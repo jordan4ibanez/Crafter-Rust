@@ -1,16 +1,17 @@
 use std::ptr::{self, null};
 use std::{collections::HashMap, os::raw::c_int};
 
-use glfw::ffi::{glfwSetErrorCallback, glfwInit, glfwDefaultWindowHints, glfwWindowHint};
+use glfw::ffi::{glfwSetErrorCallback, glfwInit, glfwDefaultWindowHints, glfwWindowHint, glfwGetPrimaryMonitor, glfwGetMonitorPhysicalSize};
 
 extern crate glfw;
 
-use glfw::{ffi::*, Window, Context, WindowHint, OpenGlProfileHint};
+use glfw::*;
+use winit::monitor;
 
 
 fn main() {
 
-    let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
+    let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();    
 
     let (mut window, events) = glfw.create_window(300, 300, "Hello this is window", glfw::WindowMode::Windowed)
         .expect("Failed to create GLFW window.");
@@ -31,32 +32,32 @@ fn main() {
     glfw.window_hint(WindowHint::OpenGlForwardCompat(true));
 
     
+    // get primary monitor and size
+    let mut monitor_size: (u32, u32) = (0, 0);
 
-    unsafe {
+    glfw.with_primary_monitor(|_, m: Option<&Monitor> | {
 
-        let primary_monitor = glfwGetPrimaryMonitor();
+        // must unwrap the safety chain
+        let monitor_reference: &Monitor = m.unwrap();
+        let video_mode_option: Option<VidMode> = monitor_reference.get_video_mode();
+        let video_mode: VidMode = video_mode_option.unwrap();
 
-        let width: &mut i32 = &mut 0;
-        let height: &mut i32 = &mut 0;
+        // finally gotten the hard values
+        monitor_size = (video_mode.width, video_mode.height);
+        
+        // drop everything just in case memory leak
+        drop(monitor_reference);
+        drop(video_mode_option);
+        drop(video_mode);
+    });
 
-        glfwGetMonitorPhysicalSize(primary_monitor, width, height);
-
-
-
-        //let title: *const i8 = 5 as *const i8;
-
-
-        //let test = window.window_ptr();
-
-        //let handle = glfwCreateWindow(*width, *height, title, primary_monitor, window);
-
-    }
+    println!("{} , {}", monitor_size.0, monitor_size.1);
 
     window.set_should_close(false);
 
     while !window.should_close() {
         glfw.poll_events();
-        println!("{}", window.should_close());
+        //println!("{}", window.should_close());
         unsafe {
             //glfwWindowShouldClose(window.get_wgl_context());
         }
