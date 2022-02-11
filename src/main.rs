@@ -11,8 +11,10 @@ use winit::monitor;
 
 fn main() {
 
+    // initalize glfw
     let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();    
 
+    // create glfw window
     let (mut window, events) = glfw.create_window(300, 300, "Hello this is window", glfw::WindowMode::Windowed)
         .expect("Failed to create GLFW window.");
 
@@ -51,6 +53,13 @@ fn main() {
         drop(video_mode);
 
     });
+
+    // make window size half the resolution
+    window.set_size(monitor_size.0 as i32 / 2, monitor_size.1 as i32 / 2);
+
+    // center the window
+    window.set_pos((monitor_size.0 as i32 - (monitor_size.0 as i32 / 2)) / 2, (monitor_size.1 as i32 - (monitor_size.1 as i32 / 2)) / 2);
+    
 
     println!("{} , {}", monitor_size.0, monitor_size.1);
 
