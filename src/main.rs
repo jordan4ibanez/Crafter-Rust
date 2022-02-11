@@ -16,7 +16,7 @@ fn main() {
     let (mut window, events) = glfw.create_window(300, 300, "Hello this is window", glfw::WindowMode::Windowed)
         .expect("Failed to create GLFW window.");
 
-    println!("GLFW initialized properly!");
+    println!("GLFW window initialized properly!");
 
     // redundantly instatialize defaul hints in case of bad drivers
     glfw.default_window_hints();
