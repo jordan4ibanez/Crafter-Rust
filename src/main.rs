@@ -5,7 +5,7 @@ use glfw::ffi::{glfwSetErrorCallback, glfwInit, glfwDefaultWindowHints, glfwWind
 
 extern crate glfw;
 
-use glfw::{ffi::*, Window, Context, WindowHint};
+use glfw::{ffi::*, Window, Context, WindowHint, OpenGlProfileHint};
 
 
 fn test () {
@@ -21,17 +21,22 @@ fn main() {
 
     println!("GLFW initialized properly!");
 
+    // redundantly instatialize defaul hints in case of bad drivers
+    glfw.default_window_hints();
+
+    // base profile
+    glfw.window_hint(WindowHint::OpenGlProfile(OpenGlProfileHint::Core));
+
+    // base version
+    glfw.window_hint(WindowHint::ContextVersionMajor(3));
+    glfw.window_hint(WindowHint::ContextVersionMinor(2));
+
+    // allow driver optimizations
+    glfw.window_hint(WindowHint::OpenGlForwardCompat(true));
+
+    
+
     unsafe {
-
-        
-        glfwWindowHint(CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(CONTEXT_VERSION_MINOR, 2);
-
-        glfwDefaultWindowHints();
-
-        glfwWindowHint(OPENGL_PROFILE, OPENGL_COMPAT_PROFILE);
-
-        glfwWindowHint(OPENGL_FORWARD_COMPAT, TRUE);
 
         let primary_monitor = glfwGetPrimaryMonitor();
 
