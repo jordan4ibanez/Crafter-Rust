@@ -49,6 +49,7 @@ fn main() {
         drop(monitor_reference);
         drop(video_mode_option);
         drop(video_mode);
+
     });
 
     println!("{} , {}", monitor_size.0, monitor_size.1);
@@ -57,9 +58,7 @@ fn main() {
 
     while !window.should_close() {
         glfw.poll_events();
-        //println!("{}", window.should_close());
-        unsafe {
-            //glfwWindowShouldClose(window.get_wgl_context());
-        }
+        
+        
     }
 }
