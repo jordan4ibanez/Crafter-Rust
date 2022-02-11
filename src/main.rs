@@ -19,14 +19,9 @@ fn main() {
     let (mut window, events) = glfw.create_window(300, 300, "Hello this is window", glfw::WindowMode::Windowed)
         .expect("Failed to create GLFW window.");
 
-    
-    unsafe {
+    println!("GLFW initialized properly!");
 
-        if glfwInit() == 0 {
-            println!("Unable to initialize GLFW!")
-        } else {
-            println!("GLFW initialized properly!")
-        }
+    unsafe {
 
         
         glfwWindowHint(CONTEXT_VERSION_MAJOR, 3);
