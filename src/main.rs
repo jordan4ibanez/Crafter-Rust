@@ -59,10 +59,17 @@ fn main() {
 
     // center the window
     window.set_pos((monitor_size.0 as i32 - (monitor_size.0 as i32 / 2)) / 2, (monitor_size.1 as i32 - (monitor_size.1 as i32 / 2)) / 2);
-    
 
-    println!("{} , {}", monitor_size.0, monitor_size.1);
+    // make context current
+    window.make_current();
 
+    // load the opengl function pointers
+    gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
+
+    // debug
+    println!("Window Resolution: {} , {}", monitor_size.0, monitor_size.1);
+
+    // A basic boolean for the window
     window.set_should_close(false);
 
     while !window.should_close() {
