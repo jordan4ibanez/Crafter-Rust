@@ -2,7 +2,7 @@ use std::{sync::mpsc::Receiver, ffi::{CString, c_void}, mem, ptr};
 
 extern crate glfw;
 
-use cgmath::{Vector4, Matrix4};
+use cgmath::{Vector4, Matrix4, Vector3};
 use gl::types::{GLfloat, GLsizeiptr, GLsizei};
 use glfw::*;
 use rand::{thread_rng, Rng};
@@ -131,7 +131,7 @@ fn main() {
 
     let mut test_shader_program: ShaderProgram = shader_program::new(vertex_shader.clone(), fragment_shader.clone());
     test_shader_program.create_uniform("color".to_string());
-    test_shader_program.create_uniform("light".to_string());
+    test_shader_program.create_uniform("pos".to_string());
     test_shader_program.test();
 
 
@@ -223,7 +223,7 @@ fn main() {
         delta = time_object.calculate_delta(&glfw);
 
         if go_up {
-            color_test += delta as f32;
+            color_test += delta as f32 * 10.0;
 
             if color_test >= 1.0 {
                 color_test = 1.0;
@@ -245,8 +245,11 @@ fn main() {
 
         unsafe {
 
+            let my_vector4f: Vector4<f32> = Vector4::new(color_test, color_test / 1.24, 0.0, color_test);
 
-            let my_vector: Vector4<f32> = Vector4::new(color_test,0.0,0.0,1.0);
+            test_shader_program.set_uniform_vec4("pos".to_string(), my_vector4f);
+
+            let my_vector: Vector4<f32> = Vector4::new(color_test, 0.0,0.0,1.0);
 
             test_shader_program.set_uniform_vec4("color".to_string(), my_vector);
 
@@ -272,8 +275,6 @@ fn main() {
             // gl::Uniform4f(vertexColorLocation, 0.0, 1.0, 0.0, 1.0);
             // gl::DrawArrays(gl::TRIANGLES, 0, 3);
         }
-        
-
 
         test_shader_program.unbind();
 
@@ -289,7 +290,9 @@ fn main() {
         */        
     }
 
-    test_shader_program.clean_up()
+    test_shader_program.clean_up();
+
+    println!("Program exited successfully!");
 }
 
 // event processing, keys, mouse, etc

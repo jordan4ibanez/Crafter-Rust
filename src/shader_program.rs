@@ -1,5 +1,5 @@
 use std::{collections::HashMap, ffi::CString, ptr};
-use cgmath::{self, Matrix4, Matrix, Vector4};
+use cgmath::{self, Matrix4, Matrix, Vector4, Vector3};
 use gl::types::GLint;
 
 // "class fields"
@@ -76,9 +76,17 @@ impl ShaderProgram {
     pub fn set_uniform_vec4(&self, uniform_name: String, value: Vector4<f32>) {
         let location: &i32 = self.uniforms.get(&uniform_name).expect("COULD NOT LOAD UNIFORM! (Vec4)");
         unsafe {            
-
+            // todo: error handling
             gl::Uniform4f(*location, value.x, value.y, value.z, value.w);
         }
+    }
+
+    pub fn set_uniform_vec3(&self, uniform_name: String, value: Vector3<f32>) {      
+        let location: &i32 = self.uniforms.get(&uniform_name).expect("COULD NOT LOAD UNIFORM! (Vec3)");
+        unsafe {            
+            // todo: error handling
+            gl::Uniform3f(*location, value.x, value.y, value.z);
+        }  
     }
 
     pub fn create_vertex_shader(&self, vertex_shader_code: String) -> u32 {
