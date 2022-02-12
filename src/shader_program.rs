@@ -80,16 +80,20 @@ impl ShaderProgram {
         unsafe {
             shader_id = gl::CreateShader(shader_type);
 
-            if shader_id == 0 {
-                panic!("ERROR CREATING SHADER!");
-            }
-
             // must convert the shader into C code
             let c_str_vert = CString::new(shader_code.clone().as_bytes()).unwrap();
 
             gl::ShaderSource(shader_id, 1, &c_str_vert.as_ptr(), ptr::null());
 
             gl::CompileShader(shader_id);
+
+            let mut success = false as GLint;
+
+            gl::GetShaderiv(shader_id, gl::COMPILE_STATUS, &mut success);
+            
+            if success != gl::TRUE as GLint {
+                panic!("ERROR COMPILING SHADER!");
+            }
 
             gl::AttachShader(self.program_id, shader_id);
 
