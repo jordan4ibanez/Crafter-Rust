@@ -89,6 +89,8 @@ fn main() {
     // window title - reused pointer
     let mut window_title: String = String::new();
 
+    let mut counter = 0;
+
     while !window.should_close() {
 
         unsafe {
@@ -118,6 +120,12 @@ fn main() {
 
         // END fps debug
 
-        window.swap_buffers();        
+        window.swap_buffers();
+
+        counter += 1;
+
+        if counter >= 30_000 {
+            panic!("Your demo is over boi");
+        }
     }
 }
