@@ -110,22 +110,6 @@ fn main() {
 
         // END fps debug
 
-
-
-
-
-        // START window title debug
-
-        // let test = randy.gen_range(0..100000).to_string();
-
-        // println!("{}", test);
-
-        // window.set_title(&test);
-
-        // END window title debug
-        
-        // function/event processing goes here
-
         window.swap_buffers();        
     }
 }
