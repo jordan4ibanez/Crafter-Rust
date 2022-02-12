@@ -1,7 +1,4 @@
 use std::sync::mpsc::Receiver;
-use std::env;
-
-use rand::{thread_rng, Rng};
 
 extern crate glfw;
 
@@ -100,7 +97,7 @@ fn main() {
     let mut time_object = time_object::new(&glfw);
     // inlined cache vars
     let mut returned_value: (bool, i32);
-    let mut delta: f64 = 0.0;
+    let mut _delta: f64 = 0.0;
 
     // window title - reused pointer
     let mut window_title: String = String::new();
@@ -117,9 +114,16 @@ fn main() {
 
     println!("Current Working Path: {}", path);
 
-    let vertex_shader = load_resource(path + "\\test.txt");
+
+    let vertex_shader = load_resource(path.to_string() + "/shader_code/vertex_shader.vs");
 
     println!("THIS IS THE DEBUG OF SHADER: {}", vertex_shader);
+
+    let fragment_shader = load_resource(path.to_string() + "/shader_code/fragment_shader.fs");
+
+    println!("THIS IS A DEBUG OF SHADER: {}", fragment_shader);
+
+
 
     // main program loop
     while !window.should_close() {
@@ -156,7 +160,7 @@ fn main() {
 
         // START delta debug
         
-        delta = time_object.calculate_delta(&glfw);
+        // delta = time_object.calculate_delta(&glfw);
 
         // assert_eq!(delta, delta);
         // println!("{}", delta);
