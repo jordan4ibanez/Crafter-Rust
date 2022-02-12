@@ -1,6 +1,8 @@
 use std::ptr::{self, null};
 use std::{collections::HashMap, os::raw::c_int};
 
+use rand::{thread_rng, Rng};
+
 use glfw::ffi::{glfwSetErrorCallback, glfwInit, glfwDefaultWindowHints, glfwWindowHint, glfwGetPrimaryMonitor, glfwGetMonitorPhysicalSize};
 
 extern crate glfw;
@@ -66,15 +68,72 @@ fn main() {
     // load the opengl function pointers
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
 
+    // remove vsync
+    glfw.set_swap_interval(glfw::SwapInterval::None);
+
     // debug
     println!("Window Resolution: {} , {}", monitor_size.0, monitor_size.1);
 
     // A basic boolean for the window
     window.set_should_close(false);
 
+    // a random number generator for debug
+    let mut randy = thread_rng();
+
+
+    // timer variables
+    let mut previous_time: f64 = glfw.get_time();
+    let mut current_time: f64 = glfw.get_time();
+    let mut frame_count: i64 = 0;
+    let mut window_title: String = String::new();
+
+
     while !window.should_close() {
+
         glfw.poll_events();
+
+
+        // START fps debug
+
+        current_time = glfw.get_time();
+
+        frame_count += 1;
+
+        if current_time - previous_time >= 1.0 {
+
+            //println!("FPS: {}", frame_count);
+
+            // push the raw data
+            window_title.push_str("FPS: ");
+            window_title.push_str(&frame_count.to_string());
+
+            window.set_title(&window_title);
+
+            window_title.clear();
+
+            frame_count = 0;
+
+            previous_time = current_time;
+        }
+
+        // END fps debug
+
+
+
+
+
+        // START window title debug
+
+        // let test = randy.gen_range(0..100000).to_string();
+
+        // println!("{}", test);
+
+        // window.set_title(&test);
+
+        // END window title debug
         
-        
+        // function/event processing goes here
+
+        window.swap_buffers();        
     }
 }
