@@ -182,6 +182,7 @@ pub fn new(vertex_code: String, fragment_code: String) -> ShaderProgram {
 
     shader_program.fragment_shader_id = shader_program.create_fragment_shader(fragment_code);
 
+    shader_program.link();
 
     shader_program
 }
