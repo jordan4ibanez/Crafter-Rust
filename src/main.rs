@@ -82,9 +82,10 @@ fn main() {
     let mut randy = thread_rng();
 
     // fps counter object
-    let mut fps_counter = time_object::new(&glfw);
+    let mut time_object = time_object::new(&glfw);
     // inlined cache vars
-    let mut returned_value: (bool, i32) = (false,0);
+    let mut returned_value: (bool, i32);
+    let mut delta: f64 = 0.0;
 
     // window title - reused pointer
     let mut window_title: String = String::new();
@@ -106,7 +107,7 @@ fn main() {
 
         // START fps debug
 
-        returned_value = fps_counter.count(&glfw);
+        returned_value = time_object.count_fps(&glfw);
         
         if returned_value.0 {
 
@@ -119,6 +120,14 @@ fn main() {
         }
 
         // END fps debug
+
+        // START delta debug
+        
+        delta = time_object.calculate_delta(&glfw);
+
+        println!("{}", delta);
+
+        // END delta debug
 
         window.swap_buffers();
 
