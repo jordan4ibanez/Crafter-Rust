@@ -10,17 +10,17 @@ extern crate glfw;
 use glfw::*;
 use winit::monitor;
 
+use voxel_chunk::chunk;
+
+// const MAP: HashMap<String, chunk::Chunk> = HashMap::new();
 
 fn main() {
 
+
+    // glfw initialization and configuration
+
     // initalize glfw
-    let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();    
-
-    // create glfw window
-    let (mut window, events) = glfw.create_window(300, 300, "Hello this is window", glfw::WindowMode::Windowed)
-        .expect("Failed to create GLFW window.");
-
-    println!("GLFW window initialized properly!");
+    let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
 
     // redundantly instatialize defaul hints in case of bad drivers
     glfw.default_window_hints();
@@ -35,6 +35,13 @@ fn main() {
     // allow driver optimizations
     glfw.window_hint(WindowHint::OpenGlForwardCompat(true));
 
+
+    // create glfw window
+    let (mut window, events) = glfw.create_window(300, 300, "Hello this is window", glfw::WindowMode::Windowed)
+    .expect("Failed to create GLFW window.");
+
+    println!("GLFW window initialized properly!");
+    
     
     // get primary monitor and size
     let mut monitor_size: (u32, u32) = (0, 0);
@@ -56,6 +63,8 @@ fn main() {
 
     });
 
+    
+
     // make window size half the resolution
     window.set_size(monitor_size.0 as i32 / 2, monitor_size.1 as i32 / 2);
 
@@ -65,11 +74,11 @@ fn main() {
     // make context current
     window.make_current();
 
-    // load the opengl function pointers
-    gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
-
     // remove vsync
     glfw.set_swap_interval(glfw::SwapInterval::None);
+
+    // load the opengl function pointers
+    gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
 
     // debug
     println!("Window Resolution: {} , {}", monitor_size.0, monitor_size.1);
