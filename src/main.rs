@@ -1,18 +1,11 @@
-use std::ptr::{self, null};
-use std::{collections::HashMap, os::raw::c_int};
-
-use rand::{thread_rng, Rng};
-
-use glfw::ffi::{glfwSetErrorCallback, glfwInit, glfwDefaultWindowHints, glfwWindowHint, glfwGetPrimaryMonitor, glfwGetMonitorPhysicalSize};
+use rand::{thread_rng};
 
 extern crate glfw;
 
 use glfw::*;
-use winit::monitor;
 
-use voxel_chunk::chunk;
+mod fps_counter;
 
-// const MAP: HashMap<String, chunk::Chunk> = HashMap::new();
 
 fn main() {
 
@@ -41,7 +34,6 @@ fn main() {
     .expect("Failed to create GLFW window.");
 
     println!("GLFW window initialized properly!");
-    
     
     // get primary monitor and size
     let mut monitor_size: (u32, u32) = (0, 0);
@@ -89,13 +81,13 @@ fn main() {
     // a random number generator for debug
     let mut randy = thread_rng();
 
+    // fps counter object
+    let mut fps_counter = fps_counter::new(&glfw);
+    // inlined cache vars
+    let mut returned_value: (bool, i32) = (false,0);
 
-    // timer variables
-    let mut previous_time: f64 = glfw.get_time();
-    let mut current_time: f64 = glfw.get_time();
-    let mut frame_count: i64 = 0;
+    // window title - reused pointer
     let mut window_title: String = String::new();
-
 
     while !window.should_close() {
 
@@ -104,25 +96,16 @@ fn main() {
 
         // START fps debug
 
-        current_time = glfw.get_time();
+        returned_value = fps_counter.count(&glfw);
+        
+        if returned_value.0 {
 
-        frame_count += 1;
-
-        if current_time - previous_time >= 1.0 {
-
-            //println!("FPS: {}", frame_count);
-
-            // push the raw data
             window_title.push_str("FPS: ");
-            window_title.push_str(&frame_count.to_string());
+            window_title.push_str(&returned_value.1.to_string());
 
             window.set_title(&window_title);
 
             window_title.clear();
-
-            frame_count = 0;
-
-            previous_time = current_time;
         }
 
         // END fps debug
