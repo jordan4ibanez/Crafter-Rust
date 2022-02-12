@@ -184,6 +184,8 @@ fn main() {
 
         test_shader_program.unbind();
     }
+
+    test_shader_program.clean_up()
 }
 
 // event processing, keys, mouse, etc
