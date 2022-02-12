@@ -2,6 +2,7 @@ use std::{sync::mpsc::Receiver, ffi::{CString, c_void}, mem, ptr};
 
 extern crate glfw;
 
+use cgmath::{Vector4, Matrix4};
 use gl::types::{GLfloat, GLsizeiptr, GLsizei};
 use glfw::*;
 
@@ -128,13 +129,9 @@ fn main() {
     let fragment_shader: String = load_resource(path.to_string() + "/shader_code/fragment_shader.fs");
 
     let mut test_shader_program: ShaderProgram = shader_program::new(vertex_shader.clone(), fragment_shader.clone());
-    test_shader_program.create_uniform("flarp".to_string());
+    test_shader_program.create_uniform("color".to_string());
+    test_shader_program.create_uniform("light".to_string());
     test_shader_program.test();
-
-    
-    let mut test_shader_program2: ShaderProgram = shader_program::new(vertex_shader, fragment_shader);
-    test_shader_program2.create_uniform("flarp22".to_string());
-    test_shader_program2.test();
 
 
 
@@ -228,8 +225,26 @@ fn main() {
         // END delta debug
 
         unsafe {
+
+
+            let my_vector: Vector4<f32> = Vector4::new(0.0,1.0,1.0,1.0);
+
+            test_shader_program.set_uniform_vec4("color".to_string(), my_vector);
+
             gl::BindVertexArray(vao); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
 
+            let color_name = CString::new("color").unwrap();
+
+            // let vertex_color_location = gl::GetUniformLocation(test_shader_program.get_program(), color_name.as_ptr());
+            //let vertex_color_location: i32 = test_shader_program.get_uniform_location("color".to_string()).clone();
+
+            //let mut test = 0.0;
+
+            //gl::GetUniformfv(test_shader_program.get_program(), vertex_color_location, &mut test);
+
+            //println!("{}", test);
+
+            //gl::Uniform4f(vertex_color_location, 0.0, 1.0, 0.0, 1.0);
 
             gl::DrawArrays(gl::TRIANGLES, 0, 3);
 
