@@ -1,4 +1,4 @@
-use rand::{thread_rng};
+use rand::{thread_rng, Rng};
 
 extern crate glfw;
 
@@ -90,6 +90,14 @@ fn main() {
     let mut window_title: String = String::new();
 
     while !window.should_close() {
+
+        unsafe {
+            // this will probably give you a seizure
+            //gl::ClearColor(randy.gen(), randy.gen(), randy.gen(), 1.0);
+
+            gl::ClearColor(0.5,0.5,0.5,1.0);
+            gl::Clear(gl::COLOR_BUFFER_BIT);
+        }
 
         glfw.poll_events();
 
