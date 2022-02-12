@@ -5,6 +5,7 @@ extern crate glfw;
 use cgmath::{Vector4, Matrix4};
 use gl::types::{GLfloat, GLsizeiptr, GLsizei};
 use glfw::*;
+use rand::{thread_rng, Rng};
 
 use crate::{resource_loader::load_resource, shader_program::ShaderProgram};
 
@@ -100,13 +101,13 @@ fn main() {
     window.set_should_close(false);
 
     // a random number generator for debug
-    // let mut randy = thread_rng();
+    let mut randy = thread_rng();
 
     // fps counter object
     let mut time_object = time_object::new(&glfw);
     // inlined cache vars
     let mut returned_value: (bool, i32);
-    let mut _delta: f64 = 0.0;
+    let mut delta: f64 = 0.0;
 
     // window title - reused pointer
     let mut window_title: String = String::new();
@@ -178,6 +179,8 @@ fn main() {
     
 
 
+    let mut color_test: f32 = 0.0;
+    let mut go_up = true;
 
 
     // main program loop
@@ -217,7 +220,23 @@ fn main() {
 
         // START delta debug
         
-        // delta = time_object.calculate_delta(&glfw);
+        delta = time_object.calculate_delta(&glfw);
+
+        if go_up {
+            color_test += delta as f32;
+
+            if color_test >= 1.0 {
+                color_test = 1.0;
+                go_up = false;
+            }
+        } else {
+            color_test -= delta as f32;
+            
+            if color_test <= 0.0 {
+                color_test = 0.0;
+                go_up = true;
+            }
+        }
 
         // assert_eq!(delta, delta);
         // println!("{}", delta);
@@ -227,13 +246,13 @@ fn main() {
         unsafe {
 
 
-            let my_vector: Vector4<f32> = Vector4::new(0.0,1.0,1.0,1.0);
+            let my_vector: Vector4<f32> = Vector4::new(color_test,0.0,0.0,1.0);
 
             test_shader_program.set_uniform_vec4("color".to_string(), my_vector);
 
             gl::BindVertexArray(vao); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
 
-            let color_name = CString::new("color").unwrap();
+            //let color_name = CString::new("color").unwrap();
 
             // let vertex_color_location = gl::GetUniformLocation(test_shader_program.get_program(), color_name.as_ptr());
             //let vertex_color_location: i32 = test_shader_program.get_uniform_location("color".to_string()).clone();
@@ -254,6 +273,7 @@ fn main() {
             // gl::DrawArrays(gl::TRIANGLES, 0, 3);
         }
         
+
 
         test_shader_program.unbind();
 
