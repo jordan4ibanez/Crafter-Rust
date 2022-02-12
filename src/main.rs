@@ -90,7 +90,7 @@ fn main() {
     window.set_should_close(false);
 
     // a random number generator for debug
-    let mut randy = thread_rng();
+    // let mut randy = thread_rng();
 
     // fps counter object
     let mut time_object = time_object::new(&glfw);
@@ -101,7 +101,7 @@ fn main() {
     // window title - reused pointer
     let mut window_title: String = String::new();
 
-    let mut counter = 0;
+    // let mut counter = 0;
 
 
     // main program loop
@@ -141,18 +141,21 @@ fn main() {
         
         delta = time_object.calculate_delta(&glfw);
 
-        //println!("{}", delta);
+        // assert_eq!(delta, delta);
+        // println!("{}", delta);
 
         // END delta debug
 
         window.swap_buffers();
 
-        counter += 1;
+        // counter += 1;
 
+        /*
         if counter >= 30_000 {
             println!("Your demo is over boi!");
             window.set_should_close(true);
         }
+        */
     }
 }
 
