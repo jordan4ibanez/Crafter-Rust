@@ -40,6 +40,14 @@ impl ShaderProgram {
         }
     }
 
+    pub fn get_uniform_location(&self, uniform_name: String) -> &i32 {
+        self.uniforms.get(&uniform_name).expect("TRIED TO GET A UNIFORM THAT DOES NOT EXIST!")
+    }
+
+    pub fn get_program(&self) -> u32 {
+        self.program_id
+    }
+
     // cannot overload so the name will end with the value
     pub fn set_uniform_m32(&self, uniform_name: String, value: Matrix4<f32>) {
         let location: &i32 = self.uniforms.get(&uniform_name).expect("COULD NOT LOAD UNIFORM! (M<F32>)");
@@ -120,7 +128,6 @@ impl ShaderProgram {
             if success != gl::TRUE as GLint {
                 panic!("COULD NOT LINK SHADER!")
             }
-            
 
             // delete the shaders, they are now one in the main shader program
             gl::DeleteShader(self.vertex_shader_id);
