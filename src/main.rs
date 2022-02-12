@@ -7,7 +7,10 @@ extern crate glfw;
 
 use glfw::*;
 
+use crate::resource_loader::load_resource;
+
 mod time_object;
+mod resource_loader;
 
 
 fn main() {
@@ -114,6 +117,9 @@ fn main() {
 
     println!("Current Working Path: {}", path);
 
+    let vertex_shader = load_resource(path + "\\test.txt");
+
+    println!("THIS IS THE DEBUG OF SHADER: {}", vertex_shader);
 
     // main program loop
     while !window.should_close() {
@@ -156,7 +162,7 @@ fn main() {
         // println!("{}", delta);
 
         // END delta debug
-
+        
         window.swap_buffers();
 
         // counter += 1;
