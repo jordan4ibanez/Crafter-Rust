@@ -129,6 +129,9 @@ fn main() {
     // main program loop
     while !window.should_close() {
 
+
+        test_shader_program.bind();
+
         unsafe {
             // this will probably give you a seizure
             //gl::ClearColor(randy.gen(), randy.gen(), randy.gen(), 1.0);
@@ -178,6 +181,8 @@ fn main() {
             window.set_should_close(true);
         }
         */
+
+        test_shader_program.unbind();
     }
 }
 
