@@ -12,7 +12,6 @@ pub struct Time {
 }
 
 impl Time {
-    #[inline(always)]
     pub fn count_fps(&mut self, glfw: &glfw::Glfw) -> (bool, i32) {
 
         self.current_time = glfw.get_time();
@@ -34,7 +33,6 @@ impl Time {
         (false, 0)
     }
 
-    #[inline(always)]
     pub fn calculate_delta(&mut self, glfw: &glfw::Glfw) -> f64 {
         self.current_delta = glfw.get_time();
 
@@ -46,7 +44,6 @@ impl Time {
     }
 }
 
-#[inline(always)]
 pub fn new(glfw: &glfw::Glfw) -> Time {
     let current_time = glfw.get_time();
     Time {
