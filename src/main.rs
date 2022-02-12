@@ -4,7 +4,7 @@ extern crate glfw;
 
 use glfw::*;
 
-mod fps_counter;
+mod time_object;
 
 
 fn main() {
@@ -82,7 +82,7 @@ fn main() {
     let mut randy = thread_rng();
 
     // fps counter object
-    let mut fps_counter = fps_counter::new(&glfw);
+    let mut fps_counter = time_object::new(&glfw);
     // inlined cache vars
     let mut returned_value: (bool, i32) = (false,0);
 

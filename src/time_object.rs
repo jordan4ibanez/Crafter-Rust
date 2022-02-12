@@ -1,14 +1,14 @@
 extern crate glfw;
 
-pub struct FpsCounter {
+pub struct Time {
     previous_time: f64,
     current_time: f64,
     frame_count: i32,
 }
 
-impl FpsCounter {
+impl Time {
     #[inline(always)]
-    pub fn count(&mut self, glfw: &glfw::Glfw) -> (bool, i32) {
+    pub fn count_fps(&mut self, glfw: &glfw::Glfw) -> (bool, i32) {
 
         self.current_time = glfw.get_time();
 
@@ -31,9 +31,9 @@ impl FpsCounter {
 }
 
 #[inline(always)]
-pub fn new(glfw: &glfw::Glfw) -> FpsCounter {
+pub fn new(glfw: &glfw::Glfw) -> Time {
     let current_time = glfw.get_time();
-    FpsCounter {
+    Time {
         previous_time: current_time.clone(),
         current_time: current_time.clone(),
         frame_count: 0,
