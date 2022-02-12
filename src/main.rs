@@ -4,10 +4,11 @@ extern crate glfw;
 
 use glfw::*;
 
-use crate::resource_loader::load_resource;
+use crate::{resource_loader::load_resource, shader_program::ShaderProgram};
 
 mod time_object;
 mod resource_loader;
+mod shader_program;
 
 
 fn main() {
@@ -115,14 +116,14 @@ fn main() {
     println!("Current Working Path: {}", path);
 
 
-    let vertex_shader = load_resource(path.to_string() + "/shader_code/vertex_shader.vs");
+    let vertex_shader: String = load_resource(path.to_string() + "/shader_code/vertex_shader.vs");
 
-    println!("THIS IS THE DEBUG OF SHADER: {}", vertex_shader);
+    let fragment_shader: String = load_resource(path.to_string() + "/shader_code/fragment_shader.fs");
 
-    let fragment_shader = load_resource(path.to_string() + "/shader_code/fragment_shader.fs");
+    let test_shader_program: ShaderProgram = shader_program::new(vertex_shader, fragment_shader);
 
-    println!("THIS IS A DEBUG OF SHADER: {}", fragment_shader);
 
+    test_shader_program.test();
 
 
     // main program loop
