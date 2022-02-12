@@ -120,8 +120,12 @@ fn main() {
 
     let fragment_shader: String = load_resource(path.to_string() + "/shader_code/fragment_shader.fs");
 
-    let test_shader_program: ShaderProgram = shader_program::new(vertex_shader, fragment_shader);
+    let mut test_shader_program: ShaderProgram = shader_program::new(vertex_shader, fragment_shader);
 
+    test_shader_program.create_uniform("flarp".to_string());
+    test_shader_program.create_uniform("flarp1".to_string());
+    test_shader_program.create_uniform("flarp2".to_string());
+    test_shader_program.create_uniform("flarp3".to_string());
 
     test_shader_program.test();
 
