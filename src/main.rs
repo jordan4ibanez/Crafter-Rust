@@ -1,4 +1,5 @@
 use std::sync::mpsc::Receiver;
+use std::env;
 
 use rand::{thread_rng, Rng};
 
@@ -73,7 +74,7 @@ fn main() {
     window.set_mouse_button_polling(true);
     //window.set_raw_mouse_motion(true);
     window.set_cursor_enter_polling(true);
-    println!("You can utilize set_cursor_enter_polling to save resources on loss of os focus");
+    println!("\n A NOTE:\nYou can utilize set_cursor_enter_polling to save resources on loss of os focus\n");
     window.set_cursor_pos_polling(true);
 
 
@@ -102,6 +103,16 @@ fn main() {
     let mut window_title: String = String::new();
 
     // let mut counter = 0;
+
+    // gets current working directory
+    let path = std::env::current_dir()
+                                .unwrap()
+                                .as_os_str()
+                                .to_str()
+                                .unwrap()
+                                .to_owned();
+
+    println!("Current Working Path: {}", path);
 
 
     // main program loop
@@ -164,7 +175,7 @@ fn process_events(window: &mut glfw::Window, events: &Receiver<(f64, glfw::Windo
     // iterate events
     for (_, event) in glfw::flush_messages(events) {
 
-        println!("{:?}", event);
+        // println!("{:?}", event);
 
         // match event enums
         match event {
