@@ -1,3 +1,5 @@
+use std::sync::mpsc::Receiver;
+
 use rand::{thread_rng, Rng};
 
 extern crate glfw;
@@ -56,7 +58,6 @@ fn main() {
     });
 
     
-
     // make window size half the resolution
     window.set_size(monitor_size.0 as i32 / 2, monitor_size.1 as i32 / 2);
 
@@ -65,6 +66,16 @@ fn main() {
 
     // make context current
     window.make_current();
+
+    // enable internal C calls
+    window.set_key_polling(true);
+    window.set_framebuffer_size_polling(true);
+    window.set_mouse_button_polling(true);
+    //window.set_raw_mouse_motion(true);
+    window.set_cursor_enter_polling(true);
+    println!("You can utilize set_cursor_enter_polling to save resources on loss of os focus");
+    window.set_cursor_pos_polling(true);
+
 
     // remove vsync
     glfw.set_swap_interval(glfw::SwapInterval::None);
@@ -92,6 +103,8 @@ fn main() {
 
     let mut counter = 0;
 
+
+    // main program loop
     while !window.should_close() {
 
         unsafe {
@@ -103,6 +116,9 @@ fn main() {
         }
 
         glfw.poll_events();
+
+        // this is where all events are processed
+        process_events(&mut window, &events);
 
 
         // START fps debug
@@ -125,7 +141,7 @@ fn main() {
         
         delta = time_object.calculate_delta(&glfw);
 
-        println!("{}", delta);
+        //println!("{}", delta);
 
         // END delta debug
 
@@ -134,7 +150,34 @@ fn main() {
         counter += 1;
 
         if counter >= 30_000 {
-            panic!("Your demo is over boi");
+            println!("Your demo is over boi!");
+            window.set_should_close(true);
+        }
+    }
+}
+
+// event processing, keys, mouse, etc
+fn process_events(window: &mut glfw::Window, events: &Receiver<(f64, glfw::WindowEvent)>) {
+    // iterate events
+    for (_, event) in glfw::flush_messages(events) {
+
+        println!("{:?}", event);
+
+        // match event enums
+        match event {
+            glfw::WindowEvent::FramebufferSize(width, height) => {
+                // update the gl viewport to match the new window size
+                unsafe {
+                    gl::Viewport(0,0, width, height)
+                }
+            }
+
+            // close the window on escape
+            glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => window.set_should_close(true),
+
+            glfw::WindowEvent::Key(Key::Space, _, Action::Press, _) => println!("SPACEY!"),
+
+            _ => {}
         }
     }
 }
