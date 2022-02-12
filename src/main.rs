@@ -30,7 +30,7 @@ fn main() {
 
 
     // create glfw window
-    let (mut window, events) = glfw.create_window(300, 300, "Hello this is window", glfw::WindowMode::Windowed)
+    let (mut window, events) = glfw.create_window(300, 300, "FPS: 0", glfw::WindowMode::Windowed)
     .expect("Failed to create GLFW window.");
 
     println!("GLFW window initialized properly!");
