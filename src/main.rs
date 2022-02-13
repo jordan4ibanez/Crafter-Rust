@@ -139,9 +139,9 @@ fn main() {
 
     let fragment_shader: String = load_resource(path.to_string() + "/shader_code/fragment_shader.fs");
 
-    let mut test_shader_program: ShaderProgram = shader_program::new(vertex_shader.clone(), fragment_shader.clone());
-    test_shader_program.create_uniform("color".to_string());
+    let mut test_shader_program: ShaderProgram = shader_program::new(vertex_shader, fragment_shader);
     test_shader_program.create_uniform("pos".to_string());
+    test_shader_program.create_uniform("color".to_string());
     test_shader_program.test();
 
 
@@ -206,11 +206,11 @@ fn main() {
 
 
     let texture_test: Texture = texture::new(path.to_string() + "/textures/debug.png");
-    texture_test.test();
+    // texture_test.test();
 
 
     let texture_test2: Texture = texture::new(path.to_string() + "/textures/debug_2.png");
-    texture_test2.test();
+    // texture_test2.test();
     // END TEXTURE TEST
 
     
@@ -283,14 +283,26 @@ fn main() {
 
         unsafe {
 
-            gl::BindVertexArray(VAO);
 
+            test_shader_program.set_uniform_vec3("pos".to_string(), Vector3::new(0.5, 0.0, 0.0));
+            test_shader_program.set_uniform_vec3("color".to_string(), Vector3::new(1.0, 1.0, 1.0));
+
+            gl::BindVertexArray(VAO);
 
             // bind Texture
             gl::BindTexture(gl::TEXTURE_2D, texture_test.get_id());
 
             // render container
             gl::BindVertexArray(VAO);
+
+            gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, ptr::null());
+
+
+            gl::BindTexture(gl::TEXTURE_2D, texture_test2.get_id());
+
+            test_shader_program.set_uniform_vec3("pos".to_string(), Vector3::new(-0.5, 0.0, 0.0));
+            test_shader_program.set_uniform_vec3("color".to_string(), Vector3::new(1.0, 1.0, 1.0));
+
             gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, ptr::null());
 
             //let mut cool_pos: f32;
