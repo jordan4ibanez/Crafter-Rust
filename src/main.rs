@@ -2,16 +2,17 @@ use std::{sync::mpsc::Receiver, ffi::{CString, c_void}, mem, ptr};
 
 extern crate glfw;
 
+mod graphics;
+mod time_object;
+mod resource_loader;
+
 use cgmath::{Vector4, Matrix4, Vector3};
 use gl::types::{GLfloat, GLsizeiptr, GLsizei};
 use glfw::*;
 use rand::{thread_rng, Rng};
 
-use crate::{resource_loader::load_resource, shader_program::ShaderProgram};
+use crate::{resource_loader::load_resource, graphics::shader_program::{ShaderProgram, self}};
 
-mod time_object;
-mod resource_loader;
-mod shader_program;
 
 
 fn main() {
@@ -140,11 +141,15 @@ fn main() {
 
 
     let vao: u32 =  unsafe {
+
+        let vec_vertices: Vec<f32> = Vec::new();    
+
         let vertices: [f32; 9] = [
             -0.5, -0.5, 0.0, // left
              0.5, -0.5, 0.0, // right
              0.0,  0.5, 0.0  // top
         ];
+
         let (mut VBO, mut vao) = (0, 0);
         gl::GenVertexArrays(1, &mut vao);
         gl::GenBuffers(1, &mut VBO);
@@ -254,9 +259,9 @@ fn main() {
 
             let mut my_color: Vector4<f32> = Vector4::new(color_test, 0.0,0.0,1.0);
 
-            for i in 0..=2_056 {
+            for i in 0..=257 {
 
-                cool_pos = i as f32 / 2_056.0;
+                cool_pos = i as f32 / 257.0;
 
                 my_pos.x = color_test + cool_pos - 0.5;
                 my_pos.y = (color_test / 1.24) - cool_pos;
