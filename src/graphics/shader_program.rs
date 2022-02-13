@@ -21,6 +21,7 @@ impl ShaderProgram {
         println!("VERT ID: {}", self.vertex_shader_id);
         println!("FRAG ID: {}", self.fragment_shader_id);
         println!("UNIFORMS: {:#?}", self.uniforms);
+        println!("---SHADER OBJECT TEST HAS ENDED---");
     }
 
     // the unsafe is wrapped around a safe
