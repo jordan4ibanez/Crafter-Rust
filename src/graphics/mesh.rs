@@ -10,13 +10,27 @@ pub struct Mesh {
     pos_vbo_id: u32,
     color_vbo_id: u32,
     texture_vbo_id: u32,
-    idx_vbo_id: u32,
+    idx_vbo_id: u32, // this needs to be renames indices
     vertex_count: i32,
     texture: Texture
 }
 
 
 impl Mesh {
+
+    // debug for prototyping meshes
+    pub fn test(&self) {
+        println!("---BEGIN MESH TEST--");
+        println!("ID: {}", self.vao_id);
+        println!("POS: {}", self.pos_vbo_id);
+        println!("COLOR: {}", self.color_vbo_id);
+        println!("TEXTURE: {}", self.texture_vbo_id);
+        println!("IDX: {}", self.idx_vbo_id);
+        println!("V COUNT: {}", self.vertex_count);
+        self.texture.test();
+        println!("---END MESH TEST---");
+    }
+
     // internal constructor
     // the improvement is this allows dynamic allocations
     pub fn construct(&mut self, positions: Vec<f32>, colors: Vec<f32>, indices: Vec<i32>, texture_coordinates: Vec<f32>){
