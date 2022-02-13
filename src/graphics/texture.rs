@@ -4,7 +4,7 @@ use gl::{types::GLint, TEXTURE_MIN_FILTER, RGBA};
 use stb_image_rust;
 
 pub struct Texture {
-    id: *mut u32,
+    id: u32,
     width: i32,
     height: i32
 }
@@ -27,6 +27,7 @@ impl Texture {
         let mut file: File = File::open(path).expect("COULD NOT LOAD IMAGE!");
         let mut data: Vec<u8> = Vec::<u8>::new();
         file.read_to_end(&mut data).expect("COULD NOT PARSE IMAGE DATA!");
+
 
         // next we will use rust to hold the memory
         let mut computed: i32 = 0;
@@ -53,17 +54,17 @@ impl Texture {
         }
     }
 
-    fn create_gl_texture(&self, texture: *mut u8) -> *mut u32 {
+    fn create_gl_texture(&self, texture: *mut u8) -> u32 {
 
-        let texture_id: *mut u32 = 0 as *mut u32;
+        let mut texture_id = 0;
 
         unsafe {
 
             // create a new texture in the gpu
-            gl::GenTextures(1, texture_id);
+            gl::GenTextures(1, &mut texture_id);
 
             // bind the texture
-            gl::BindTexture(gl::TEXTURE_2D, *texture_id);
+            gl::BindTexture(gl::TEXTURE_2D, texture_id);
 
             // tell opengl how to unpack the rgba bytes, each compenent is 1 byte in size
             gl::PixelStorei(gl::UNPACK_ALIGNMENT, 1);
@@ -95,10 +96,11 @@ impl Texture {
                 texture as *const u8 as *const c_void);
         }
 
+        // texture_id
         texture_id
     }
 
-    pub fn get_id(&self) -> *mut u32 {
+    pub fn get_id(&self) -> u32 {
         self.id
     }
 
@@ -112,7 +114,7 @@ impl Texture {
 
     pub fn clean_up(&self) {
         unsafe {
-            gl::DeleteTextures(1, self.id);
+            gl::DeleteTextures(1, &self.id);
         }
 
         drop(self);
@@ -122,11 +124,10 @@ impl Texture {
 // constructor
 pub fn new(texture_path: String) -> Texture {
     let mut returning_texture: Texture = Texture {
-        id: 0 as *mut u32,
+        id: 0,
         width: 0,
         height: 0,
     };
-
     returning_texture.construct(texture_path);
 
     returning_texture
