@@ -5,11 +5,17 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+# I'm documenting this as I translate it from LWJGL and Java.
+# It's easier for me.
 [dependencies]
-rand = "0.8.4"
-gl = "0.14.0"
-glfw = "0.43.0"
-winit = "0.26.1"
-cgmath = "0.18.0"
-voxel_chunk = "*"
-alto = "*"
+
+rand = "0.8.4" # math.random() in rust
+
+gl = "0.14.0" # openGL bindings
+glfw = "0.43.0" # GLFW
+cgmath = "0.18.0" # JOML
+alto = "*" # openAL wrapper
+stb_image_rust = "2.27.2" # image loading (STBI wrapper)
+
+# custom chunk object
+voxel_chunk = "*" 
