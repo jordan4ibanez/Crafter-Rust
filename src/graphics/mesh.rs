@@ -19,7 +19,7 @@ pub struct Mesh {
 impl Mesh {
     // internal constructor
     // the improvement is this allows dynamic allocations
-    pub fn construct(&mut self, positions: Vec<f32>, colors: Vec<f32>, indices: Vec<i32>, texture_coordinates: Vec<f32>, texture: Texture){
+    pub fn construct(&mut self, positions: Vec<f32>, colors: Vec<f32>, indices: Vec<i32>, texture_coordinates: Vec<f32>){
 
         unsafe { 
 
@@ -104,9 +104,6 @@ impl Mesh {
 
             // next add the vertex count to it's int
             self.vertex_count = indices.len() as i32;
-            
-
-            self.texture = texture;
 
         }
     }
@@ -164,6 +161,18 @@ impl Mesh {
 }
 
 
-pub fn new() {
+pub fn new(positions: Vec<f32>, colors: Vec<f32>, indices: Vec<i32>, texture_coordinates: Vec<f32>, texture: Texture) -> Mesh {
+    let mut returning_mesh: Mesh = Mesh {
+        vao_id: 0,
+        pos_vbo_id: 0,
+        color_vbo_id: 0,
+        texture_vbo_id: 0,
+        idx_vbo_id: 0,
+        vertex_count: 0,
+        texture,
+    };
 
+    returning_mesh.construct(positions, colors, indices, texture_coordinates);
+
+    returning_mesh
 }
