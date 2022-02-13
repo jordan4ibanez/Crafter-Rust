@@ -11,6 +11,17 @@ pub struct Texture {
 
 
 impl Texture {
+
+    // this is only for debugging
+    pub fn test(&self) {
+        println!("-- BEGINNING TEXTURE TEST ---");
+        println!("ID: {:#?}", self.id);
+        println!("WIDTH: {}", self.width);
+        println!("HEIGHT: {}", self.height);
+        println!("-- END TEXTURE TEST --");
+    }
+
+    
     pub fn construct(&mut self, path: String) {
         // we must first load the file into memory using rust's api
         let mut file: File = File::open(path).expect("COULD NOT LOAD IMAGE!");
@@ -106,4 +117,17 @@ impl Texture {
 
         drop(self);
     }
+}
+
+// constructor
+pub fn new(texture_path: String) -> Texture {
+    let mut returning_texture: Texture = Texture {
+        id: 0 as *mut u32,
+        width: 0,
+        height: 0,
+    };
+
+    returning_texture.construct(texture_path);
+
+    returning_texture
 }
