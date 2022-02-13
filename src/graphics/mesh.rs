@@ -128,7 +128,7 @@ impl Mesh {
         }
     }
 
-    pub fn clean_up(&mut self, delete_texture: bool){
+    pub fn clean_up(&self, delete_texture: bool){
         unsafe {
             // bind buffer 0
             gl::BindBuffer(gl::ARRAY_BUFFER, 0);
@@ -139,16 +139,16 @@ impl Mesh {
             gl::DisableVertexAttribArray(0);
 
             // clear the buffer data in gpu
-            gl::DeleteBuffers(1, &mut self.pos_vbo_id);
-            gl::DeleteBuffers(1, &mut self.color_vbo_id);
-            gl::DeleteBuffers(1, &mut self.texture_vbo_id);
-            gl::DeleteBuffers(1, &mut self.idx_vbo_id);
+            gl::DeleteBuffers(1, &self.pos_vbo_id);
+            gl::DeleteBuffers(1, &self.color_vbo_id);
+            gl::DeleteBuffers(1, &self.texture_vbo_id);
+            gl::DeleteBuffers(1, &self.idx_vbo_id);
 
             // explicitly break the previous bindings
             gl::BindVertexArray(0);
 
             // delete the whole object
-            gl::DeleteVertexArrays(1, &mut self.vao_id);
+            gl::DeleteVertexArrays(1, &self.vao_id);
 
 
             // delete internal texture if specified to
