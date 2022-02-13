@@ -366,6 +366,8 @@ fn main() {
     }
 
     test_shader_program.clean_up();
+    texture_test.clean_up();
+    texture_test2.clean_up();
 
     println!("Program exited successfully!");
 }
