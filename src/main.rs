@@ -223,7 +223,7 @@ fn main() {
         delta = time_object.calculate_delta(&glfw);
 
         if go_up {
-            color_test += delta as f32 * 10.0;
+            color_test += delta as f32;
 
             if color_test >= 1.0 {
                 color_test = 1.0;
@@ -245,35 +245,53 @@ fn main() {
 
         unsafe {
 
-            let my_vector4f: Vector4<f32> = Vector4::new(color_test, color_test / 1.24, 0.0, color_test);
-
-            test_shader_program.set_uniform_vec4("pos".to_string(), my_vector4f);
-
-            let my_vector: Vector4<f32> = Vector4::new(color_test, 0.0,0.0,1.0);
-
-            test_shader_program.set_uniform_vec4("color".to_string(), my_vector);
-
             gl::BindVertexArray(vao); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
 
-            //let color_name = CString::new("color").unwrap();
 
-            // let vertex_color_location = gl::GetUniformLocation(test_shader_program.get_program(), color_name.as_ptr());
-            //let vertex_color_location: i32 = test_shader_program.get_uniform_location("color".to_string()).clone();
+            let mut cool_pos: f32;
 
-            //let mut test = 0.0;
+            let mut my_pos: Vector4<f32> = Vector4::new(0.0,0.0,0.0,0.0);
 
-            //gl::GetUniformfv(test_shader_program.get_program(), vertex_color_location, &mut test);
+            let mut my_color: Vector4<f32> = Vector4::new(color_test, 0.0,0.0,1.0);
 
-            //println!("{}", test);
+            for i in 0..=2_056 {
 
-            //gl::Uniform4f(vertex_color_location, 0.0, 1.0, 0.0, 1.0);
+                cool_pos = i as f32 / 2_056.0;
 
-            gl::DrawArrays(gl::TRIANGLES, 0, 3);
+                my_pos.x = color_test + cool_pos - 0.5;
+                my_pos.y = (color_test / 1.24) - cool_pos;
+                // z is unchanged
+                my_pos.w = color_test;
+                
+                my_color.y = cool_pos;
 
-            // let ourColor = CString::new("ourColor").unwrap();
-            // let vertexColorLocation = gl::GetUniformLocation(test_shader_program.get_program(), ourColor.as_ptr());
-            // gl::Uniform4f(vertexColorLocation, 0.0, 1.0, 0.0, 1.0);
-            // gl::DrawArrays(gl::TRIANGLES, 0, 3);
+                test_shader_program.set_uniform_vec4("pos".to_string(), my_pos);
+
+                test_shader_program.set_uniform_vec4("color".to_string(), my_color);
+
+
+                //let color_name = CString::new("color").unwrap();
+
+                // let vertex_color_location = gl::GetUniformLocation(test_shader_program.get_program(), color_name.as_ptr());
+                //let vertex_color_location: i32 = test_shader_program.get_uniform_location("color".to_string()).clone();
+
+                //let mut test = 0.0;
+
+                //gl::GetUniformfv(test_shader_program.get_program(), vertex_color_location, &mut test);
+
+                //println!("{}", test);
+
+                //gl::Uniform4f(vertex_color_location, 0.0, 1.0, 0.0, 1.0);
+
+                gl::DrawArrays(gl::TRIANGLES, 0, 3);
+
+                // let ourColor = CString::new("ourColor").unwrap();
+                // let vertexColorLocation = gl::GetUniformLocation(test_shader_program.get_program(), ourColor.as_ptr());
+                // gl::Uniform4f(vertexColorLocation, 0.0, 1.0, 0.0, 1.0);
+                // gl::DrawArrays(gl::TRIANGLES, 0, 3);
+            }
+
+            gl::BindVertexArray(0);
         }
 
         test_shader_program.unbind();
