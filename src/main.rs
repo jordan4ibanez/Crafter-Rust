@@ -11,7 +11,16 @@ use gl::types::{GLfloat, GLsizeiptr, GLsizei};
 use glfw::*;
 use rand::{thread_rng, Rng};
 
-use crate::{resource_loader::load_resource, graphics::shader_program::{ShaderProgram, self}};
+use crate::{
+    resource_loader::load_resource,
+    graphics::{
+        shader_program::{
+            ShaderProgram,
+            self
+        },
+        texture::{self, *}
+    }
+};
 
 
 
@@ -140,21 +149,28 @@ fn main() {
     // A LONG TEST
 
 
-    let vao: u32 =  unsafe {
+    let (VBO, VAO, EBO) = unsafe {
 
-        let vec_vertices: Vec<f32> = Vec::new();    
-
-        let vertices: [f32; 9] = [
-            -0.5, -0.5, 0.0, // left
-             0.5, -0.5, 0.0, // right
-             0.0,  0.5, 0.0  // top
+        // set up vertex data (and buffer(s)) and configure vertex attributes
+        // ------------------------------------------------------------------
+        // HINT: type annotation is crucial since default for float literals is f64
+        let vertices: [f32; 32] = [
+            // positions       // colors        // texture coords
+             0.5,  0.5, 0.0,   1.0, 0.0, 0.0,   1.0, 1.0, // top right
+             0.5, -0.5, 0.0,   0.0, 1.0, 0.0,   1.0, 0.0, // bottom right
+            -0.5, -0.5, 0.0,   0.0, 0.0, 1.0,   0.0, 0.0, // bottom left
+            -0.5,  0.5, 0.0,   1.0, 1.0, 0.0,   0.0, 1.0  // top left
         ];
-
-        let (mut VBO, mut vao) = (0, 0);
-        gl::GenVertexArrays(1, &mut vao);
+        let indices = [
+            0, 1, 3,  // first Triangle
+            1, 2, 3   // second Triangle
+        ];
+        let (mut VBO, mut VAO, mut EBO) = (0, 0, 0);
+        gl::GenVertexArrays(1, &mut VAO);
         gl::GenBuffers(1, &mut VBO);
-        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-        gl::BindVertexArray(vao);
+        gl::GenBuffers(1, &mut EBO);
+
+        gl::BindVertexArray(VAO);
 
         gl::BindBuffer(gl::ARRAY_BUFFER, VBO);
         gl::BufferData(gl::ARRAY_BUFFER,
@@ -162,24 +178,40 @@ fn main() {
                        &vertices[0] as *const f32 as *const c_void,
                        gl::STATIC_DRAW);
 
-        gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 3 * mem::size_of::<GLfloat>() as GLsizei, ptr::null());
+        gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, EBO);
+        gl::BufferData(gl::ELEMENT_ARRAY_BUFFER,
+                       (indices.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
+                       &indices[0] as *const i32 as *const c_void,
+                       gl::STATIC_DRAW);
+
+        let stride = 8 * mem::size_of::<GLfloat>() as GLsizei;
+        // position attribute
+        gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, stride, ptr::null());
         gl::EnableVertexAttribArray(0);
+        // color attribute
+        gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE, stride, (3 * mem::size_of::<GLfloat>()) as *const c_void);
+        gl::EnableVertexAttribArray(1);
+        // texture coord attribute
+        gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, stride, (6 * mem::size_of::<GLfloat>()) as *const c_void);
+        gl::EnableVertexAttribArray(2);
 
-        // note that this is allowed, the call to gl::VertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-        gl::BindBuffer(gl::ARRAY_BUFFER, 0);
-
-        // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-        // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-        gl::BindVertexArray(0);
-
-        vao
+        (VBO, VAO, EBO)
     };
 
-
-    // END TEST
-
+    // END LONG TEST
 
 
+
+    // TEXTURE TEST
+
+
+    let texture_test: Texture = texture::new(path.to_string() + "/textures/debug.png");
+    texture_test.test();
+
+
+    let texture_test2: Texture = texture::new(path.to_string() + "/textures/debug_2.png");
+    texture_test2.test();
+    // END TEXTURE TEST
 
     
 
@@ -210,7 +242,7 @@ fn main() {
         // START fps debug
 
         returned_value = time_object.count_fps(&glfw);
-        
+
         if returned_value.0 {
 
             window_title.push_str("FPS: ");
@@ -224,7 +256,7 @@ fn main() {
         // END fps debug
 
         // START delta debug
-        
+        /*
         delta = time_object.calculate_delta(&glfw);
 
         if go_up {
@@ -242,6 +274,7 @@ fn main() {
                 go_up = true;
             }
         }
+        */
 
         // assert_eq!(delta, delta);
         // println!("{}", delta);
@@ -250,29 +283,36 @@ fn main() {
 
         unsafe {
 
-            gl::BindVertexArray(vao); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+            gl::BindVertexArray(VAO);
 
 
-            let mut cool_pos: f32;
+            // bind Texture
+            gl::BindTexture(gl::TEXTURE_2D, texture_test.get_id());
 
-            let mut my_pos: Vector4<f32> = Vector4::new(0.0,0.0,0.0,0.0);
+            // render container
+            gl::BindVertexArray(VAO);
+            gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, ptr::null());
 
-            let mut my_color: Vector4<f32> = Vector4::new(color_test, 0.0,0.0,1.0);
+            //let mut cool_pos: f32;
 
-            for i in 0..=257 {
+            //let mut my_pos: Vector4<f32> = Vector4::new(0.0,0.0,0.0,0.0);
 
-                cool_pos = i as f32 / 257.0;
+            //let mut my_color: Vector4<f32> = Vector4::new(color_test, 0.0,0.0,1.0);
 
-                my_pos.x = color_test + cool_pos - 0.5;
-                my_pos.y = (color_test / 1.24) - cool_pos;
+            //for i in 0..=257 {
+
+                //cool_pos = i as f32 / 257.0;
+
+                //my_pos.x = color_test + cool_pos - 0.5;
+                //my_pos.y = (color_test / 1.24) - cool_pos;
                 // z is unchanged
-                my_pos.w = color_test;
+                //my_pos.w = color_test;
                 
-                my_color.y = cool_pos;
+                //my_color.y = cool_pos;
 
-                test_shader_program.set_uniform_vec4("pos".to_string(), my_pos);
+                //test_shader_program.set_uniform_vec4("pos".to_string(), my_pos);
 
-                test_shader_program.set_uniform_vec4("color".to_string(), my_color);
+                //test_shader_program.set_uniform_vec4("color".to_string(), my_color);
 
 
                 //let color_name = CString::new("color").unwrap();
@@ -288,15 +328,15 @@ fn main() {
 
                 //gl::Uniform4f(vertex_color_location, 0.0, 1.0, 0.0, 1.0);
 
-                gl::DrawArrays(gl::TRIANGLES, 0, 3);
+                //gl::DrawArrays(gl::TRIANGLES, 0, 3);
 
                 // let ourColor = CString::new("ourColor").unwrap();
                 // let vertexColorLocation = gl::GetUniformLocation(test_shader_program.get_program(), ourColor.as_ptr());
                 // gl::Uniform4f(vertexColorLocation, 0.0, 1.0, 0.0, 1.0);
                 // gl::DrawArrays(gl::TRIANGLES, 0, 3);
-            }
+            //}
 
-            gl::BindVertexArray(0);
+            //gl::BindVertexArray(0);
         }
 
         test_shader_program.unbind();
