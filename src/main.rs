@@ -73,6 +73,7 @@ fn debug_mesh(path: &str) -> Mesh {
 
 fn main() {
 
+    let boi = transformation::new();
 
     // glfw initialization and configuration
 
@@ -190,6 +191,9 @@ fn main() {
     let mut go_up = true;
 
 
+    let debug_mesh: Mesh = debug_mesh(&path);
+
+
 
     // main program loop
     while !window.should_close() {       
@@ -257,11 +261,11 @@ fn main() {
             for i in 1..1000 {
                 test_shader_program.set_uniform_vec4("pos".to_string(), Vector4::new(color_test - (i as f32 / 100.0) , i as f32 / 100.0, 0.0, color_test));
 
-                let debug_mesh: Mesh = debug_mesh(&path);
+                
                 //debug_mesh.test();
                 debug_mesh.render();
 
-                debug_mesh.clean_up(true);
+                //debug_mesh.clean_up(true);
             }
             // test_shader_program.set_uniform_vec3("color".to_string(), Vector3::new(1.0, 1.0, 1.0));
 
