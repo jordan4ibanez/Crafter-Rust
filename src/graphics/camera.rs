@@ -1,5 +1,7 @@
 use glam::Vec3;
 
+use crate::controls::keyboard::Keyboard;
+
 
 pub struct Camera {
     position: Vec3,
@@ -36,6 +38,13 @@ impl Camera {
         self.rotation_vector
     }
 
+    pub fn set_fov(&mut self, fov: f32) {
+        self.fov = fov;
+    }
+
+    pub fn get_fov(&self) -> f32 {
+        self.fov
+    }
 
     // methods
 
@@ -60,9 +69,22 @@ impl Camera {
 
     }
 
-    pub fn on_tick() {
-        panic!("YOU FORGOT TO INCLUDE THE MOUSE!");
-        todo!();
+    pub fn on_tick(&mut self, keyboard: &Keyboard) {
+        if keyboard.get_backward() {
+            self.position.z -= 0.01;
+        }
+        if keyboard.get_forward() {
+            self.position.z += 0.01;
+        }
     }
 
+}
+
+pub fn new() -> Camera {
+    Camera {
+        position: Vec3::new(0.0, 0.0,0.0),
+        rotation: Vec3::new(0.0, 0.0,0.0),
+        rotation_vector: Vec3::new(0.0, 0.0,0.0),
+        fov: 60.0,
+    }
 }
