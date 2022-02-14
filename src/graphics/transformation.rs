@@ -11,8 +11,19 @@ pub struct Transformation {
 }
 
 impl Transformation {
-    pub fn reset_projection_matrix(&mut self, fov: f32, width: f32, height: f32, z_near: f32, z_far: f32, test_mod: f32) {
 
+    pub fn get_projection_matrix(&self) -> Mat4 {
+        self.projection_matrix
+    }
+
+    pub fn get_view_matrix(&self) -> Mat4 {
+        self.view_matrix
+    }
+
+
+    pub fn reset_projection_matrix(&mut self, fov: f32, width: f32, height: f32, z_near: f32, z_far: f32) {
+
+        // this is the window of the game, the initial camera position and specifications
         self.projection_matrix = Mat4::perspective_rh_gl(fov.to_radians(), width / height, z_near, z_far);
 
 
@@ -33,14 +44,6 @@ impl Transformation {
         self.view_matrix *= Mat4::from_translation(my_vector);
 
 
-    }
-
-    pub fn get_projection_matrix(&self) -> Mat4 {
-        self.projection_matrix
-    }
-
-    pub fn get_view_matrix(&self) -> Mat4 {
-        self.view_matrix
     }
 }
 
