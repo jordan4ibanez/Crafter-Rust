@@ -1,6 +1,8 @@
 
 use glam::{Mat4, Vec3};
 
+use super::camera::Camera;
+
 // Remember that glam is basically just joml
 
 // I will implement ortholinear rendering later
@@ -21,28 +23,19 @@ impl Transformation {
     }
 
 
-    pub fn reset_projection_matrix(&mut self, fov: f32, width: f32, height: f32, z_near: f32, z_far: f32) {
+    pub fn reset_projection_matrix(&mut self, camera: &Camera, width: f32, height: f32, z_near: f32, z_far: f32) {
 
         // this is the window of the game, the initial camera position and specifications
-        self.projection_matrix = Mat4::perspective_rh_gl(fov.to_radians(), width / height, z_near, z_far);
-
-
-        // camera rotation inversion goes here
-        // camera rotation will be a vec2
-        let camera_rotation: (f32, f32) = (0.0, 0.0);
+        self.projection_matrix = Mat4::perspective_rh_gl(camera.get_fov().to_radians(), width / height, z_near, z_far);
 
         self.view_matrix = Mat4::IDENTITY;
 
-        self.view_matrix *= Mat4::from_axis_angle(Vec3::new(0.0,1.0,0.0), camera_rotation.0);
-        self.view_matrix *= Mat4::from_axis_angle(Vec3::new(1.0,0.0,0.0), camera_rotation.1);
+        self.view_matrix *= Mat4::from_axis_angle(Vec3::new(0.0,1.0,0.0), camera.get_rot().x);
+        self.view_matrix *= Mat4::from_axis_angle(Vec3::new(1.0,0.0,0.0), camera.get_rot().y);
 
 
-        // camera position inversion goes here
-        // camera position will be a vec3
         // this is also inverted
-        let camera_position : (f32, f32, f32) = (0.0, 0.0, 10.0);
-
-        let my_vector: Vec3 = Vec3::new(-camera_position.0, -camera_position.1, -camera_position.2);
+        let my_vector: Vec3 = Vec3::new(-camera.get_pos().x, -camera.get_pos().y, -camera.get_pos().z);
 
         self.view_matrix *= Mat4::from_translation(my_vector);
 
