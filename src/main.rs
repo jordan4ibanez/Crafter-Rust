@@ -273,7 +273,7 @@ fn main() {
             // this will probably give you a seizure
             //gl::ClearColor(randy.gen(), randy.gen(), randy.gen(), 1.0);
 
-            gl::ClearColor(0.0, 0.0, 0.0, 1.0);
+            gl::ClearColor(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 1.0);
             gl::Clear(gl::COLOR_BUFFER_BIT);
         }
 
