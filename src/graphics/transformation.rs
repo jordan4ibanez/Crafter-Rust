@@ -1,8 +1,7 @@
-use std::ops::Mul;
 
-use glam::{Mat4, Vec3, Quat};
+use glam::{Mat4, Vec3};
 
-// Remember that cgmath is basically just joml
+// Remember that glam is basically just joml
 
 // I will implement ortholinear rendering later
 pub struct Transformation {
