@@ -1,5 +1,4 @@
 use std::{mem, ffi::c_void, ptr};
-
 use gl::types::{GLfloat, GLsizeiptr, GLsizei, GLint};
 
 use super::texture::Texture;
