@@ -1,6 +1,6 @@
 use std::{collections::HashMap, ffi::CString, ptr};
-use cgmath::{self, Matrix4, Matrix, Vector4, Vector3};
 use gl::types::GLint;
+use glam::{Vec4, Vec3, Mat4};
 
 // "class fields"
 pub struct ShaderProgram {
@@ -38,6 +38,10 @@ impl ShaderProgram {
 
             // manual memory drop to ensure no memory leaks
             drop(c_string);
+
+            if uniform_location < 0 {
+                panic!("COULD NOT CREATE UNIFORM!");
+            }
         }
     }
 
@@ -50,12 +54,15 @@ impl ShaderProgram {
     }
 
     // cannot overload so the name will end with the value
-    pub fn set_uniform_m32(&self, uniform_name: String, value: Matrix4<f32>) {
+    pub fn set_uniform_mat4(&self, uniform_name: String, value: Mat4) {
         let location: &i32 = self.uniforms.get(&uniform_name).expect("COULD NOT LOAD UNIFORM! (M<F32>)");
         // todo: error handling
         unsafe {
-            gl::UniformMatrix4fv(*location, 1, gl::FALSE, value.as_ptr());
+            gl::UniformMatrix4fv(*location, 1, gl::FALSE, &value.to_cols_array()[0]);
         }
+
+
+        // println!("{:#?}", &mut value.col(0)[0] as *const f32);
     }
 
     pub fn set_light_uniform(&self, uniform_name: String, value: f32) {
@@ -74,7 +81,7 @@ impl ShaderProgram {
         }
     }
 
-    pub fn set_uniform_vec4(&self, uniform_name: String, value: Vector4<f32>) {
+    pub fn set_uniform_vec4(&self, uniform_name: String, value: Vec4) {
         let location: &i32 = self.uniforms.get(&uniform_name).expect("COULD NOT LOAD UNIFORM! (Vec4)");
         unsafe {            
             // todo: error handling
@@ -82,7 +89,7 @@ impl ShaderProgram {
         }
     }
 
-    pub fn set_uniform_vec3(&self, uniform_name: String, value: Vector3<f32>) {      
+    pub fn set_uniform_vec3(&self, uniform_name: String, value: Vec3) {      
         let location: &i32 = self.uniforms.get(&uniform_name).expect("COULD NOT LOAD UNIFORM! (Vec3)");
         unsafe {            
             // todo: error handling
