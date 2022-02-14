@@ -8,14 +8,12 @@ out vec3 exColor;
 out vec2 outTexCoord;
 
 
-uniform vec4 pos;
-
 //uniform mat4 modelViewMatrix;
-//uniform mat4 projectionMatrix;
+uniform mat4 projectionMatrix;
 
 void main()
 {
-    gl_Position = vec4(position, 1.0) + pos;
+    gl_Position = projectionMatrix * vec4(position, 1.0);
     exColor = inColor;
     outTexCoord = texCoord;
 }
