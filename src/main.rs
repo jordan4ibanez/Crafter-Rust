@@ -31,7 +31,7 @@ use crate::{
         },
         transformation::{
             self
-        }
+        }, camera::{self, Camera}
     },
 
     controls::{
@@ -151,6 +151,8 @@ fn main() {
     let mut mouse: Mouse = mouse::new();
     let mut keyboard: Keyboard = keyboard::new();
 
+    let mut camera: Camera = camera::new();
+
 
     // main program loop
     while !window.should_close() {       
@@ -170,6 +172,8 @@ fn main() {
         // this is where all events are processed
         process_events(&mut window, &events, &mut mouse, &mut keyboard);
 
+
+        camera.on_tick(&keyboard);
 
         // START fps debug
 
@@ -214,7 +218,7 @@ fn main() {
 
 
 
-        tranformation.reset_projection_matrix(60.0, window.get_size().0 as f32, window.get_size().1 as f32, 0.01, 1000.0);
+        tranformation.reset_projection_matrix(&camera, window.get_size().0 as f32, window.get_size().1 as f32, 0.01, 1000.0);
 
         test_shader_program.set_uniform_mat4("projectionMatrix".to_string(), tranformation.get_projection_matrix());
 
