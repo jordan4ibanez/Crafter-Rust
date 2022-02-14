@@ -14,15 +14,10 @@ pub struct Transformation {
 impl Transformation {
     pub fn reset_projection_matrix(&mut self, fov: f32, width: f32, height: f32, z_near: f32, z_far: f32) {
 
-        let mut transform: Mat4 = Mat4::IDENTITY;
-
-        transform *= Mat4::perspective_rh_gl(fov.to_radians(), width / height, z_near, z_far);
-
-        
-        self.projection_matrix = transform;
+        self.projection_matrix = Mat4::perspective_rh_gl(fov.to_radians(), width / height, z_near, z_far);
 
 
-        // let camera_rotation = (0.0, 1.0);        
+        // let camera_rotation = (0.0, 1.0);
 
     }
 
