@@ -329,7 +329,7 @@ fn main() {
         unsafe {
 
 
-            for i in 1..100 {
+            for i in 1..1000 {
                 test_shader_program.set_uniform_vec4("pos".to_string(), Vector4::new(color_test - (i as f32 / 100.0) , i as f32 / 100.0, 0.0, color_test));
 
                 let debug_mesh: Mesh = debug_mesh(&path);
