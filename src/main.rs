@@ -181,27 +181,13 @@ fn main() {
 
     println!("Current Working Path: {}", path);
 
-
-    let vertex_shader: String = load_resource(path.to_string() + "/shader_code/vertex_shader.vs");
-
-    let fragment_shader: String = load_resource(path.to_string() + "/shader_code/fragment_shader.fs");
-
-    let mut test_shader_program: ShaderProgram = shader_program::new(vertex_shader, fragment_shader);
+    let mut test_shader_program: ShaderProgram = shader_program::new(
+        load_resource(path.to_string() + "/shader_code/vertex_shader.vs"),
+        load_resource(path.to_string() + "/shader_code/fragment_shader.fs"));
     test_shader_program.create_uniform("pos".to_string());
     test_shader_program.test();
 
 
-
-    // TEXTURE TEST
-
-
-    // let texture_test: Texture = texture::new(path.to_string() + "/textures/debug.png");
-    // texture_test.test();
-
-
-    // let texture_test2: Texture = texture::new(path.to_string() + "/textures/debug_2.png");
-    // texture_test2.test();
-    // END TEXTURE TEST
 
     let mut color_test: f32 = 0.0;
     let mut go_up = true;
