@@ -35,7 +35,14 @@ use crate::{
     },
 
     controls::{
-        mouse::{self, Mouse}
+        mouse::{
+            self,
+            Mouse
+        },
+        keyboard::{
+            self,
+            Keyboard
+        }
     }
 };
 
@@ -146,6 +153,7 @@ fn main() {
 
     // enable internal C calls
     window.set_key_polling(true);
+
     window.set_framebuffer_size_polling(true);
     window.set_mouse_button_polling(true);
     window.set_scroll_polling(true);
@@ -154,9 +162,8 @@ fn main() {
     println!("\n A NOTE:\nYou can utilize set_cursor_enter_polling to save resources on loss of os focus\n");
     window.set_cursor_pos_polling(true);
 
-
     // remove vsync
-    glfw.set_swap_interval(glfw::SwapInterval::None);
+    glfw.set_swap_interval(glfw::SwapInterval::Adaptive);
 
     // load the opengl function pointers
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
@@ -213,6 +220,7 @@ fn main() {
     let mut tranformation = transformation::new();
 
     let mut mouse: Mouse = mouse::new();
+    let mut keyboard: Keyboard = keyboard::new();
 
 
     // main program loop
@@ -231,7 +239,7 @@ fn main() {
         glfw.poll_events();
 
         // this is where all events are processed
-        process_events(&mut window, &events, &mut mouse);
+        process_events(&mut window, &events, &mut mouse, &mut keyboard);
 
 
         // START fps debug
@@ -316,12 +324,14 @@ fn main() {
 }
 
 // event processing, keys, mouse, etc
-fn process_events(window: &mut glfw::Window, events: &Receiver<(f64, glfw::WindowEvent)>, mouse: &mut Mouse) {
+fn process_events(window: &mut glfw::Window, events: &Receiver<(f64, glfw::WindowEvent)>, mouse: &mut Mouse, keyboard: &mut Keyboard) {
     // iterate events
     for (_, event) in glfw::flush_messages(events) {
 
 
         mouse.process_events(&event);
+
+        keyboard.process_events(&event);
 
         // match event enums
         match event {
