@@ -5,6 +5,7 @@ pub struct Time {
     previous_time: f64,
     current_time: f64,
     frame_count: i32,
+    reset: bool,
 
     // delta fields
     previous_delta: f64,
@@ -12,7 +13,12 @@ pub struct Time {
 }
 
 impl Time {
-    pub fn count_fps(&mut self, glfw: &glfw::Glfw) -> (bool, i32) {
+    pub fn count_fps(&mut self, glfw: &glfw::Glfw) -> bool {
+
+        if self.reset {
+            self.frame_count = 0;
+            self.reset = false;
+        }
 
         self.current_time = glfw.get_time();
 
@@ -24,13 +30,12 @@ impl Time {
 
             let counted_fps = self.frame_count.clone();
 
-            self.frame_count = 0;
+            self.reset = true;
 
-            return (true, counted_fps);
-
+            return true;
         }
 
-        (false, 0)
+        false
     }
 
     pub fn calculate_delta(&mut self, glfw: &glfw::Glfw) -> f64 {
@@ -42,6 +47,10 @@ impl Time {
 
         delta
     }
+
+    pub fn get_fps(&self) -> i32 {
+        self.frame_count
+    }
 }
 
 pub fn new(glfw: &glfw::Glfw) -> Time {
@@ -51,6 +60,7 @@ pub fn new(glfw: &glfw::Glfw) -> Time {
         previous_time: current_time,
         current_time,
         frame_count: 0,
+        reset: false,
 
         // delta fields
         previous_delta: current_time,
