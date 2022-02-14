@@ -218,7 +218,9 @@ fn main() {
 
         test_shader_program.set_uniform_mat4("projectionMatrix".to_string(), tranformation.get_projection_matrix());
 
-        test_shader_program.set_uniform_mat4("modelViewMatrix".to_string(), tranformation.update_model_matrix(Vec3::new(0.0,0.0,color_test * 10.0), Vec3::new(0.0, color_test * 90_f32.to_radians(), 0.0)));
+        // color_test * 10.0 (as z position)
+        // color_test * 90_f32.to_radians() (as y rotation)
+        test_shader_program.set_uniform_mat4("modelViewMatrix".to_string(), tranformation.update_model_matrix(Vec3::new(0.0,0.0, 0.0), Vec3::new(0.0, 0.0, 0.0)));
 
 
         
@@ -273,9 +275,7 @@ fn process_events(window: &mut glfw::Window, events: &Receiver<(f64, glfw::Windo
             // close the window on escape
             glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => window.set_should_close(true),
 
-            glfw::WindowEvent::Key(Key::Space, _, Action::Press, _) => println!("SPACEY!"),
-
-            _ => {}
+            _ => ()
         }
     }
 }
