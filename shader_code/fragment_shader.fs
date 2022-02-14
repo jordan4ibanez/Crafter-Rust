@@ -1,14 +1,14 @@
 #version 330 core
-out vec4 FragColor;
 
-in vec3 ourColor;
-in vec2 TexCoord;
-in vec3 color_modifier;
+in  vec3 exColor;
+in  vec2 outTexCoord;
 
-// texture sampler
-uniform sampler2D texture1;
+out vec4 fragColor;
 
+uniform sampler2D texture_sampler;
+
+//the basic no frills fast graphics mode
 void main()
 {
-	FragColor = texture(texture1, TexCoord) * vec4(color_modifier, 1.0);
+    fragColor = texture( texture_sampler, outTexCoord) * vec4(exColor, 1.0);
 }

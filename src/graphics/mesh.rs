@@ -35,10 +35,7 @@ impl Mesh {
     // the improvement is this allows dynamic allocations
     pub fn construct(&mut self, positions: Vec<f32>, colors: Vec<f32>, indices: Vec<i32>, texture_coordinates: Vec<f32>){
 
-        unsafe { 
-
-            let stride = 8 * mem::size_of::<GLfloat>() as GLsizei;
-
+        unsafe {
             // the VAO is basically the master key for the GL object
             gl::GenVertexArrays(1, &mut self.vao_id);
 
@@ -58,7 +55,7 @@ impl Mesh {
 
             gl::EnableVertexAttribArray(0);
 
-            gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, stride, ptr::null());
+            gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
 
 
 
@@ -77,26 +74,28 @@ impl Mesh {
 
             gl::EnableVertexAttribArray(1);
 
-            gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE, stride, ptr::null());
-
+            gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
 
 
 
             // texture coordinates vbo - as index 2 in GL
+            
             gl::GenBuffers(1, &mut self.texture_vbo_id);
 
-            gl::BindBuffer(gl::ARRAY_BUFFER, self.color_vbo_id);
+            gl::BindBuffer(gl::ARRAY_BUFFER, self.texture_vbo_id);
 
             gl::BufferData(
                 gl::ARRAY_BUFFER,
                 (texture_coordinates.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
-                &colors.as_slice()[0] as *const f32 as *const c_void,
+                &texture_coordinates.as_slice()[0] as *const f32 as *const c_void,
                 gl::STATIC_DRAW
             );
 
             gl::EnableVertexAttribArray(2);
 
-            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, stride, ptr::null());
+            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, 0, ptr::null());
+
+
 
 
             // index (indices) vbo
@@ -107,7 +106,7 @@ impl Mesh {
 
             gl::BufferData(
                 gl::ELEMENT_ARRAY_BUFFER,
-                (indices.len() * mem::size_of::<GLint>()) as GLsizeiptr,
+                (indices.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
                 &indices.as_slice()[0] as *const i32 as *const c_void,
                 gl::STATIC_DRAW
             );

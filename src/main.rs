@@ -1,4 +1,4 @@
-use std::{sync::mpsc::Receiver, ffi::{CString, c_void}, mem, ptr};
+use std::{sync::mpsc::Receiver, ffi::{CString, c_void}, mem, ptr, vec};
 
 extern crate glfw;
 
@@ -18,10 +18,57 @@ use crate::{
             ShaderProgram,
             self
         },
-        texture::{self, *}
+        texture::{self, *},
+        mesh::{self, *}
+
     }
 };
 
+fn debug_mesh(path: &str) -> Mesh {
+
+    // this is the light attrib in crafter
+    let colors: Vec<f32> = vec![
+        1.0, 1.0, 1.0,
+        1.0, 1.0, 1.0,
+        1.0, 1.0, 1.0,
+        1.0, 1.0, 1.0,
+    ];
+
+    let indices: Vec<i32> = vec![
+        //tri 1
+		0, 1, 3,
+
+		//tri 2
+		3, 1, 2,
+    ];
+
+    let positions: Vec<f32> = vec![        
+        -0.5, 0.5, 0.0, //top left
+		-0.5, -0.5, 0.0, //bottom left
+		0.5, -0.5, 0.0, //bottom right
+		0.5, 0.5, 0.0, //top right
+    ];
+
+    let texture_coordinates: Vec<f32> = vec![
+        1.0, 1.0, //bottom right
+        0.0, 1.0, //bottom left
+        0.0, 0.0, //top left
+        1.0, 0.0, //top right
+        
+    ];
+
+    let this_texture = texture::new(path.to_string() + "/textures/debug.png");
+
+    let returning_mesh = mesh::new(
+        positions,
+        colors,
+        indices,
+        texture_coordinates,
+        this_texture
+    );
+
+    returning_mesh
+}
 
 
 fn main() {
@@ -141,7 +188,6 @@ fn main() {
 
     let mut test_shader_program: ShaderProgram = shader_program::new(vertex_shader, fragment_shader);
     test_shader_program.create_uniform("pos".to_string());
-    test_shader_program.create_uniform("color".to_string());
     test_shader_program.test();
 
 
@@ -149,6 +195,7 @@ fn main() {
     // A LONG TEST
 
 
+    /*
     let (VBO, VAO, EBO) = unsafe {
 
         // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -197,6 +244,7 @@ fn main() {
 
         (VBO, VAO, EBO)
     };
+    */
 
     // END LONG TEST
 
@@ -205,19 +253,18 @@ fn main() {
     // TEXTURE TEST
 
 
-    let texture_test: Texture = texture::new(path.to_string() + "/textures/debug.png");
+    // let texture_test: Texture = texture::new(path.to_string() + "/textures/debug.png");
     // texture_test.test();
 
 
-    let texture_test2: Texture = texture::new(path.to_string() + "/textures/debug_2.png");
+    // let texture_test2: Texture = texture::new(path.to_string() + "/textures/debug_2.png");
     // texture_test2.test();
     // END TEXTURE TEST
 
-    
-
-
     let mut color_test: f32 = 0.0;
     let mut go_up = true;
+
+    let debug_mesh: Mesh = debug_mesh(&path);
 
 
     // main program loop
@@ -256,7 +303,7 @@ fn main() {
         // END fps debug
 
         // START delta debug
-        /*
+        
         delta = time_object.calculate_delta(&glfw);
 
         if go_up {
@@ -274,7 +321,6 @@ fn main() {
                 go_up = true;
             }
         }
-        */
 
         // assert_eq!(delta, delta);
         // println!("{}", delta);
@@ -284,26 +330,32 @@ fn main() {
         unsafe {
 
 
-            test_shader_program.set_uniform_vec3("pos".to_string(), Vector3::new(0.5, 0.0, 0.0));
-            test_shader_program.set_uniform_vec3("color".to_string(), Vector3::new(1.0, 1.0, 1.0));
+            for i in 1..100 {
+                test_shader_program.set_uniform_vec4("pos".to_string(), Vector4::new(color_test - (i as f32 / 100.0) , (i as f32 / 100.0), 0.0, color_test));
 
-            gl::BindVertexArray(VAO);
+                
+                //debug_mesh.test();
+                debug_mesh.render();
+            }
+            // test_shader_program.set_uniform_vec3("color".to_string(), Vector3::new(1.0, 1.0, 1.0));
+
+            // gl::BindVertexArray(VAO);
 
             // bind Texture
-            gl::BindTexture(gl::TEXTURE_2D, texture_test.get_id());
+            // gl::BindTexture(gl::TEXTURE_2D, texture_test.get_id());
 
             // render container
-            gl::BindVertexArray(VAO);
+            // gl::BindVertexArray(VAO);
 
-            gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, ptr::null());
+            // gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, ptr::null());
 
 
-            gl::BindTexture(gl::TEXTURE_2D, texture_test2.get_id());
+            // gl::BindTexture(gl::TEXTURE_2D, texture_test2.get_id());
 
-            test_shader_program.set_uniform_vec3("pos".to_string(), Vector3::new(-0.5, 0.0, 0.0));
-            test_shader_program.set_uniform_vec3("color".to_string(), Vector3::new(1.0, 1.0, 1.0));
+            // test_shader_program.set_uniform_vec3("pos".to_string(), Vector3::new(-0.5, 0.0, 0.0));
+            // test_shader_program.set_uniform_vec3("color".to_string(), Vector3::new(1.0, 1.0, 1.0));
 
-            gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, ptr::null());
+            // gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, ptr::null());
 
             //let mut cool_pos: f32;
 
@@ -366,8 +418,11 @@ fn main() {
     }
 
     test_shader_program.clean_up();
-    texture_test.clean_up();
-    texture_test2.clean_up();
+
+    // debug_mesh.clean_up(true);
+
+    // texture_test.clean_up();
+    // texture_test2.clean_up();
 
     println!("Program exited successfully!");
 }

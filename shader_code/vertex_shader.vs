@@ -1,23 +1,21 @@
 #version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aColor;
-layout (location = 2) in vec2 aTexCoord;
 
-out vec3 ourColor;
-out vec2 TexCoord;
-out vec3 color_modifier;
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 inColor;
+layout (location = 2) in vec2 texCoord;
 
-// uniforms are modifiers for meshes
-uniform vec3 pos;
-uniform vec3 color;
+out vec3 exColor;
+out vec2 outTexCoord;
+
+
+uniform vec4 pos;
+
+//uniform mat4 modelViewMatrix;
+//uniform mat4 projectionMatrix;
 
 void main()
 {
-
-	gl_Position = vec4(aPos + pos, 1.0);
-
-	ourColor = aColor;
-	color_modifier = color;
-	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
-
+    gl_Position = vec4(position, 1.0) + pos;
+    exColor = inColor;
+    outTexCoord = texCoord;
 }
