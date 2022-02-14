@@ -2,6 +2,7 @@ extern crate glfw;
 
 mod graphics;
 mod time_object;
+mod controls;
 
 use glam::Vec3;
 use glfw::*;
@@ -31,6 +32,10 @@ use crate::{
         transformation::{
             self
         }
+    },
+
+    controls::{
+        mouse::{self, Mouse}
     }
 };
 
@@ -143,6 +148,7 @@ fn main() {
     window.set_key_polling(true);
     window.set_framebuffer_size_polling(true);
     window.set_mouse_button_polling(true);
+    window.set_scroll_polling(true);
     //window.set_raw_mouse_motion(true);
     window.set_cursor_enter_polling(true);
     println!("\n A NOTE:\nYou can utilize set_cursor_enter_polling to save resources on loss of os focus\n");
@@ -204,8 +210,9 @@ fn main() {
 
     let debug_mesh: Mesh = debug_mesh(&path);
 
-
     let mut tranformation = transformation::new();
+
+    let mut mouse: Mouse = mouse::new();
 
 
     // main program loop
@@ -224,7 +231,7 @@ fn main() {
         glfw.poll_events();
 
         // this is where all events are processed
-        process_events(&mut window, &events);
+        process_events(&mut window, &events, &mut mouse);
 
 
         // START fps debug
@@ -304,14 +311,17 @@ fn main() {
     // texture_test2.clean_up();
 
     println!("Program exited successfully!");
+
+    
 }
 
 // event processing, keys, mouse, etc
-fn process_events(window: &mut glfw::Window, events: &Receiver<(f64, glfw::WindowEvent)>) {
+fn process_events(window: &mut glfw::Window, events: &Receiver<(f64, glfw::WindowEvent)>, mouse: &mut Mouse) {
     // iterate events
     for (_, event) in glfw::flush_messages(events) {
 
-        // println!("{:?}", event);
+
+        mouse.process_events(&event);
 
         // match event enums
         match event {
