@@ -164,7 +164,6 @@ fn main() {
     // fps counter object
     let mut time_object = time_object::new(&glfw);
     // inlined cache vars
-    let mut returned_value: (bool, i32);
     let mut delta: f64 = 0.0;
 
     // window title - reused pointer
@@ -220,12 +219,12 @@ fn main() {
 
         // START fps debug
 
-        returned_value = time_object.count_fps(&glfw);
+        let returned_value = time_object.count_fps(&glfw);
 
-        if returned_value.0 {
+        if returned_value {
 
             window_title.push_str("FPS: ");
-            window_title.push_str(&returned_value.1.to_string());
+            window_title.push_str(&time_object.get_fps().to_string());
 
             window.set_title(&window_title);
 
