@@ -17,7 +17,8 @@ impl Transformation {
         self.projection_matrix = Mat4::perspective_rh_gl(fov.to_radians(), width / height, z_near, z_far);
 
 
-        let camera_rotation: (f32, f32) = (test_mod.to_radians(), 0.0);
+        // camera rotation inversion goes here
+        let camera_rotation: (f32, f32) = (0.0, 0.0);
 
         self.view_matrix = Mat4::IDENTITY;
 
@@ -25,7 +26,8 @@ impl Transformation {
         self.view_matrix *= Mat4::from_axis_angle(Vec3::new(1.0,0.0,0.0), camera_rotation.1);
 
 
-        let camera_position : (f32, f32, f32) = (0.0,0.0,-10.0);
+        // camera position inversion goes here
+        let camera_position : (f32, f32, f32) = (0.0, 0.0, -10.0);
 
         let my_vector: Vec3 = Vec3::new(camera_position.0, camera_position.1, camera_position.2);
 
