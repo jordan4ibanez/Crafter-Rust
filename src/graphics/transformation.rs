@@ -48,11 +48,11 @@ impl Transformation {
 
 pub fn new() -> Transformation {
 
-    let t = Transformation {
+    let returning_transformation: Transformation = Transformation {
         projection_matrix: Mat4::IDENTITY,
         model_matrix: Mat4::IDENTITY,
         view_matrix: Mat4::IDENTITY
     };
     
-    t
+    returning_transformation
 }
