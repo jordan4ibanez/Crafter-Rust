@@ -259,89 +259,18 @@ fn main() {
 
         // END delta debug
 
-        unsafe {
 
 
-            //for i in 1..1000 {
-                // test_shader_program.set_uniform_vec4("pos".to_string(), Vec4::new(color_test , 0.0, 0.0, color_test));
+        tranformation.reset_projection_matrix(60.0, window.get_size().0 as f32, window.get_size().1 as f32, 0.01, 1000.0);
 
-                tranformation.reset_projection_matrix(60.0, window.get_size().0 as f32, window.get_size().1 as f32, 0.01, 1000.0, color_test * 45.0);
-
-                test_shader_program.set_uniform_mat4("projectionMatrix".to_string(), tranformation.get_projection_matrix());
+        test_shader_program.set_uniform_mat4("projectionMatrix".to_string(), tranformation.get_projection_matrix());
 
 
-                test_shader_program.set_uniform_mat4("modelViewMatrix".to_string(), tranformation.get_view_matrix());
-                
-                //debug_mesh.test();
-                debug_mesh.render();
+        test_shader_program.set_uniform_mat4("modelViewMatrix".to_string(), tranformation.get_view_matrix());
+        
+        //debug_mesh.test();
+        debug_mesh.render();
 
-                //debug_mesh.clean_up(true);
-            //}
-            // test_shader_program.set_uniform_vec3("color".to_string(), Vector3::new(1.0, 1.0, 1.0));
-
-            // gl::BindVertexArray(VAO);
-
-            // bind Texture
-            // gl::BindTexture(gl::TEXTURE_2D, texture_test.get_id());
-
-            // render container
-            // gl::BindVertexArray(VAO);
-
-            // gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, ptr::null());
-
-
-            // gl::BindTexture(gl::TEXTURE_2D, texture_test2.get_id());
-
-            // test_shader_program.set_uniform_vec3("pos".to_string(), Vector3::new(-0.5, 0.0, 0.0));
-            // test_shader_program.set_uniform_vec3("color".to_string(), Vector3::new(1.0, 1.0, 1.0));
-
-            // gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, ptr::null());
-
-            //let mut cool_pos: f32;
-
-            //let mut my_pos: Vector4<f32> = Vector4::new(0.0,0.0,0.0,0.0);
-
-            //let mut my_color: Vector4<f32> = Vector4::new(color_test, 0.0,0.0,1.0);
-
-            //for i in 0..=257 {
-
-                //cool_pos = i as f32 / 257.0;
-
-                //my_pos.x = color_test + cool_pos - 0.5;
-                //my_pos.y = (color_test / 1.24) - cool_pos;
-                // z is unchanged
-                //my_pos.w = color_test;
-                
-                //my_color.y = cool_pos;
-
-                //test_shader_program.set_uniform_vec4("pos".to_string(), my_pos);
-
-                //test_shader_program.set_uniform_vec4("color".to_string(), my_color);
-
-
-                //let color_name = CString::new("color").unwrap();
-
-                // let vertex_color_location = gl::GetUniformLocation(test_shader_program.get_program(), color_name.as_ptr());
-                //let vertex_color_location: i32 = test_shader_program.get_uniform_location("color".to_string()).clone();
-
-                //let mut test = 0.0;
-
-                //gl::GetUniformfv(test_shader_program.get_program(), vertex_color_location, &mut test);
-
-                //println!("{}", test);
-
-                //gl::Uniform4f(vertex_color_location, 0.0, 1.0, 0.0, 1.0);
-
-                //gl::DrawArrays(gl::TRIANGLES, 0, 3);
-
-                // let ourColor = CString::new("ourColor").unwrap();
-                // let vertexColorLocation = gl::GetUniformLocation(test_shader_program.get_program(), ourColor.as_ptr());
-                // gl::Uniform4f(vertexColorLocation, 0.0, 1.0, 0.0, 1.0);
-                // gl::DrawArrays(gl::TRIANGLES, 0, 3);
-            //}
-
-            //gl::BindVertexArray(0);
-        }
 
         test_shader_program.unbind();
 
