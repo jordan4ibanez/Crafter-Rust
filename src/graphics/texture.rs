@@ -9,6 +9,11 @@ pub struct Texture {
     height: i32
 }
 
+impl Drop for Texture {
+    fn drop(& mut self){
+        self.clean_up();
+    }
+}
 
 impl Texture {
 
