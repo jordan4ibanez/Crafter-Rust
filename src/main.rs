@@ -8,6 +8,7 @@ mod resource_loader;
 
 // use cgmath::{Vector4, Matrix4, Vector3};
 
+use glam::Vec3;
 //use glam::Vec4;
 use glfw::*;
 use rand::{thread_rng};
@@ -264,8 +265,9 @@ fn main() {
 
         test_shader_program.set_uniform_mat4("projectionMatrix".to_string(), tranformation.get_projection_matrix());
 
+        test_shader_program.set_uniform_mat4("modelViewMatrix".to_string(), tranformation.update_model_matrix(Vec3::new(0.0,0.0,color_test * 10.0), Vec3::new(0.0, color_test * 90_f32.to_radians(), 0.0)));
 
-        test_shader_program.set_uniform_mat4("modelViewMatrix".to_string(), tranformation.get_view_matrix());
+
         
         //debug_mesh.test();
         debug_mesh.render();
