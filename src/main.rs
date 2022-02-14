@@ -95,7 +95,7 @@ fn main() {
 
     // create glfw window
     let (mut window, events) = glfw.create_window(300, 300, "FPS: 0", glfw::WindowMode::Windowed)
-    .expect("Failed to create GLFW window.");
+            .expect("Failed to create GLFW window.");
 
     println!("GLFW window initialized properly!");
     
@@ -168,8 +168,6 @@ fn main() {
 
     // window title - reused pointer
     let mut window_title: String = String::new();
-
-    // let mut counter = 0;
 
     // gets current working directory
     let path = std::env::current_dir()
