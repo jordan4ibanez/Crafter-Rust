@@ -61,7 +61,8 @@ impl Camera {
     }
 
     pub fn on_tick() {
+        panic!("YOU FORGOT TO INCLUDE THE MOUSE!");
         todo!();
     }
-    
+
 }
