@@ -2,6 +2,8 @@ use std::{collections::HashMap, ffi::CString, ptr};
 use gl::types::GLint;
 use glam::{Vec4, Vec3, Mat4};
 
+use super::resource_loader;
+
 // "class fields"
 pub struct ShaderProgram {
     program_id: u32,
@@ -193,7 +195,7 @@ impl ShaderProgram {
 }
 
 // "class constructor"
-pub fn new(vertex_code: String, fragment_code: String) -> ShaderProgram {
+pub fn new(vertex_code_path: String, fragment_code_path: String) -> ShaderProgram {
 
     // we must create a mutable version of this object
     let mut shader_program: ShaderProgram = ShaderProgram {
@@ -209,7 +211,11 @@ pub fn new(vertex_code: String, fragment_code: String) -> ShaderProgram {
 
     shader_program.uniforms = HashMap::new();
 
+    let vertex_code: String = resource_loader::load_resource(vertex_code_path);
+
     shader_program.vertex_shader_id = shader_program.create_vertex_shader(vertex_code);
+
+    let fragment_code: String = resource_loader::load_resource(fragment_code_path);
 
     shader_program.fragment_shader_id = shader_program.create_fragment_shader(fragment_code);
 

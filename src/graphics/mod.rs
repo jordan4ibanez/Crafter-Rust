@@ -3,3 +3,4 @@ pub mod texture;
 pub mod mesh;
 pub mod transformation;
 pub mod camera;
+pub mod resource_loader;

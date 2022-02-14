@@ -4,7 +4,6 @@ extern crate glfw;
 
 mod graphics;
 mod time_object;
-mod resource_loader;
 
 // use cgmath::{Vector4, Matrix4, Vector3};
 
@@ -14,8 +13,8 @@ use glfw::*;
 use rand::{thread_rng};
 
 use crate::{
-    resource_loader::load_resource,
     graphics::{
+        
         shader_program::{
             ShaderProgram,
             self
@@ -181,8 +180,9 @@ fn main() {
     println!("Current Working Path: {}", path);
 
     let mut test_shader_program: ShaderProgram = shader_program::new(
-        load_resource(path.to_string() + "/shader_code/vertex_shader.vs"),
-        load_resource(path.to_string() + "/shader_code/fragment_shader.fs"));
+        path.to_string() + "/shader_code/vertex_shader.vs",
+        path.to_string() + "/shader_code/fragment_shader.fs"
+    );
     test_shader_program.create_uniform("projectionMatrix".to_string());
     test_shader_program.create_uniform("modelViewMatrix".to_string());
     test_shader_program.test();
