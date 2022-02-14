@@ -18,31 +18,11 @@ impl Transformation {
 
         transform *= Mat4::perspective_rh_gl(fov.to_radians(), width / height, z_near, z_far);
 
-        //transform = transform * Mat4::from_translation(Vec3::new(0.5, -0.5, 0.0));
-        //transform = transform * Mat4::from_axis_angle(Vec3::new(0.0, 0.0, 1.0), 0.0);
         
         self.projection_matrix = transform;
-        /*
-
-        // where the GL window is "looking"
-        self.projection_matrix *= Mat4::perspective_rh(
-            fov.to_radians(),
-            width / height,
-            z_near,
-            z_far
-        );
-        */
 
 
-        // let camera_rotation = (0.0, 1.0);
-        
-
-
-        //let perspect = perspective(Rad(fov),width / height,z_near,z_far);
-
-        //self.projection_matrix.swap_elements(perspect);
-
-        //self.projection_matrix;
+        // let camera_rotation = (0.0, 1.0);        
 
     }
 
