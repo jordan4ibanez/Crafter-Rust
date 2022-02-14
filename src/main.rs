@@ -1,27 +1,36 @@
-use std::{sync::mpsc::Receiver, ffi::{CString, c_void}, mem, ptr, vec};
-
 extern crate glfw;
 
 mod graphics;
 mod time_object;
 
-// use cgmath::{Vector4, Matrix4, Vector3};
-
 use glam::Vec3;
-//use glam::Vec4;
 use glfw::*;
-use rand::{thread_rng};
+
+use rand::{
+    thread_rng
+};
+
+use std::{
+    sync::mpsc::Receiver,
+    vec
+};
 
 use crate::{
     graphics::{
-        
         shader_program::{
             ShaderProgram,
             self
         },
-        texture::{self},
-        mesh::{self, *},
-        transformation::{self}
+        texture::{
+            self
+        },
+        mesh::{
+            self,
+            *
+        },
+        transformation::{
+            self
+        }
     }
 };
 
