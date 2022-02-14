@@ -95,8 +95,6 @@ fn debug_mesh(path: &str) -> Mesh {
 
 fn main() {
 
-    let boi = transformation::new();
-
     // glfw initialization and configuration
 
     // initalize glfw
@@ -320,7 +318,6 @@ fn main() {
 
     println!("Program exited successfully!");
 
-    
 }
 
 // event processing, keys, mouse, etc
