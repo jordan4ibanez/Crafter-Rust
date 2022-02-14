@@ -69,21 +69,17 @@ impl Mouse {
     }
 
     pub fn process_events(&mut self, event: &WindowEvent){
-        let mut mouse_scrolled: bool = false;
 
         match event {
 
             // left mouse button
-            glfw::WindowEvent::MouseButton(glfw::MouseButtonLeft, Action::Press, _) => self.left_mouse_button = true,
-            glfw::WindowEvent::MouseButton(glfw::MouseButtonLeft, Action::Release, _) => self.left_mouse_button = false,
+            glfw::WindowEvent::MouseButton(glfw::MouseButtonLeft, action, _) => self.left_mouse_button = action == &glfw::Action::Press,
 
             // right mouse button
-            glfw::WindowEvent::MouseButton(glfw::MouseButtonRight, Action::Press, _) => self.right_mouse_button = true,
-            glfw::WindowEvent::MouseButton(glfw::MouseButtonRight, Action::Release, _) => self.right_mouse_button = false,
+            glfw::WindowEvent::MouseButton(glfw::MouseButtonRight, action, _) => self.right_mouse_button = action == &glfw::Action::Press,
 
             // mouse within window
-            glfw::WindowEvent::CursorEnter(true) => self.set_in_window(true),
-            glfw::WindowEvent::CursorEnter(false) => self.set_in_window(false),
+            glfw::WindowEvent::CursorEnter(entered) => self.set_in_window(entered == &true),
 
             // mouse movement
             glfw::WindowEvent::CursorPos(x,y) => self.set_pos(x,y),
@@ -92,11 +88,7 @@ impl Mouse {
             glfw::WindowEvent::Scroll(_, scroll) => self.set_scroll(scroll),
 
             _ => ()
-        }
 
-        // reset the mouse scroll if it isn't scrolled
-        if !mouse_scrolled {
-            self.set_scroll(&0.0);
         }
     }
 }
