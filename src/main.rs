@@ -92,7 +92,6 @@ fn main() {
     // allow driver optimizations
     glfw.window_hint(WindowHint::OpenGlForwardCompat(true));
 
-
     // create glfw window
     let (mut window, events) = glfw.create_window(300, 300, "FPS: 0", glfw::WindowMode::Windowed)
             .expect("Failed to create GLFW window.");
