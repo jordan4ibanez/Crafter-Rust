@@ -50,22 +50,22 @@ impl Keyboard {
         match event {
 
             // forward
-            glfw::WindowEvent::Key(glfw::Key::W, _, action, _) => self.forward = action == &glfw::Action::Press,
+            glfw::WindowEvent::Key(glfw::Key::W, _, action, _) => self.forward = action == &glfw::Action::Press || action == &glfw::Action::Repeat,
 
             // backward
-            glfw::WindowEvent::Key(glfw::Key::S, _, action, _) => self.backward = action == &glfw::Action::Press,
+            glfw::WindowEvent::Key(glfw::Key::S, _, action, _) => self.backward = action == &glfw::Action::Press || action == &glfw::Action::Repeat,
 
             // left
-            glfw::WindowEvent::Key(glfw::Key::A, _, action, _) => self.left = action == &glfw::Action::Press,
+            glfw::WindowEvent::Key(glfw::Key::A, _, action, _) => self.left = action == &glfw::Action::Press || action == &glfw::Action::Repeat,
 
             // right
-            glfw::WindowEvent::Key(glfw::Key::D, _, action, _) => self.right = action == &glfw::Action::Press,
+            glfw::WindowEvent::Key(glfw::Key::D, _, action, _) => self.right = action == &glfw::Action::Press || action == &glfw::Action::Repeat,
 
             // jump
-            glfw::WindowEvent::Key(glfw::Key::Space, _, action, _) => self.jump = action == &glfw::Action::Press,
+            glfw::WindowEvent::Key(glfw::Key::Space, _, action, _) => self.jump = action == &glfw::Action::Press || action == &glfw::Action::Repeat,
 
             // sneak
-            glfw::WindowEvent::Key(glfw::Key::LeftShift, _, action, _) => self.sneak = action == &glfw::Action::Press,
+            glfw::WindowEvent::Key(glfw::Key::LeftShift, _, action, _) => self.sneak = action == &glfw::Action::Press || action == &glfw::Action::Repeat,
 
             _ => ()
         }
