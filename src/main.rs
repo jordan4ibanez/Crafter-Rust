@@ -264,7 +264,7 @@ fn main() {
             //for i in 1..1000 {
                 // test_shader_program.set_uniform_vec4("pos".to_string(), Vec4::new(color_test , 0.0, 0.0, color_test));
 
-                tranformation.reset_projection_matrix(60.0, window.get_size().0 as f32, window.get_size().1 as f32, 0.01, 1000.0);
+                tranformation.reset_projection_matrix(color_test * 180.0, window.get_size().0 as f32, window.get_size().1 as f32, 0.01, 1000.0);
 
                 test_shader_program.set_uniform_mat4("projectionMatrix".to_string(), tranformation.get_projection_matrix());
                 
