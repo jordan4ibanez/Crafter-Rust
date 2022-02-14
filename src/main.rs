@@ -104,6 +104,10 @@ fn main() {
     // return created glfw window
     let (mut window, events) = graphics::set_up::set_up_glfw(&mut glfw);
 
+
+    // testing of 3D camera
+    window.set_cursor_mode(glfw::CursorMode::Disabled);
+
     // a random number generator for debug
     let mut randy = thread_rng();
 
@@ -129,6 +133,7 @@ fn main() {
         path.to_string() + "/shader_code/vertex_shader.vs",
         path.to_string() + "/shader_code/fragment_shader.fs"
     );
+
     test_shader_program.create_uniform("projectionMatrix".to_string());
     test_shader_program.create_uniform("modelViewMatrix".to_string());
     test_shader_program.test();
