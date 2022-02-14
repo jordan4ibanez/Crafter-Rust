@@ -6,10 +6,11 @@ mod graphics;
 mod time_object;
 mod resource_loader;
 
-use cgmath::{Vector4, Matrix4, Vector3};
-use gl::types::{GLfloat, GLsizeiptr, GLsizei};
+// use cgmath::{Vector4, Matrix4, Vector3};
+
+//use glam::Vec4;
 use glfw::*;
-use rand::{thread_rng, Rng};
+use rand::{thread_rng};
 
 use crate::{
     resource_loader::load_resource,
@@ -18,9 +19,9 @@ use crate::{
             ShaderProgram,
             self
         },
-        texture::{self, *},
+        texture::{self},
         mesh::{self, *},
-        transformation::{self,*}
+        transformation::{self}
     }
 };
 
@@ -43,10 +44,10 @@ fn debug_mesh(path: &str) -> Mesh {
     ];
 
     let positions: Vec<f32> = vec![        
-        -0.5, 0.5, 0.0, //top left
-		-0.5, -0.5, 0.0, //bottom left
-		0.5, -0.5, 0.0, //bottom right
-		0.5, 0.5, 0.0, //top right
+        -0.5,  0.5, -0.15, //top left
+		-0.5, -0.5, -0.15, //bottom left
+		 0.5, -0.5, -0.15, //bottom right
+		 0.5,  0.5, -0.15, //top right
     ];
 
     let texture_coordinates: Vec<f32> = vec![
@@ -182,7 +183,7 @@ fn main() {
     let mut test_shader_program: ShaderProgram = shader_program::new(
         load_resource(path.to_string() + "/shader_code/vertex_shader.vs"),
         load_resource(path.to_string() + "/shader_code/fragment_shader.fs"));
-    test_shader_program.create_uniform("pos".to_string());
+    test_shader_program.create_uniform("projectionMatrix".to_string());
     test_shader_program.test();
 
 
@@ -193,6 +194,8 @@ fn main() {
 
     let debug_mesh: Mesh = debug_mesh(&path);
 
+
+    let mut tranformation = transformation::new();
 
 
     // main program loop
@@ -258,15 +261,18 @@ fn main() {
         unsafe {
 
 
-            for i in 1..1000 {
-                test_shader_program.set_uniform_vec4("pos".to_string(), Vector4::new(color_test - (i as f32 / 100.0) , i as f32 / 100.0, 0.0, color_test));
+            //for i in 1..1000 {
+                // test_shader_program.set_uniform_vec4("pos".to_string(), Vec4::new(color_test , 0.0, 0.0, color_test));
 
+                tranformation.reset_projection_matrix(60.0, window.get_size().0 as f32, window.get_size().1 as f32, 0.01, 1000.0);
+
+                test_shader_program.set_uniform_mat4("projectionMatrix".to_string(), tranformation.get_projection_matrix());
                 
                 //debug_mesh.test();
                 debug_mesh.render();
 
                 //debug_mesh.clean_up(true);
-            }
+            //}
             // test_shader_program.set_uniform_vec3("color".to_string(), Vector3::new(1.0, 1.0, 1.0));
 
             // gl::BindVertexArray(VAO);
