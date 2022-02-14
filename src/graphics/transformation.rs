@@ -24,7 +24,10 @@ impl Transformation {
         self.view_matrix *= Mat4::from_axis_angle(Vec3::new(0.0,1.0,0.0), camera_rotation.0);
         self.view_matrix *= Mat4::from_axis_angle(Vec3::new(1.0,0.0,0.0), camera_rotation.1);
 
-        let my_vector: Vec3 = Vec3::new(0.0, 0.0, -40.0);
+
+        let camera_position : (f32, f32, f32) = (0.0,0.0,-10.0);
+
+        let my_vector: Vec3 = Vec3::new(camera_position.0, camera_position.1, camera_position.2);
 
         self.view_matrix *= Mat4::from_translation(my_vector);
 
