@@ -99,6 +99,14 @@ impl Camera {
             self.position.z += yaw.cos() * 0.01;
         }
 
+        // y axis
+        if keyboard.get_sneak() {
+            self.position.y -= 0.01;
+        }
+
+        if keyboard.get_jump() {
+            self.position.y += 0.01;
+        }
 
         // rotation
         const MOUSE_SENSITIVITY: f32 = 0.09;
