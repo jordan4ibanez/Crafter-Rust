@@ -50,6 +50,8 @@ pub fn create_chunk_mesh(path: &str) -> Mesh {
     face_south(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, 0.0, 0.0, 0.0);
     face_north(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, 0.0, 0.0, 0.0);
 
+    face_west(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, 0.0, 0.0, 0.0);
+
 
     let this_texture: Texture = texture::new(path.to_string() + "/textures/debug.png");
 
