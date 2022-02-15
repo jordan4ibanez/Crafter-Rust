@@ -174,7 +174,7 @@ fn main() {
         mouse.reset();
 
         // this is where all events are processed
-        process_events(&mut window, &events, &mut mouse, &mut keyboard);
+        process_events(&mut glfw, &mut window, &events, &mut mouse, &mut keyboard);
 
 
         camera.on_tick(&keyboard, &mouse);
@@ -261,8 +261,24 @@ fn main() {
 
 }
 
+
+fn debug_full_screen(glfw: &mut Glfw, window: &mut Window){ 
+    glfw.with_primary_monitor(|glfw, m: Option<&Monitor> | {
+        // must unwrap the safety chain
+        let monitor_reference: &Monitor = m.unwrap();
+        let video_mode_option: Option<VidMode> = monitor_reference.get_video_mode();
+        let video_mode: VidMode = video_mode_option.unwrap();
+
+        window.set_monitor(glfw::WindowMode::FullScreen(&monitor_reference), video_mode.width as i32 / 2, video_mode.height as i32 / 2, video_mode.width, video_mode.height, Some(video_mode.refresh_rate));
+
+        glfw.set_swap_interval(glfw::SwapInterval::Adaptive);
+    });    
+    println!("f11");
+}
+
+
 // event processing, keys, mouse, etc
-fn process_events(window: &mut glfw::Window, events: &Receiver<(f64, glfw::WindowEvent)>, mouse: &mut Mouse, keyboard: &mut Keyboard) {
+fn process_events(glfw: &mut Glfw, window: &mut glfw::Window, events: &Receiver<(f64, glfw::WindowEvent)>, mouse: &mut Mouse, keyboard: &mut Keyboard) {
     // iterate events
     for (_, event) in glfw::flush_messages(events) {
 
@@ -282,6 +298,7 @@ fn process_events(window: &mut glfw::Window, events: &Receiver<(f64, glfw::Windo
 
             // close the window on escape
             glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => window.set_should_close(true),
+            glfw::WindowEvent::Key(Key::F11, _, Action::Press, _) => debug_full_screen(glfw, window),
 
             _ => ()
         }
