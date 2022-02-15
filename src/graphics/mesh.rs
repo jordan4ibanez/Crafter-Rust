@@ -14,12 +14,6 @@ pub struct Mesh {
     texture: Texture
 }
 
-impl Drop for Mesh {
-    fn drop(& mut self){
-        self.clean_up(true);
-    }
-}
-
 impl Mesh {
 
     // debug for prototyping meshes
