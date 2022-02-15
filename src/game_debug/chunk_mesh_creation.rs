@@ -64,7 +64,7 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
     
     for i in 0..32768 {
 
-        if randy.gen::<f32>() > 0.5 {
+        if randy.gen::<f32>() > 0.6 {
 
             
             let (x,y,z) = index_to_pos(&i);
