@@ -218,14 +218,14 @@ pub fn face_south(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coor
     let mut pos: [f32; 18] = [
 
         // tri 1
-        0., 0., 0.,
-        0., 0., 0.,
-        0., 0., 0.,
+        0., 1., 1.,
+        0., 0., 1.,
+        1., 0., 1.,
 
         // tri 2
-        0., 0., 0.,
-        0., 0., 0.,
-        0., 0., 0.
+        1., 1., 1.,
+        0., 1., 1.,
+        1., 0., 1.
     ];
 
     set_pos(&mut pos, x, y, z);
@@ -253,14 +253,14 @@ pub fn face_south(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coor
     let texture: [f32; 12] = [
 
         // tri 1
+        0., 1.,
         0., 0.,
-        0., 0.,
-        0., 0.,
+        1., 0.,
 
         // tri 2
-        0., 0.,
-        0., 0.,
-        0., 0.
+        1., 1.,
+        0., 1.,
+        1., 0.
     ];
 
     push(texture_coordinates, &texture);
