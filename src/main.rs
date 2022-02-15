@@ -9,7 +9,7 @@ use glam::Vec3;
 use glfw::*;
 
 use rand::{
-    thread_rng
+    thread_rng, prelude::ThreadRng
 };
 
 use std::{
@@ -24,7 +24,7 @@ use crate::{
             self
         },
         texture::{
-            self
+            self, Texture
         },
         mesh::{
             self,
@@ -84,7 +84,7 @@ fn main() {
     window.set_cursor_mode(glfw::CursorMode::Disabled);
 
     // a random number generator for debug
-    let mut randy = thread_rng();
+    let mut randy: ThreadRng = thread_rng();
 
     // fps counter object
     let mut time_object = time_object::new(&glfw);
@@ -113,13 +113,9 @@ fn main() {
 
 
 
+    let debug_texture: Texture = texture::new(path.to_string() + "/textures/debug.png");
 
-    let debug_mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(&path);
-
-
-
-
-
+    
     let mut tranformation = transformation::new();
 
     let mut mouse: Mouse = mouse::new(&window);
@@ -204,10 +200,15 @@ fn main() {
         // color_test * 90_f32.to_radians() (as y rotation)
         test_shader_program.set_uniform_mat4("modelViewMatrix".to_string(), tranformation.update_model_matrix(Vec3::new(0.0,0.0, -2.0), Vec3::new(0.0, 0.0, 0.0)));
 
-
+    
+        let texture_clone = texture::clone(&debug_texture);
         
         //debug_mesh.test();
+        let debug_mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(texture_clone, &mut randy);
+
         debug_mesh.render();
+
+        debug_mesh.clean_up(false);
 
 
         test_shader_program.unbind();
