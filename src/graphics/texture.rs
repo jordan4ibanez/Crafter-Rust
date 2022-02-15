@@ -15,12 +15,6 @@ pub struct Texture {
     height: i32
 }
 
-impl Drop for Texture {
-    fn drop(& mut self){
-        self.clean_up();
-    }
-}
-
 impl Texture {
 
     // this is only for debugging
@@ -139,4 +133,17 @@ pub fn new(texture_path: String) -> Texture {
     returning_texture.construct(texture_path);
 
     returning_texture
+}
+
+pub fn clone(original: &Texture) -> Texture {
+
+    let id: u32 = original.get_id();
+    let width: i32 = original.get_width();
+    let height: i32 = original.get_height();
+
+    Texture {
+        id,
+        width,
+        height,
+    }
 }
