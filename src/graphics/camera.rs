@@ -73,7 +73,7 @@ impl Camera {
 
     pub fn on_tick(&mut self, keyboard: &Keyboard, mouse: &Mouse, delta: f32) {
 
-        let movement_speed: f32 = delta * 10.0;
+        let movement_speed: f32 = delta * 15.0;
 
         // z axis
         if keyboard.get_forward() {
