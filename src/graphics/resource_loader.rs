@@ -1,4 +1,6 @@
-use std::fs;
+use std::{fs::{self, File}, io::Read, fmt::Debug};
+
+use glfw::{PixelImage, ffi::glfwSetWindowIcon};
 
 pub fn load_resource(path: String) -> String {
 
@@ -8,4 +10,13 @@ pub fn load_resource(path: String) -> String {
         Ok(data) => data,
         Err(_) => panic!("FAILED TO LOAD: {}!", &path[..]),
     }    
+}
+
+pub fn load_texture(path: String) -> Vec<u8>{
+
+    let mut file: File = File::open(path).expect("COULD NOT LOAD IMAGE!");
+    let mut data: Vec<u8> = Vec::<u8>::new();
+    file.read_to_end(&mut data).expect("COULD NOT PARSE IMAGE DATA!");
+
+    data
 }
