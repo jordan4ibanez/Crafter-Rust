@@ -15,6 +15,7 @@ gl = "0.14.0" # openGL bindings
 glfw = "0.43.0" # GLFW
 glam = "0.20.2" # JOML
 alto = "*" # openAL wrapper
+
 stb_image_rust = "2.27.2" # image loading (STBI wrapper)
 
 # custom chunk object
