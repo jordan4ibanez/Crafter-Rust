@@ -94,13 +94,26 @@ pub fn set_up_glfw(glfw: &mut Glfw) -> (glfw::Window, Receiver<(f64, WindowEvent
     println!("Window Resolution: {} , {}", monitor_size.0, monitor_size.1);
 
 
-    // this needs to be wrapped into a window object
-    unsafe {
-        gl::Viewport(0,0, monitor_size.0 as i32 / 2, monitor_size.1 as i32 / 2)
-    }
-
     // A basic boolean for the window
     window.set_should_close(false);
+
+    // set OpenGL variables
+    unsafe {
+        gl::Viewport(0,0, monitor_size.0 as i32 / 2, monitor_size.1 as i32 / 2);
+
+        // depth testing
+        gl::Enable(gl::DEPTH_TEST);
+        gl::DepthFunc(gl::LESS);
+
+        //back face culling
+        gl::Enable(gl::CULL_FACE);
+        gl::CullFace(gl::BACK);
+
+        // Support for transparencies
+        gl::Enable(gl::BLEND);
+        gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
+
+    }
 
     (window, events)
     
