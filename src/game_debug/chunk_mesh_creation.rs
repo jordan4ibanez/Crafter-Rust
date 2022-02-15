@@ -41,9 +41,10 @@ pub fn create_chunk_mesh(path: &str) -> Mesh {
     // this is the light attrib in crafter
     let mut colors: Vec<f32> = Vec::<f32>::new();
 
-    for i in 0..100 {
-        face_up(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, i as f32, 0.0, 0.0);
-    }
+    // for i in 0..100 {
+    // }
+
+    face_up(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, 0.0, 0.0, 0.0);
 
     let this_texture: Texture = texture::new(path.to_string() + "/textures/debug.png");
 
