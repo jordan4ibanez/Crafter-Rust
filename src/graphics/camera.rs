@@ -1,6 +1,8 @@
+use std::f32::consts::PI;
+
 use glam::Vec3;
 
-use crate::controls::keyboard::Keyboard;
+use crate::controls::{keyboard::Keyboard, mouse::Mouse};
 
 
 pub struct Camera {
@@ -69,13 +71,48 @@ impl Camera {
 
     }
 
-    pub fn on_tick(&mut self, keyboard: &Keyboard) {
-        if keyboard.get_backward() {
-            self.position.z -= 0.01;
-        }
+    pub fn on_tick(&mut self, keyboard: &Keyboard, mouse: &Mouse) {
+
+        // z axis
         if keyboard.get_forward() {
-            self.position.z += 0.01;
+            let yaw: f32 = self.rotation.y.to_radians() + PI;
+            self.position.x += -yaw.sin() * 0.01;
+            self.position.z += yaw.cos() * 0.01;
         }
+
+        if keyboard.get_backward() {
+            let yaw: f32 = self.rotation.y.to_radians();
+            self.position.x += -yaw.sin() * 0.01;
+            self.position.z += yaw.cos() * 0.01;
+        }
+
+        // x axis
+        if keyboard.get_left() {
+            let yaw: f32 = self.rotation.y.to_radians() + (PI / 2.0);
+            self.position.x += -yaw.sin() * 0.01;
+            self.position.z += yaw.cos() * 0.01;
+        }
+
+        if keyboard.get_right() {
+            let yaw: f32 = self.rotation.y.to_radians() - (PI / 2.0);
+            self.position.x += -yaw.sin() * 0.01;
+            self.position.z += yaw.cos() * 0.01;
+        }
+
+
+        // rotation
+        const MOUSE_SENSITIVITY: f32 = 0.09;
+        self.rotation.x += mouse.get_pos_vec().y * MOUSE_SENSITIVITY;
+        self.rotation.y += mouse.get_pos_vec().x * MOUSE_SENSITIVITY;
+
+        // limit rotation
+        if self.rotation.x > 90.0 {
+            self.rotation.x = 90.0;
+        } 
+        if self.rotation.x < -90.0 {
+            self.rotation.x = -90.0;
+        }
+
     }
 
 }
