@@ -1,67 +1,49 @@
-use crate::graphics::{mesh::{Mesh, self}, texture::{self, Texture}};
+use crate::graphics::{
+    mesh::{
+        Mesh,
+        self
+    },
+    texture::{
+        self,
+        Texture
+    }
+};
+
+use super::chunk_mesh_boilerplate::{
+    self,
+    face_up,
+    face_down,
+    face_south,
+    face_north,
+    face_west,
+    face_east
+};
+
+/*
+positions,
+colors,
+indices,
+texture_coordinates,
+this_texture
+*/
 
 
-pub fn create_chunk_mesh(path: &str) -> Mesh {
-    
+
+
+pub fn create_chunk_mesh(path: &str) -> Mesh {   
+
+    let mut positions: Vec<f32> = Vec::<f32>::new();
+
+    let mut indices: Vec<i32> = Vec::<i32>::new();
+
+    let mut texture_coordinates: Vec<f32> = Vec::<f32>::new();
+
     // this is the light attrib in crafter
-    let colors: Vec<f32> = vec![
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-    ];
+    let mut colors: Vec<f32> = Vec::<f32>::new();
 
-    let indices: Vec<i32> = vec![
-        // Front face
-        0, 1, 3, 3, 1, 2,
-        // Top Face
-        4, 0, 3, 5, 4, 3,
-        // Right face
-        3, 2, 7, 5, 3, 7,
-        // Left face
-        6, 1, 0, 6, 0, 4,
-        // Bottom face
-        2, 1, 6, 2, 6, 7,
-        // Back face
-        7, 6, 4, 7, 4, 5,
-    ];
-
-    let positions: Vec<f32> = vec![        
-        // VO
-        -0.5,  0.5,  0.5,
-        // V1
-        -0.5, -0.5,  0.5,
-        // V2
-        0.5,  -0.5,  0.5,
-        // V3
-        0.5,   0.5,  0.5,
-        // V4
-        -0.5,  0.5, -0.5,
-        // V5
-        0.5,   0.5, -0.5,
-        // V6
-        -0.5, -0.5, -0.5,
-        // V7
-        0.5,  -0.5, -0.5,
-    ];
-
-    let texture_coordinates: Vec<f32> = vec![
-        1.0, 1.0, //bottom right
-        0.0, 1.0, //bottom left
-        0.0, 0.0, //top left
-        1.0, 0.0, //top right
-
-
-        1.0, 1.0, //bottom right
-        0.0, 1.0, //bottom left
-        0.0, 0.0, //top left
-        1.0, 0.0, //top right
-        
-    ];
+    for i in 0..100 {
+        face_up(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, i as f32, 0.0, 0.0);
+    }
 
     let this_texture: Texture = texture::new(path.to_string() + "/textures/debug.png");
 
