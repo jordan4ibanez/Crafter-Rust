@@ -57,7 +57,7 @@ fn adjust_indices(index: &mut [i32], positions: &Vec<f32>) {
 
 
 
-pub fn face_up(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordinates: &mut Vec<f32>, colors: &mut Vec<f32>, x: f32, y: f32, z: f32) {
+pub fn face_up(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordinates: &mut Vec<f32>, colors: &mut Vec<f32>, x: f32, y: f32, z: f32, light: f32) {
 
     // vertex data
 
@@ -118,14 +118,14 @@ pub fn face_up(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordin
     let color: [f32; 18] = [
 
         // tri 1
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
+        light, light, light,
+        light, light, light,
+        light, light, light,
 
         // tri 2
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
+        light, light, light,
+        light, light, light,
+        light, light, light,
     ];
 
     push(colors, &color);
@@ -134,7 +134,7 @@ pub fn face_up(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordin
 
 
 
-pub fn face_down(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordinates: &mut Vec<f32>, colors: &mut Vec<f32>, x: f32, y: f32, z: f32) {
+pub fn face_down(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordinates: &mut Vec<f32>, colors: &mut Vec<f32>, x: f32, y: f32, z: f32, light: f32) {
 
         // vertex data
 
@@ -195,14 +195,14 @@ pub fn face_down(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coord
         let color: [f32; 18] = [
     
             // tri 1
-            1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0,
-    
+            light, light, light,
+            light, light, light,
+            light, light, light,
+
             // tri 2
-            1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0,
+            light, light, light,
+            light, light, light,
+            light, light, light,
         ];
     
         push(colors, &color);
@@ -211,7 +211,7 @@ pub fn face_down(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coord
 
 
 
-pub fn face_south(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordinates: &mut Vec<f32>, colors: &mut Vec<f32>, x: f32, y: f32, z: f32) {
+pub fn face_south(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordinates: &mut Vec<f32>, colors: &mut Vec<f32>, x: f32, y: f32, z: f32, light: f32) {
 
     // vertex data
 
@@ -272,14 +272,14 @@ pub fn face_south(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coor
     let color: [f32; 18] = [
 
         // tri 1
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
+        light, light, light,
+        light, light, light,
+        light, light, light,
 
         // tri 2
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
+        light, light, light,
+        light, light, light,
+        light, light, light,
     ];
 
     push(colors, &color);
@@ -288,7 +288,7 @@ pub fn face_south(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coor
 
 
 
-pub fn face_north(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordinates: &mut Vec<f32>, colors: &mut Vec<f32>, x: f32, y: f32, z: f32) {
+pub fn face_north(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordinates: &mut Vec<f32>, colors: &mut Vec<f32>, x: f32, y: f32, z: f32, light: f32) {
     
     // vertex data
 
@@ -349,14 +349,14 @@ pub fn face_north(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coor
     let color: [f32; 18] = [
 
         // tri 1
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
+        light, light, light,
+        light, light, light,
+        light, light, light,
 
         // tri 2
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
+        light, light, light,
+        light, light, light,
+        light, light, light,
     ];
 
     push(colors, &color);
@@ -365,7 +365,7 @@ pub fn face_north(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coor
 
 
 
-pub fn face_west(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordinates: &mut Vec<f32>, colors: &mut Vec<f32>, x: f32, y: f32, z: f32) {
+pub fn face_west(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordinates: &mut Vec<f32>, colors: &mut Vec<f32>, x: f32, y: f32, z: f32, light: f32) {
     
     // vertex data
 
@@ -426,14 +426,14 @@ pub fn face_west(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coord
     let color: [f32; 18] = [
 
         // tri 1
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
+        light, light, light,
+        light, light, light,
+        light, light, light,
 
         // tri 2
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
+        light, light, light,
+        light, light, light,
+        light, light, light,
     ];
 
     push(colors, &color);
@@ -442,7 +442,7 @@ pub fn face_west(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coord
 
 
 
-pub fn face_east(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordinates: &mut Vec<f32>, colors: &mut Vec<f32>, x: f32, y: f32, z: f32) {
+pub fn face_east(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordinates: &mut Vec<f32>, colors: &mut Vec<f32>, x: f32, y: f32, z: f32, light: f32) {
     
     // vertex data
 
@@ -503,14 +503,14 @@ pub fn face_east(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coord
     let color: [f32; 18] = [
 
         // tri 1
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
+        light, light, light,
+        light, light, light,
+        light, light, light,
 
         // tri 2
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
+        light, light, light,
+        light, light, light,
+        light, light, light,
     ];
 
     push(colors, &color);
