@@ -147,7 +147,7 @@ fn main() {
         process_events(&mut glfw, &mut window, &events, &mut mouse, &mut keyboard);
 
 
-        camera.on_tick(&keyboard, &mouse);
+        camera.on_tick(&keyboard, &mouse, delta as f32);
 
         // START fps debug
 

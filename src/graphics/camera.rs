@@ -71,41 +71,43 @@ impl Camera {
 
     }
 
-    pub fn on_tick(&mut self, keyboard: &Keyboard, mouse: &Mouse) {
+    pub fn on_tick(&mut self, keyboard: &Keyboard, mouse: &Mouse, delta: f32) {
+
+        let movement_speed: f32 = delta * 10.0;
 
         // z axis
         if keyboard.get_forward() {
             let yaw: f32 = self.rotation.y.to_radians() + PI;
-            self.position.x += -yaw.sin() * 0.01;
-            self.position.z += yaw.cos() * 0.01;
+            self.position.x += -yaw.sin() * movement_speed;
+            self.position.z += yaw.cos() * movement_speed;
         }
 
         if keyboard.get_backward() {
             let yaw: f32 = self.rotation.y.to_radians();
-            self.position.x += -yaw.sin() * 0.01;
-            self.position.z += yaw.cos() * 0.01;
+            self.position.x += -yaw.sin() * movement_speed;
+            self.position.z += yaw.cos() * movement_speed;
         }
 
         // x axis
         if keyboard.get_left() {
             let yaw: f32 = self.rotation.y.to_radians() + (PI / 2.0);
-            self.position.x += -yaw.sin() * 0.01;
-            self.position.z += yaw.cos() * 0.01;
+            self.position.x += -yaw.sin() * movement_speed;
+            self.position.z += yaw.cos() * movement_speed;
         }
 
         if keyboard.get_right() {
             let yaw: f32 = self.rotation.y.to_radians() - (PI / 2.0);
-            self.position.x += -yaw.sin() * 0.01;
-            self.position.z += yaw.cos() * 0.01;
+            self.position.x += -yaw.sin() * movement_speed;
+            self.position.z += yaw.cos() * movement_speed;
         }
 
         // y axis
         if keyboard.get_sneak() {
-            self.position.y -= 0.01;
+            self.position.y -= movement_speed;
         }
 
         if keyboard.get_jump() {
-            self.position.y += 0.01;
+            self.position.y += movement_speed;
         }
 
         // rotation
