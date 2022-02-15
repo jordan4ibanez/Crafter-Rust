@@ -1,6 +1,6 @@
 use rand::{prelude::ThreadRng, Rng};
 
-use crate::graphics::{
+use crate::{graphics::{
     mesh::{
         Mesh,
         self
@@ -9,7 +9,7 @@ use crate::graphics::{
         self,
         Texture
     }
-};
+}, game_debug::chunk_mesh_boilerplate::dry_run};
 
 use super::chunk_mesh_boilerplate::{
     self,
@@ -60,33 +60,47 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
 
     // this is the light attrib in crafter
     let mut colors: Vec<f32> = Vec::<f32>::new();
-
     
+
+    // dry run to get values
+
+    let mut pos_count = 0;
+    let mut indice_count = 0;
+    let mut texture_coord_count = 0;
+    let mut colors_count = 0;
+
     for i in 0..32768 {
-
-        if randy.gen::<f32>() > 0.6 {
-
-            
-            let (x,y,z) = index_to_pos(&i);
-
-            let light = randy.gen::<f32>();
-            face_up(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
-            let light = randy.gen::<f32>();
-            face_down(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
-
-
-            let light = randy.gen::<f32>();
-            face_south(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
-            let light = randy.gen::<f32>();
-            face_north(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
-
-
-            let light = randy.gen::<f32>();
-            face_west(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
-            let light = randy.gen::<f32>();
-            face_east(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
+        for _ in 0..6 {
+            dry_run(&mut pos_count, &mut indice_count, &mut texture_coord_count, &mut colors_count)
         }
     }
+
+    println!("CALCULATED: {}", pos_count);
+
+    for i in 0..32768 {
+
+        // if randy.gen::<f32>() > 0.0 {
+
+            
+            let light = randy.gen::<f32>();
+            let (x,y,z) = index_to_pos(&i);
+
+            
+            face_up(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
+            
+            face_down(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
+
+            face_south(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
+
+            face_north(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
+
+            face_west(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
+
+            face_east(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
+        // }
+    }
+
+    println!("positions length: {}", positions.len());
 
     let returning_mesh: Mesh = mesh::new(
         positions,

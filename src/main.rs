@@ -128,9 +128,6 @@ fn main() {
     while !window.should_close() {       
 
         unsafe {
-            // this will probably give you a seizure
-            //gl::ClearColor(randy.gen(), randy.gen(), randy.gen(), 1.0);
-
             gl::ClearColor(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 1.0);
             gl::Clear(gl::COLOR_BUFFER_BIT);
 
@@ -169,6 +166,7 @@ fn main() {
         
         delta = time_object.calculate_delta(&glfw);
 
+        /*
         if go_up {
             color_test += delta as f32;
 
@@ -184,6 +182,7 @@ fn main() {
                 go_up = true;
             }
         }
+        */
 
         // assert_eq!(delta, delta);
         // println!("{}", delta);
@@ -206,7 +205,7 @@ fn main() {
         //debug_mesh.test();
         let debug_mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(texture_clone, &mut randy);
 
-        debug_mesh.render();
+        // debug_mesh.render();
 
         debug_mesh.clean_up(false);
 

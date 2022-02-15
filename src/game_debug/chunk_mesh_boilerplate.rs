@@ -55,6 +55,13 @@ fn adjust_indices(index: &mut [i32], positions: &Vec<f32>) {
 }
 
 
+pub fn dry_run(pos_count: &mut i32, indice_count: &mut i32, texture_coord_count: &mut i32, colors_count: &mut i32) {
+    *pos_count += 18;
+    *indice_count += 6;
+    *texture_coord_count += 12;
+    *colors_count += 18;
+}
+
 
 
 pub fn face_up(positions: &mut Vec<f32>, indices: &mut Vec<i32>, texture_coordinates: &mut Vec<f32>, colors: &mut Vec<f32>, x: f32, y: f32, z: f32, light: f32) {
