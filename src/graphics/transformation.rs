@@ -30,9 +30,8 @@ impl Transformation {
 
         self.view_matrix = Mat4::IDENTITY;
 
-        self.view_matrix *= Mat4::from_axis_angle(Vec3::new(0.0,1.0,0.0), camera.get_rot().x);
-        self.view_matrix *= Mat4::from_axis_angle(Vec3::new(1.0,0.0,0.0), camera.get_rot().y);
-
+        self.view_matrix *= Mat4::from_axis_angle(Vec3::new(1.0,0.0,0.0), camera.get_rot().x.to_radians());
+        self.view_matrix *= Mat4::from_axis_angle(Vec3::new(0.0,1.0,0.0), camera.get_rot().y.to_radians());
 
         // this is also inverted
         let my_vector: Vec3 = Vec3::new(-camera.get_pos().x, -camera.get_pos().y, -camera.get_pos().z);
