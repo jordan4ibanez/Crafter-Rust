@@ -1,7 +1,13 @@
-use std::{fs::File, io::Read, ffi::c_void};
+use std::{ffi::c_void};
 
-use gl::{types::GLint, TEXTURE_MIN_FILTER, RGBA};
+use gl::{
+    types::GLint,
+    TEXTURE_MIN_FILTER,
+    RGBA
+};
 use stb_image_rust;
+
+use super::resource_loader;
 
 pub struct Texture {
     id: u32,
@@ -28,11 +34,8 @@ impl Texture {
 
     
     pub fn construct(&mut self, path: String) {
-        // we must first load the file into memory using rust's api
-        let mut file: File = File::open(path).expect("COULD NOT LOAD IMAGE!");
-        let mut data: Vec<u8> = Vec::<u8>::new();
-        file.read_to_end(&mut data).expect("COULD NOT PARSE IMAGE DATA!");
-
+        
+        let mut data = resource_loader::load_texture(path);
 
         // next we will use rust to hold the memory
         let mut computed: i32 = 0;
