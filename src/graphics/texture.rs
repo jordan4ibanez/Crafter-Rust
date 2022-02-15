@@ -34,8 +34,8 @@ impl Texture {
 
     
     pub fn construct(&mut self, path: String) {
-        
-        let mut data = resource_loader::load_texture(path);
+
+        let mut data: Vec<u8> = resource_loader::load_texture(path);
 
         // next we will use rust to hold the memory
         let mut computed: i32 = 0;
