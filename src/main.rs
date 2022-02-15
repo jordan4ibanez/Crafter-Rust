@@ -3,6 +3,7 @@ extern crate glfw;
 mod graphics;
 mod controls;
 mod time;
+mod game_debug;
 
 use glam::Vec3;
 use glfw::*;
@@ -54,57 +55,20 @@ use crate::{
             self,
             Time
         }
-    }
+    },
+    game_debug::chunk_mesh_creation,
 };
 
-fn debug_mesh(path: &str) -> Mesh {
-
-    // this is the light attrib in crafter
-    let colors: Vec<f32> = vec![
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0,
-    ];
-
-    let indices: Vec<i32> = vec![
-        //tri 1
-		0, 1, 3,
-
-		//tri 2
-		3, 1, 2,
-    ];
-
-    let positions: Vec<f32> = vec![        
-        -0.5,  0.5, -0.15, //top left
-		-0.5, -0.5, -0.15, //bottom left
-		 0.5, -0.5, -0.15, //bottom right
-		 0.5,  0.5, -0.15, //top right
-    ];
-
-    let texture_coordinates: Vec<f32> = vec![
-        1.0, 1.0, //bottom right
-        0.0, 1.0, //bottom left
-        0.0, 0.0, //top left
-        1.0, 0.0, //top right
-        
-    ];
-
-    let this_texture = texture::new(path.to_string() + "/textures/debug.png");
-
-    let returning_mesh = mesh::new(
-        positions,
-        colors,
-        indices,
-        texture_coordinates,
-        this_texture
-    );
-
-    returning_mesh
-}
-
-
 fn main() {
+
+    // gets current working directory
+    let path: String = std::env::current_dir()
+                                .unwrap()
+                                .as_os_str()
+                                .to_str()
+                                .unwrap()
+                                .to_owned();
+
 
     // glfw initialization and configuration
 
@@ -113,7 +77,7 @@ fn main() {
 
     // borrow and mutate glfw
     // return created glfw window
-    let (mut window, events) = graphics::set_up::set_up_glfw(&mut glfw);
+    let (mut window, events) = graphics::set_up::set_up_glfw(&mut glfw, &path);
 
 
     // testing of 3D camera
@@ -129,14 +93,6 @@ fn main() {
 
     // window title - reused pointer
     let mut window_title: String = String::new();
-
-    // gets current working directory
-    let path = std::env::current_dir()
-                                .unwrap()
-                                .as_os_str()
-                                .to_str()
-                                .unwrap()
-                                .to_owned();
 
     println!("Current Working Path: {}", path);
 
@@ -155,7 +111,14 @@ fn main() {
     let mut go_up = true;
 
 
-    let debug_mesh: Mesh = debug_mesh(&path);
+
+
+
+    let debug_mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(&path);
+
+
+
+
 
     let mut tranformation = transformation::new();
 
@@ -239,7 +202,7 @@ fn main() {
 
         // color_test * 10.0 (as z position)
         // color_test * 90_f32.to_radians() (as y rotation)
-        test_shader_program.set_uniform_mat4("modelViewMatrix".to_string(), tranformation.update_model_matrix(Vec3::new(0.0,0.0, 0.0), Vec3::new(0.0, 0.0, 0.0)));
+        test_shader_program.set_uniform_mat4("modelViewMatrix".to_string(), tranformation.update_model_matrix(Vec3::new(0.0,0.0, -2.0), Vec3::new(0.0, 0.0, 0.0)));
 
 
         
