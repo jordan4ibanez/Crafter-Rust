@@ -1,8 +1,8 @@
 extern crate glfw;
 
 mod graphics;
-mod time_object;
 mod controls;
+mod time;
 
 use glam::Vec3;
 use glfw::*;
@@ -31,7 +31,11 @@ use crate::{
         },
         transformation::{
             self
-        }, camera::{self, Camera}
+        }, 
+        camera::{
+            self,
+            Camera
+        }
     },
 
     controls::{
@@ -42,6 +46,13 @@ use crate::{
         keyboard::{
             self,
             Keyboard
+        }
+    },
+
+    time::{
+        time_object::{
+            self,
+            Time
         }
     }
 };
