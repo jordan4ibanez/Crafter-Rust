@@ -113,7 +113,7 @@ fn main() {
 
 
 
-    let debug_texture: Texture = texture::new(path.to_string() + "/textures/debug.png");
+    let debug_texture: Texture = texture::new(path.to_string() + "/textures/dirt.png");
 
     
     let mut tranformation = transformation::new();
