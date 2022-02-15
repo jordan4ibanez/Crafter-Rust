@@ -1,4 +1,4 @@
-use std::sync::mpsc::Receiver;
+use std::{sync::mpsc::Receiver};
 
 use glfw::{
 
@@ -8,15 +8,17 @@ use glfw::{
     WindowEvent,
     Context,
     Monitor,
-    VidMode
+    VidMode, Window, ffi::{GLFWimage, glfwSetWindowIcon}
 
 };
+
+use crate::graphics::resource_loader;
 
 // utility file
 
 // this is just a lonely set up file to clean up main()
 
-pub fn set_up_glfw(glfw: &mut Glfw) -> (glfw::Window, Receiver<(f64, WindowEvent)>){
+pub fn set_up_glfw(glfw: &mut Glfw, path: &str) -> (glfw::Window, Receiver<(f64, WindowEvent)>){
 
     // redundantly instatialize defaul hints in case of bad drivers
     glfw.default_window_hints();
@@ -37,6 +39,8 @@ pub fn set_up_glfw(glfw: &mut Glfw) -> (glfw::Window, Receiver<(f64, WindowEvent
             .expect("Failed to create GLFW window.");
 
     println!("GLFW window initialized properly!");
+
+    set_window_icon(&window,path.to_string() + "/textures/icon.png");
 
     // get primary monitor and size
     let mut monitor_size: (u32, u32) = (0, 0);
@@ -117,4 +121,43 @@ pub fn set_up_glfw(glfw: &mut Glfw) -> (glfw::Window, Receiver<(f64, WindowEvent
 
     (window, events)
     
+}
+
+fn set_window_icon(window: &Window, path: String) {
+
+    let mut data: Vec<u8> = resource_loader::load_texture(path);
+
+    // next we will use rust to hold the memory
+    let mut computed: i32 = 0;
+    let mut width: i32 = 0;
+    let mut height: i32 = 0;
+
+    let image: *mut u8;
+
+    // calling to stbi unsafely
+    unsafe {
+
+        image = stb_image_rust::stbi_load_from_memory(
+            data.as_mut_ptr(),
+            data.len() as i32,
+            &mut width,
+            &mut height,
+            &mut computed,
+            stb_image_rust::STBI_rgb_alpha
+        );
+
+        let glfw_image: GLFWimage = GLFWimage {
+            width: height,
+            height: width,
+            pixels: image
+        };
+
+        glfwSetWindowIcon(window.window_ptr(), 1, &glfw_image as *const GLFWimage);
+
+        stb_image_rust::c_runtime::free(image);
+
+        drop(glfw_image);
+    }
+
+    drop(data);
 }
