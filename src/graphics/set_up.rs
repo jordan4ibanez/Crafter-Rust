@@ -77,7 +77,7 @@ pub fn set_up_glfw(glfw: &mut Glfw) -> (glfw::Window, Receiver<(f64, WindowEvent
     
 
     // this ignores hardware acceleration
-    window.set_raw_mouse_motion(true);
+    // window.set_raw_mouse_motion(true);
 
 
     window.set_cursor_enter_polling(true);
