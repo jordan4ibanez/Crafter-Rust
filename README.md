@@ -16,5 +16,5 @@ The final one, Java, went pretty well. But due to Java's verbosity, strong OOP, 
 
 That's when I looked back into Rust got incredibly frustrated, then slowly understood and enjoyed it. This is where the current project stands. I am working hard to port my Java code into Rust and fix a LOT of issues with the Java implementation.
 
-
+Discord: https://discord.gg/PPUQHEKvJr
 
