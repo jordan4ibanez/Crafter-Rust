@@ -148,7 +148,7 @@ fn main() {
 
     let mut tranformation = transformation::new();
 
-    let mut mouse: Mouse = mouse::new();
+    let mut mouse: Mouse = mouse::new(&window);
     let mut keyboard: Keyboard = keyboard::new();
 
     let mut camera: Camera = camera::new();
@@ -169,11 +169,13 @@ fn main() {
 
         glfw.poll_events();
 
+        mouse.reset();
+
         // this is where all events are processed
         process_events(&mut window, &events, &mut mouse, &mut keyboard);
 
 
-        camera.on_tick(&keyboard);
+        camera.on_tick(&keyboard, &mouse);
 
         // START fps debug
 
