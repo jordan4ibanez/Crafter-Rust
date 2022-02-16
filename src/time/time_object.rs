@@ -28,8 +28,6 @@ impl Time {
 
             self.previous_time = self.current_time;
 
-            let counted_fps = self.frame_count.clone();
-
             self.reset = true;
 
             return true;
