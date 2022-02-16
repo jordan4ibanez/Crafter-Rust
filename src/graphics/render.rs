@@ -4,7 +4,7 @@ use glam::Vec3;
 use glfw::Window;
 use rand::prelude::ThreadRng;
 
-use crate::game_debug::chunk_mesh_creation;
+use crate::{game_debug::chunk_mesh_creation, world::world::World};
 
 use super::{gl_safety_wrappers, shader_program::{ShaderProgram, self}, transformation::{Transformation, self}, camera::{Camera, self}, texture::{Texture, self}, mesh::Mesh};
 
@@ -38,7 +38,7 @@ impl Renderer {
     }
 
     // this is a test
-    pub fn render(&mut self, window: &Window, texture_map: &Texture, randy: &mut ThreadRng) {
+    pub fn render(&mut self, window: &Window, world: &World) {
         
         gl_safety_wrappers::clear_depth_and_color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 1.0);
     
@@ -49,17 +49,30 @@ impl Renderer {
         self.transformation.reset_projection_matrix(&self.camera, window.get_size().0 as f32, window.get_size().1 as f32, 0.01, 1000.0);
 
         default_shader.set_uniform_mat4("projectionMatrix".to_string(), self.transformation.get_projection_matrix());
-
-        default_shader.set_uniform_mat4("modelViewMatrix".to_string(), self.transformation.update_model_matrix(Vec3::new(0.0,0.0, -2.0), Vec3::new(0.0, 0.0, 0.0)));
-
     
-        let texture_clone = texture::clone(texture_map);
+        for chunk in world.iter_map() {
+            match chunk.1.get_mesh(){
+                Some(mesh) => {
+                    default_shader.set_uniform_mat4(
+                        "modelViewMatrix".to_string(), 
+                        self.transformation.update_model_matrix(
+                            Vec3::new(*&chunk.1.get_pos().x as f32 * 16.0,0.0, *&chunk.1.get_pos().y as f32 * 16.0), 
+                            Vec3::new(0.0, 0.0, 0.0)
+                        )
+                    );
+                    mesh.render();
+                    
+                },
+                None => (),
+            }
+        }
+        // let texture_clone = texture::clone(texture_map);
         
-        let debug_mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(texture_clone, randy);
+        // let debug_mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(texture_clone, randy);
 
-        debug_mesh.render();
+        // debug_mesh.render();
 
-        debug_mesh.clean_up(false);
+        // debug_mesh.clean_up(false);
 
         default_shader.unbind();
     }
