@@ -1,5 +1,9 @@
 use glam::Vec2;
-use glfw::{WindowEvent, Action, Window};
+
+use glfw::{
+    WindowEvent,
+    Window
+};
 
 
 pub struct Mouse {
