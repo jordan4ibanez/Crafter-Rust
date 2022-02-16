@@ -47,6 +47,7 @@ impl Mesh {
 
             gl::BindVertexArray(self.vao_id);
 
+
             // position vbo - as index 0 in GL
             gl::GenBuffers(1, &mut self.pos_vbo_id);
 
@@ -122,7 +123,7 @@ impl Mesh {
 
 
             // next add the vertex count to it's int
-            self.vertex_count = indices.len() as i32;
+            self.vertex_count = indices.len() as i32;            
 
         }
     }

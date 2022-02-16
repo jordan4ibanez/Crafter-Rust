@@ -2,11 +2,10 @@ use std::collections::HashMap;
 
 use glam::Vec3;
 use glfw::Window;
-use rand::prelude::ThreadRng;
 
-use crate::{game_debug::chunk_mesh_creation, world::world::World};
+use crate::{world::world::World};
 
-use super::{gl_safety_wrappers, shader_program::{ShaderProgram, self}, transformation::{Transformation, self}, camera::{Camera, self}, texture::{Texture, self}, mesh::Mesh};
+use super::{gl_safety_wrappers, shader_program::{ShaderProgram}, transformation::{Transformation, self}, camera::{Camera, self}};
 
 pub struct Renderer {
     shaders: HashMap<String, ShaderProgram>,
