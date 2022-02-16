@@ -8,8 +8,12 @@ use glfw::{
     WindowEvent,
     Context,
     Monitor,
-    VidMode, Window, ffi::{GLFWimage, glfwSetWindowIcon}
-
+    VidMode,
+    Window,
+    ffi::{
+        GLFWimage,
+        glfwSetWindowIcon
+    }
 };
 
 use crate::graphics::resource_loader;
