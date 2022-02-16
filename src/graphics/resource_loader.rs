@@ -1,6 +1,10 @@
-use std::{fs::{self, File}, io::Read, fmt::Debug};
-
-use glfw::{PixelImage, ffi::glfwSetWindowIcon};
+use std::{
+    fs::{
+        self,
+        File
+    },
+    io::Read
+};
 
 pub fn load_resource(path: String) -> String {
 
