@@ -8,6 +8,7 @@ mod game_debug;
 use glam::Vec3;
 use glfw::*;
 
+use graphics::window_controls::toggle_full_screen;
 use rand::{
     thread_rng, prelude::ThreadRng
 };
@@ -34,7 +35,11 @@ use crate::{
         camera::{
             self,
             Camera
-        }, gl_safety_wrappers
+        },
+        gl_safety_wrappers,
+        window_variables::{
+            *, self
+        }
     },
 
     controls::{
@@ -103,13 +108,6 @@ fn main() {
     test_shader_program.test();
 
 
-
-    // let mut color_test: f32 = 0.0;
-    // let mut go_up = true;
-
-
-
-
     let debug_texture: Texture = texture::new(path.to_string() + "/textures/dirt.png");
 
     
@@ -119,6 +117,8 @@ fn main() {
     let mut keyboard: Keyboard = keyboard::new();
 
     let mut camera: Camera = camera::new();
+
+    let mut window_variables: WindowVariables = window_variables::new();
 
 
     // main program loop
@@ -133,7 +133,7 @@ fn main() {
         mouse.reset();
 
         // this is where all events are processed
-        process_events(&mut glfw, &mut window, &events, &mut mouse, &mut keyboard);
+        process_events(&mut glfw, &mut window, &events, &mut mouse, &mut keyboard, &mut window_variables);
 
 
         camera.on_tick(&keyboard, &mouse, delta as f32);
@@ -141,6 +141,8 @@ fn main() {
         // START fps debug
 
         let returned_value = time_object.count_fps(&glfw);
+
+
 
         if returned_value {
 
@@ -184,23 +186,8 @@ fn main() {
 }
 
 
-fn debug_full_screen(glfw: &mut Glfw, window: &mut Window){ 
-    glfw.with_primary_monitor(|glfw, m: Option<&Monitor> | {
-        // must unwrap the safety chain
-        let monitor_reference: &Monitor = m.unwrap();
-        let video_mode_option: Option<VidMode> = monitor_reference.get_video_mode();
-        let video_mode: VidMode = video_mode_option.unwrap();
-
-        window.set_monitor(glfw::WindowMode::FullScreen(&monitor_reference), video_mode.width as i32 / 2, video_mode.height as i32 / 2, video_mode.width, video_mode.height, Some(video_mode.refresh_rate));
-
-        glfw.set_swap_interval(glfw::SwapInterval::Adaptive);
-    });    
-    println!("f11");
-}
-
-
 // event processing, keys, mouse, etc
-fn process_events(glfw: &mut Glfw, window: &mut glfw::Window, events: &Receiver<(f64, glfw::WindowEvent)>, mouse: &mut Mouse, keyboard: &mut Keyboard) {
+fn process_events(glfw: &mut Glfw, window: &mut glfw::Window, events: &Receiver<(f64, glfw::WindowEvent)>, mouse: &mut Mouse, keyboard: &mut Keyboard, window_variables: &mut WindowVariables) {
     // iterate events
     for (_, event) in glfw::flush_messages(events) {
 
@@ -220,7 +207,7 @@ fn process_events(glfw: &mut Glfw, window: &mut glfw::Window, events: &Receiver<
 
             // close the window on escape
             glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => window.set_should_close(true),
-            glfw::WindowEvent::Key(Key::F11, _, Action::Press, _) => debug_full_screen(glfw, window),
+            glfw::WindowEvent::Key(Key::F11, _, Action::Press, _) => toggle_full_screen(glfw, window, window_variables),
 
             _ => ()
         }
