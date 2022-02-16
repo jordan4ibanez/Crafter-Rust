@@ -34,7 +34,7 @@ use crate::{
         camera::{
             self,
             Camera
-        }
+        }, gl_safety_wrappers
     },
 
     controls::{
@@ -124,12 +124,7 @@ fn main() {
     // main program loop
     while !window.should_close() {       
 
-        unsafe {
-            gl::ClearColor(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 1.0);
-            gl::Clear(gl::COLOR_BUFFER_BIT);
-
-            gl::Clear(gl::DEPTH_BUFFER_BIT);
-        }
+        gl_safety_wrappers::clear_depth_and_color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 1.0);
 
         test_shader_program.bind();
 
@@ -157,76 +152,32 @@ fn main() {
             window_title.clear();
         }
 
-        // END fps debug
-
-        // START delta debug
         
         delta = time_object.calculate_delta(&glfw);
-
-        /*
-        if go_up {
-            color_test += delta as f32;
-
-            if color_test >= 1.0 {
-                color_test = 1.0;
-                go_up = false;
-            }
-        } else {
-            color_test -= delta as f32;
-            
-            if color_test <= 0.0 {
-                color_test = 0.0;
-                go_up = true;
-            }
-        }
-        */
-
-        // assert_eq!(delta, delta);
-        // println!("{}", delta);
-
-        // END delta debug
-
-
 
         tranformation.reset_projection_matrix(&camera, window.get_size().0 as f32, window.get_size().1 as f32, 0.01, 1000.0);
 
         test_shader_program.set_uniform_mat4("projectionMatrix".to_string(), tranformation.get_projection_matrix());
 
-        // color_test * 10.0 (as z position)
-        // color_test * 90_f32.to_radians() (as y rotation)
         test_shader_program.set_uniform_mat4("modelViewMatrix".to_string(), tranformation.update_model_matrix(Vec3::new(0.0,0.0, -2.0), Vec3::new(0.0, 0.0, 0.0)));
 
     
         let texture_clone = texture::clone(&debug_texture);
         
-        //debug_mesh.test();
         let debug_mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(texture_clone, &mut randy);
 
         debug_mesh.render();
 
         debug_mesh.clean_up(false);
 
-
         test_shader_program.unbind();
 
         window.swap_buffers();
-
-        // counter += 1;
-
-        /*
-        if counter >= 30_000 {
-            println!("Your demo is over boi!");
-            window.set_should_close(true);
-        }
-        */        
+     
     }
 
     test_shader_program.clean_up();
 
-    // debug_mesh.clean_up(true);
-
-    // texture_test.clean_up();
-    // texture_test2.clean_up();
 
     println!("Program exited successfully!");
 

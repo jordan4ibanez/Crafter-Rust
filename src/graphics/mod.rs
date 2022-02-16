@@ -7,3 +7,4 @@ pub mod mesh;
 pub mod transformation;
 pub mod camera;
 pub mod resource_loader;
+pub mod gl_safety_wrappers;
