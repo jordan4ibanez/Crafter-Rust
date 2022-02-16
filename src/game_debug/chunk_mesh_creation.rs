@@ -1,3 +1,5 @@
+use std::thread;
+
 use rand::{prelude::ThreadRng, Rng};
 
 use crate::{graphics::{
@@ -18,7 +20,7 @@ use super::chunk_mesh_boilerplate::{
     face_south,
     face_north,
     face_west,
-    face_east
+    face_east, add_block
 };
 
 /*
@@ -63,7 +65,7 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
 
     for i in 0..32768 {
 
-        debug_array[i] = randy.gen::<f32>() > 0.8;
+        debug_array[i] = randy.gen::<f32>() > 0.5;
 
         if debug_array[i] {
             for _ in 0..6 {
@@ -102,117 +104,24 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
             let light = randy.gen::<f32>();
             let (x,y,z) = index_to_pos(&i);
 
-            
-            face_up(
+            add_block(
                 &mut positions,
                 &mut indices,
                 &mut texture_coordinates,
                 &mut colors,
-
+        
                 &mut pos_count,
                 &mut indice_count,
                 &mut texture_count,
                 &mut color_count,
                 &mut face_count,
-
-                x,
-                y,
-                z,
-                light
-            );
-            
-            face_down(
-                &mut positions,
-                &mut indices,
-                &mut texture_coordinates,
-                &mut colors,
-
-                &mut pos_count,
-                &mut indice_count,
-                &mut texture_count,
-                &mut color_count,
-                &mut face_count,
-
+        
                 x,
                 y,
                 z,
                 light
             );
 
-            face_south(
-                &mut positions,
-                &mut indices,
-                &mut texture_coordinates,
-                &mut colors,
-
-                &mut pos_count,
-                &mut indice_count,
-                &mut texture_count,
-                &mut color_count,
-                &mut face_count,
-
-                x,
-                y,
-                z,
-                light
-            );
-
-
-            face_north(
-                &mut positions,
-                &mut indices,
-                &mut texture_coordinates,
-                &mut colors,
-
-                &mut pos_count,
-                &mut indice_count,
-                &mut texture_count,
-                &mut color_count,
-                &mut face_count,
-
-                x,
-                y,
-                z,
-                light
-            );
-
-            
-            face_west(
-                &mut positions,
-                &mut indices,
-                &mut texture_coordinates,
-                &mut colors,
-
-                &mut pos_count,
-                &mut indice_count,
-                &mut texture_count,
-                &mut color_count,
-                &mut face_count,
-
-                x,
-                y,
-                z,
-                light
-            );
-            
-            
-            face_east(
-                &mut positions,
-                &mut indices,
-                &mut texture_coordinates,
-                &mut colors,
-
-                &mut pos_count,
-                &mut indice_count,
-                &mut texture_count,
-                &mut color_count,
-                &mut face_count,
-
-                x,
-                y,
-                z,
-                light
-            );
         }
     }
 

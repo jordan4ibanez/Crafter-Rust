@@ -619,3 +619,133 @@ pub fn face_east(
 
     assign(colors, &color, color_count);
 }
+
+// the packed boilerplate to allow a single function call
+pub fn add_block(
+    positions: &mut Vec<f32>,
+    indices: &mut Vec<i32>,
+    texture_coordinates: &mut Vec<f32>,
+    colors: &mut Vec<f32>,
+
+    pos_count: &mut i32,
+    indice_count: &mut i32,
+    texture_count: &mut i32,
+    color_count: &mut i32,
+    face_count: &mut i32,
+
+    x: f32,
+    y: f32,
+    z: f32,
+    light: f32
+) {
+    face_up(
+        positions,
+        indices,
+        texture_coordinates,
+        colors,
+
+        pos_count,
+        indice_count,
+        texture_count,
+        color_count,
+        face_count,
+
+        x,
+        y,
+        z,
+        light
+    );
+
+    face_down(
+        positions,
+        indices,
+        texture_coordinates,
+        colors,
+
+        pos_count,
+        indice_count,
+        texture_count,
+        color_count,
+        face_count,
+
+        x,
+        y,
+        z,
+        light
+    );
+
+    face_south(
+        positions,
+        indices,
+        texture_coordinates,
+        colors,
+
+        pos_count,
+        indice_count,
+        texture_count,
+        color_count,
+        face_count,
+
+        x,
+        y,
+        z,
+        light
+    );
+
+
+    face_north(
+        positions,
+        indices,
+        texture_coordinates,
+        colors,
+
+        pos_count,
+        indice_count,
+        texture_count,
+        color_count,
+        face_count,
+
+        x,
+        y,
+        z,
+        light
+    );
+
+
+    face_west(
+        positions,
+        indices,
+        texture_coordinates,
+        colors,
+
+        pos_count,
+        indice_count,
+        texture_count,
+        color_count,
+        face_count,
+
+        x,
+        y,
+        z,
+        light
+    );
+
+
+    face_east(
+        positions,
+        indices,
+        texture_coordinates,
+        colors,
+
+        pos_count,
+        indice_count,
+        texture_count,
+        color_count,
+        face_count,
+
+        x,
+        y,
+        z,
+        light
+    );
+}
