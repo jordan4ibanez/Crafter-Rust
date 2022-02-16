@@ -65,7 +65,7 @@ use crate::{
             *
         },
         world::{
-            *
+            *,
         }
     }
 };
@@ -99,8 +99,6 @@ fn main() {
 
     // fps counter object
     let mut time_object = time_object::new(&glfw);
-    // inlined cache vars
-    let mut delta: f64 = 0.0;
 
     // window title - reused pointer
     let mut window_title: String = String::new();
@@ -126,11 +124,25 @@ fn main() {
 
     let mut window_variables: WindowVariables = window_variables::new();
 
+    let mut world: World = world::world::new();
+
+
+    for x in -32..32 {
+        for y in -32..32 {
+            let generated_chunk: Chunk = world::chunk::new(x, y);
+            world.add(generated_chunk);
+
+            let mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(texture::clone(&debug_texture), &mut randy);
+
+            world.get_chunk_mut(x.to_string() + " " + &y.to_string()).set_mesh(mesh);
+        }
+    }
+
 
     // main program loop
-    while !window.should_close() {       
+    while !window.should_close() {
 
-        
+        let delta: f64 = time_object.calculate_delta(&glfw);
 
         glfw.poll_events();
 
@@ -142,30 +154,26 @@ fn main() {
 
         renderer.get_camera_mut().on_tick(&keyboard, &mouse, delta as f32);
 
-        renderer.render(&window, &debug_texture, &mut randy);
+        renderer.render(&window, &world);
 
-        // START fps debug
 
         let returned_value = time_object.count_fps(&glfw);
 
         if returned_value {
-
             window_title.push_str("FPS: ");
             window_title.push_str(&time_object.get_fps().to_string());
-
             window.set_title(&window_title);
-
             window_title.clear();
         }
-
-        
-        delta = time_object.calculate_delta(&glfw);
 
         window.swap_buffers();
      
     }
 
+    world.clean_up();
     renderer.clean_up();
+
+    debug_texture.clean_up();
 
     println!("Program exited successfully!");
 
