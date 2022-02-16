@@ -1,5 +1,13 @@
-use std::{mem, ffi::c_void, ptr};
-use gl::types::{GLfloat, GLsizeiptr, GLsizei, GLint};
+use std::{
+    mem,
+    ffi::c_void,
+    ptr
+};
+
+use gl::types::{
+    GLfloat,
+    GLsizeiptr
+};
 
 use super::texture::Texture;
 
