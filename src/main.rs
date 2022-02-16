@@ -13,8 +13,7 @@ use rand::{
 };
 
 use std::{
-    sync::mpsc::Receiver,
-    vec
+    sync::mpsc::Receiver
 };
 
 use crate::{
@@ -27,7 +26,6 @@ use crate::{
             self, Texture
         },
         mesh::{
-            self,
             *
         },
         transformation::{
@@ -52,8 +50,7 @@ use crate::{
 
     time::{
         time_object::{
-            self,
-            Time
+            self
         }
     },
     game_debug::chunk_mesh_creation,
@@ -107,8 +104,8 @@ fn main() {
 
 
 
-    let mut color_test: f32 = 0.0;
-    let mut go_up = true;
+    // let mut color_test: f32 = 0.0;
+    // let mut go_up = true;
 
 
 
