@@ -127,20 +127,39 @@ fn main() {
     let mut world: World = world::world::new();
 
 
-    for x in -32..32 {
-        for y in -32..32 {
-            let generated_chunk: Chunk = world::chunk::new(x, y);
-            world.add(generated_chunk);
+    let mut debug_x = -32;
+    let mut debug_y = -32;
 
-            let mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(texture::clone(&debug_texture), &mut randy);
-
-            world.get_chunk_mut(x.to_string() + " " + &y.to_string()).set_mesh(mesh);
-        }
-    }
+    let mut continue_debug = true;
+    
 
 
     // main program loop
     while !window.should_close() {
+
+
+        if continue_debug {
+            
+            let generated_chunk: Chunk = world::chunk::new(debug_x, debug_y);
+            world.add(generated_chunk);
+
+            let mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(texture::clone(&debug_texture), &mut randy);
+
+            world.get_chunk_mut(debug_x.to_string() + " " + &debug_y.to_string()).set_mesh(mesh);
+
+            debug_x += 1;
+
+            if debug_x > 32 {
+                debug_x = -32;
+
+                debug_y += 1;
+
+                if debug_y > 32 {
+                    continue_debug = false;
+                    println!("DONE!");
+                }
+            }
+        }
 
         let delta: f64 = time_object.calculate_delta(&glfw);
 

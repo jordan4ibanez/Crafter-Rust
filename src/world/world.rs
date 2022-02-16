@@ -15,14 +15,11 @@ impl World {
 
         let key: String = chunk.get_key();
 
-        let pos_x = &chunk.get_pos().x;
-        let pos_y = &chunk.get_pos().y;
-
         if !self.map.contains_key(&key) {
             self.map.insert(key, chunk);
-            println!("SET {}, {}!", pos_x, pos_y);
             return true;
         }
+        
         false
     }
 
