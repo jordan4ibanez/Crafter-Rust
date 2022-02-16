@@ -126,9 +126,10 @@ fn main() {
 
     let mut world: World = world::world::new();
 
+    const RENDER_DISTANCE: i32 = 10;
 
-    let mut debug_x = -32;
-    let mut debug_y = -32;
+    let mut debug_x = -RENDER_DISTANCE;
+    let mut debug_y = -RENDER_DISTANCE;
 
     let mut continue_debug = true;
     
@@ -149,12 +150,12 @@ fn main() {
 
             debug_x += 1;
 
-            if debug_x > 32 {
-                debug_x = -32;
+            if debug_x > RENDER_DISTANCE {
+                debug_x = -RENDER_DISTANCE;
 
                 debug_y += 1;
 
-                if debug_y > 32 {
+                if debug_y > RENDER_DISTANCE {
                     continue_debug = false;
                     println!("DONE!");
                 }
