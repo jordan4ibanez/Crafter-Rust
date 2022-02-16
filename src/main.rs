@@ -65,7 +65,7 @@ use crate::{
         chunk::{
             *
         },
-        map::{
+        world::{
             *
         }
     }
