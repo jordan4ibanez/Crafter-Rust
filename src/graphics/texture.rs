@@ -1,10 +1,5 @@
 use std::{ffi::c_void};
 
-use gl::{
-    types::GLint,
-    TEXTURE_MIN_FILTER,
-    RGBA
-};
 use stb_image_rust;
 
 use super::resource_loader;
