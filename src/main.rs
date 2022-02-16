@@ -4,6 +4,7 @@ mod graphics;
 mod controls;
 mod time;
 mod game_debug;
+mod world;
 
 use glam::Vec3;
 use glfw::*;
@@ -59,6 +60,15 @@ use crate::{
         }
     },
     game_debug::chunk_mesh_creation,
+
+    world::{
+        chunk::{
+            *
+        },
+        map::{
+            *
+        }
+    }
 };
 
 fn main() {
