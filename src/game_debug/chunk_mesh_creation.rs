@@ -56,7 +56,7 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
 
     for i in 0..32768 {
 
-        debug_array[i] = randy.gen::<f32>() > 0.98;
+        debug_array[i] = randy.gen::<f32>() > 0.9;
 
         if debug_array[i] {
             for _ in 0..6 {
