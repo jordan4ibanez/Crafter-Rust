@@ -50,32 +50,42 @@ pub fn index_to_pos ( i: &u16 ) -> (f32,f32,f32) {
 
 
 
-pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {   
+pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {      
 
-    let mut positions: Vec<f32> = Vec::<f32>::new();
-
-    let mut indices: Vec<i32> = Vec::<i32>::new();
-
-    let mut texture_coordinates: Vec<f32> = Vec::<f32>::new();
-
-    // this is the light attrib in crafter
-    let mut colors: Vec<f32> = Vec::<f32>::new();
-    
-
-    // dry run to get values
+    // dry run to get capacities
 
     let mut pos_count = 0;
     let mut indice_count = 0;
     let mut texture_coord_count = 0;
     let mut colors_count = 0;
 
-    for i in 0..32768 {
+    for _ in 0..32768 {
         for _ in 0..6 {
             dry_run(&mut pos_count, &mut indice_count, &mut texture_coord_count, &mut colors_count)
         }
     }
+    
+    let mut positions: Vec<f32> = vec![0.0; pos_count as usize];
 
-    println!("CALCULATED: {}", pos_count);
+    let mut indices: Vec<i32> = vec![0; indice_count as usize];
+
+    let mut texture_coordinates: Vec<f32> = vec![0.0; texture_coord_count as usize];
+
+    // this is the light attrib in crafter
+    let mut colors: Vec<f32> = vec![0.0; colors_count as usize];
+
+
+    // println!("CALCULATED: {}", pos_count);
+
+
+    // create the counters
+    let mut pos_count: i32 = 0;
+    let mut indice_count: i32 = 0;
+    let mut texture_count: i32 = 0;
+    let mut color_count: i32 = 0;
+
+    // this part is EXTREMELY important, this allows all the vertex points to link together
+    let mut face_count: i32 = 0;
 
     for i in 0..32768 {
 
@@ -86,21 +96,118 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
             let (x,y,z) = index_to_pos(&i);
 
             
-            face_up(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
+            face_up(
+                &mut positions,
+                &mut indices,
+                &mut texture_coordinates,
+                &mut colors,
+
+                &mut pos_count,
+                &mut indice_count,
+                &mut texture_count,
+                &mut color_count,
+                &mut face_count,
+
+                x,
+                y,
+                z,
+                light
+            );
             
-            face_down(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
+            face_down(
+                &mut positions,
+                &mut indices,
+                &mut texture_coordinates,
+                &mut colors,
 
-            face_south(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
+                &mut pos_count,
+                &mut indice_count,
+                &mut texture_count,
+                &mut color_count,
+                &mut face_count,
 
-            face_north(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
+                x,
+                y,
+                z,
+                light
+            );
 
-            face_west(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
+            face_south(
+                &mut positions,
+                &mut indices,
+                &mut texture_coordinates,
+                &mut colors,
 
-            face_east(&mut positions, &mut indices, &mut texture_coordinates, &mut colors, x, y, z, light);
+                &mut pos_count,
+                &mut indice_count,
+                &mut texture_count,
+                &mut color_count,
+                &mut face_count,
+
+                x,
+                y,
+                z,
+                light
+            );
+
+
+            face_north(
+                &mut positions,
+                &mut indices,
+                &mut texture_coordinates,
+                &mut colors,
+
+                &mut pos_count,
+                &mut indice_count,
+                &mut texture_count,
+                &mut color_count,
+                &mut face_count,
+
+                x,
+                y,
+                z,
+                light
+            );
+
+            
+            face_west(
+                &mut positions,
+                &mut indices,
+                &mut texture_coordinates,
+                &mut colors,
+
+                &mut pos_count,
+                &mut indice_count,
+                &mut texture_count,
+                &mut color_count,
+                &mut face_count,
+
+                x,
+                y,
+                z,
+                light
+            );
+            
+            
+            face_east(
+                &mut positions,
+                &mut indices,
+                &mut texture_coordinates,
+                &mut colors,
+
+                &mut pos_count,
+                &mut indice_count,
+                &mut texture_count,
+                &mut color_count,
+                &mut face_count,
+
+                x,
+                y,
+                z,
+                light
+            );
         // }
     }
-
-    println!("positions length: {}", positions.len());
 
     let returning_mesh: Mesh = mesh::new(
         positions,

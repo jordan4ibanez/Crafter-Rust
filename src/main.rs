@@ -205,7 +205,7 @@ fn main() {
         //debug_mesh.test();
         let debug_mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(texture_clone, &mut randy);
 
-        // debug_mesh.render();
+        debug_mesh.render();
 
         debug_mesh.clean_up(false);
 
