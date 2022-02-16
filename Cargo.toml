@@ -5,9 +5,11 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+
 # I'm documenting this as I translate it from LWJGL and Java.
 # It's easier for me.
 [dependencies]
+
 
 rand = "0.8.4" # math.random() in rust
 
