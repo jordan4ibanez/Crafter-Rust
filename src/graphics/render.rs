@@ -50,6 +50,10 @@ impl Renderer {
 
         default_shader.set_uniform_mat4("projectionMatrix".to_string(), self.transformation.get_projection_matrix());
     
+
+        // begin batched render
+        let mut batch_hook = false;
+
         for chunk in world.iter_map() {
             match chunk.1.get_mesh(){
                 Some(mesh) => {
@@ -60,7 +64,14 @@ impl Renderer {
                             Vec3::new(0.0, 0.0, 0.0)
                         )
                     );
-                    mesh.render();
+
+                    // inialize batch
+                    if !batch_hook {
+                        batch_hook = true;
+                        mesh.batch_hook_texture();
+                    }
+
+                    mesh.batch_render();
                     
                 },
                 None => (),

@@ -127,8 +127,28 @@ impl Mesh {
         }
     }
 
-    pub fn render(&self){
 
+    pub fn batch_hook_texture(&self) {
+        unsafe {
+            // activate first texture bank
+            gl::ActiveTexture(gl::TEXTURE0);
+
+            // bind the texture
+            gl::BindTexture(gl::TEXTURE_2D, self.texture.get_id());
+        }
+    }
+
+    pub fn batch_render(&self) {
+        unsafe {
+            // bind the mesh vertex array
+            gl::BindVertexArray(self.vao_id);
+
+            // draw the mesh
+            gl::DrawElements(gl::TRIANGLES, self.vertex_count, gl::UNSIGNED_INT, ptr::null());
+        }
+    }
+
+    pub fn render(&self){
         unsafe {
             // activate first texture bank
             gl::ActiveTexture(gl::TEXTURE0);
