@@ -8,12 +8,13 @@ use glfw::{
 use super::window_variables::WindowVariables;
 
 pub fn toggle_full_screen(glfw: &mut Glfw, window: &mut Window, window_variables: &mut WindowVariables){
-    glfw.with_primary_monitor(|glfw, m: Option<&Monitor> | {
+    glfw.with_primary_monitor(| glfw, m: Option<&Monitor> | {
+
         // must unwrap the safety chain
         let monitor_reference: &Monitor = m.unwrap();
         let video_mode_option: Option<VidMode> = monitor_reference.get_video_mode();
         let video_mode: VidMode = video_mode_option.unwrap();
-        let monitor_size = (video_mode.width, video_mode.height);
+        let monitor_size: (u32, u32) = (video_mode.width, video_mode.height);
         
         // windowed
         if window_variables.get_full_screen() {            
