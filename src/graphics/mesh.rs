@@ -39,7 +39,7 @@ impl Mesh {
 
     // internal constructor
     // the improvement is this allows dynamic allocations
-    pub fn construct(&mut self, positions: Vec<f32>, colors: Vec<f32>, indices: Vec<i32>, texture_coordinates: Vec<f32>){
+    pub fn construct(&mut self, positions: Vec<f32>, colors: Vec<f32>, indices: Vec<u32>, texture_coordinates: Vec<f32>){
 
         unsafe {
             // the VAO is basically the master key for the GL object
@@ -113,7 +113,7 @@ impl Mesh {
             gl::BufferData(
                 gl::ELEMENT_ARRAY_BUFFER,
                 (indices.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
-                &indices.as_slice()[0] as *const i32 as *const c_void,
+                &indices.as_slice()[0] as *const u32 as *const c_void,
                 gl::STATIC_DRAW
             );
 
@@ -180,7 +180,7 @@ impl Mesh {
 }
 
 
-pub fn new(positions: Vec<f32>, colors: Vec<f32>, indices: Vec<i32>, texture_coordinates: Vec<f32>, texture: Texture) -> Mesh {
+pub fn new(positions: Vec<f32>, colors: Vec<f32>, indices: Vec<u32>, texture_coordinates: Vec<f32>, texture: Texture) -> Mesh {
     let mut returning_mesh: Mesh = Mesh {
         vao_id: 0,
         pos_vbo_id: 0,

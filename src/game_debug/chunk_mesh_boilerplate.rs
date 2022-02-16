@@ -18,7 +18,7 @@ intake size and generate positions with a function
 // generic functions to reduce boilerplate
 
 // pushes the array slice into vector
-fn assign<T: Copy> (vector: &mut Vec<T>, array: &[T], current_count: &mut i32) {
+fn assign<T: Copy> (vector: &mut Vec<T>, array: &[T], current_count: &mut u32) {
     array.iter().for_each( | value: &T | {
         vector[*current_count as usize] = *value;
         *current_count += 1;
@@ -48,9 +48,9 @@ fn set_pos(pos: &mut [f32], x: f32, y: f32, z: f32) {
 }
 
 // adjusts the indices to the correct value from base
-fn adjust_indices(index: &mut [i32], face_count: &mut i32) {
+fn adjust_indices(index: &mut [u32], face_count: &mut u32) {
 
-    index.iter_mut().for_each( | value: &mut i32 | {
+    index.iter_mut().for_each( | value: &mut u32 | {
         *value += *face_count;
     });
 
@@ -58,7 +58,7 @@ fn adjust_indices(index: &mut [i32], face_count: &mut i32) {
 }
 
 // a precalculator for capacity information
-pub fn dry_run(pos_count: &mut i32, indice_count: &mut i32, texture_coord_count: &mut i32, colors_count: &mut i32) {
+pub fn dry_run(pos_count: &mut u32, indice_count: &mut u32, texture_coord_count: &mut u32, colors_count: &mut u32) {
     *pos_count += 18;
     *indice_count += 6;
     *texture_coord_count += 12;
@@ -69,15 +69,15 @@ pub fn dry_run(pos_count: &mut i32, indice_count: &mut i32, texture_coord_count:
 
 pub fn face_up(
     positions: &mut Vec<f32>,
-    indices: &mut Vec<i32>,
+    indices: &mut Vec<u32>,
     texture_coordinates: &mut Vec<f32>,
     colors: &mut Vec<f32>,
 
-    pos_count: &mut i32,
-    indice_count: &mut i32,
-    texture_count: &mut i32,
-    color_count: &mut i32,
-    face_count: &mut i32,
+    pos_count: &mut u32,
+    indice_count: &mut u32,
+    texture_count: &mut u32,
+    color_count: &mut u32,
+    face_count: &mut u32,
 
     x: f32,
     y: f32,
@@ -106,7 +106,7 @@ pub fn face_up(
 
     // index (face/indices) data
 
-    let mut index: [i32; 6] = [
+    let mut index: [u32; 6] = [
         // tri 1
         0,1,2,
 
@@ -160,15 +160,15 @@ pub fn face_up(
 
 pub fn face_down(
     positions: &mut Vec<f32>,
-    indices: &mut Vec<i32>,
+    indices: &mut Vec<u32>,
     texture_coordinates: &mut Vec<f32>,
     colors: &mut Vec<f32>,
 
-    pos_count: &mut i32,
-    indice_count: &mut i32,
-    texture_count: &mut i32,
-    color_count: &mut i32,
-    face_count: &mut i32,
+    pos_count: &mut u32,
+    indice_count: &mut u32,
+    texture_count: &mut u32,
+    color_count: &mut u32,
+    face_count: &mut u32,
 
     x: f32,
     y: f32,
@@ -198,7 +198,7 @@ pub fn face_down(
     
         // index (face/indices) data
     
-        let mut index: [i32; 6] = [
+        let mut index: [u32; 6] = [
             // tri 1
             0,1,2,
     
@@ -253,15 +253,15 @@ pub fn face_down(
 
 pub fn face_south(
     positions: &mut Vec<f32>,
-    indices: &mut Vec<i32>,
+    indices: &mut Vec<u32>,
     texture_coordinates: &mut Vec<f32>,
     colors: &mut Vec<f32>,
 
-    pos_count: &mut i32,
-    indice_count: &mut i32,
-    texture_count: &mut i32,
-    color_count: &mut i32,
-    face_count: &mut i32,
+    pos_count: &mut u32,
+    indice_count: &mut u32,
+    texture_count: &mut u32,
+    color_count: &mut u32,
+    face_count: &mut u32,
 
     x: f32,
     y: f32,
@@ -291,7 +291,7 @@ pub fn face_south(
 
     // index (face/indices) data
 
-    let mut index: [i32; 6] = [
+    let mut index: [u32; 6] = [
         // tri 1
         0,1,2,
 
@@ -346,15 +346,15 @@ pub fn face_south(
 
 pub fn face_north(
     positions: &mut Vec<f32>,
-    indices: &mut Vec<i32>,
+    indices: &mut Vec<u32>,
     texture_coordinates: &mut Vec<f32>,
     colors: &mut Vec<f32>,
 
-    pos_count: &mut i32,
-    indice_count: &mut i32,
-    texture_count: &mut i32,
-    color_count: &mut i32,
-    face_count: &mut i32,
+    pos_count: &mut u32,
+    indice_count: &mut u32,
+    texture_count: &mut u32,
+    color_count: &mut u32,
+    face_count: &mut u32,
 
     x: f32,
     y: f32,
@@ -384,7 +384,7 @@ pub fn face_north(
 
     // index (face/indices) data
 
-    let mut index: [i32; 6] = [
+    let mut index: [u32; 6] = [
         // tri 1
         0,1,2,
 
@@ -439,15 +439,15 @@ pub fn face_north(
 
 pub fn face_west(
     positions: &mut Vec<f32>,
-    indices: &mut Vec<i32>,
+    indices: &mut Vec<u32>,
     texture_coordinates: &mut Vec<f32>,
     colors: &mut Vec<f32>,
 
-    pos_count: &mut i32,
-    indice_count: &mut i32,
-    texture_count: &mut i32,
-    color_count: &mut i32,
-    face_count: &mut i32,
+    pos_count: &mut u32,
+    indice_count: &mut u32,
+    texture_count: &mut u32,
+    color_count: &mut u32,
+    face_count: &mut u32,
 
     x: f32,
     y: f32,
@@ -477,7 +477,7 @@ pub fn face_west(
 
     // index (face/indices) data
 
-    let mut index: [i32; 6] = [
+    let mut index: [u32; 6] = [
         // tri 1
         0,1,2,
 
@@ -532,15 +532,15 @@ pub fn face_west(
 
 pub fn face_east(
     positions: &mut Vec<f32>,
-    indices: &mut Vec<i32>,
+    indices: &mut Vec<u32>,
     texture_coordinates: &mut Vec<f32>,
     colors: &mut Vec<f32>,
 
-    pos_count: &mut i32,
-    indice_count: &mut i32,
-    texture_count: &mut i32,
-    color_count: &mut i32,
-    face_count: &mut i32,
+    pos_count: &mut u32,
+    indice_count: &mut u32,
+    texture_count: &mut u32,
+    color_count: &mut u32,
+    face_count: &mut u32,
 
     x: f32,
     y: f32,
@@ -570,7 +570,7 @@ pub fn face_east(
 
     // index (face/indices) data
 
-    let mut index: [i32; 6] = [
+    let mut index: [u32; 6] = [
         // tri 1
         0,1,2,
 
@@ -620,18 +620,28 @@ pub fn face_east(
     assign(colors, &color, color_count);
 }
 
+
+
+
+
+
+
+
+
+
+
 // the packed boilerplate to allow a single function call
 pub fn add_block(
     positions: &mut Vec<f32>,
-    indices: &mut Vec<i32>,
+    indices: &mut Vec<u32>,
     texture_coordinates: &mut Vec<f32>,
     colors: &mut Vec<f32>,
 
-    pos_count: &mut i32,
-    indice_count: &mut i32,
-    texture_count: &mut i32,
-    color_count: &mut i32,
-    face_count: &mut i32,
+    pos_count: &mut u32,
+    indice_count: &mut u32,
+    texture_count: &mut u32,
+    color_count: &mut u32,
+    face_count: &mut u32,
 
     x: f32,
     y: f32,

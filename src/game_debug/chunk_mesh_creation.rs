@@ -47,16 +47,16 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
 
     // dry run to get capacities
 
-    let mut pos_count = 0;
-    let mut indice_count = 0;
-    let mut texture_coord_count = 0;
-    let mut colors_count = 0;
+    let mut pos_count: u32 = 0;
+    let mut indice_count: u32 = 0;
+    let mut texture_coord_count: u32 = 0;
+    let mut colors_count: u32 = 0;
 
     let mut debug_array: [bool; 32768] = [false; 32768];
 
     for i in 0..32768 {
 
-        debug_array[i] = randy.gen::<f32>() > 0.5;
+        debug_array[i] = randy.gen::<f32>() > 0.0;
 
         if debug_array[i] {
             for _ in 0..6 {
@@ -67,7 +67,7 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
     
     let mut positions: Vec<f32> = vec![0.0; pos_count as usize];
 
-    let mut indices: Vec<i32> = vec![0; indice_count as usize];
+    let mut indices: Vec<u32> = vec![0; indice_count as usize];
 
     let mut texture_coordinates: Vec<f32> = vec![0.0; texture_coord_count as usize];
 
@@ -79,21 +79,21 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
 
 
     // create the counters
-    let mut pos_count: i32 = 0;
-    let mut indice_count: i32 = 0;
-    let mut texture_count: i32 = 0;
-    let mut color_count: i32 = 0;
+    let mut pos_count: u32 = 0;
+    let mut indice_count: u32 = 0;
+    let mut texture_count: u32 = 0;
+    let mut color_count: u32 = 0;
 
     // this part is EXTREMELY important, this allows all the vertex points to link together
-    let mut face_count: i32 = 0;
+    let mut face_count: u32 = 0;
 
     for i in 0..32768 {
 
-        if debug_array[i as usize] {
+        if debug_array[i] {
 
             
             let light = randy.gen::<f32>();
-            let (x,y,z) = index_to_pos(&i);
+            let (x,y,z) = index_to_pos(&(i as u16) as &u16);
 
             add_block(
                 &mut positions,
