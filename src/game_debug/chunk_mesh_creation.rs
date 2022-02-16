@@ -1,5 +1,3 @@
-use std::thread;
-
 use rand::{prelude::ThreadRng, Rng};
 
 use crate::{graphics::{
@@ -8,19 +6,12 @@ use crate::{graphics::{
         self
     },
     texture::{
-        self,
         Texture
     }
 }, game_debug::chunk_mesh_boilerplate::dry_run};
 
 use super::chunk_mesh_boilerplate::{
-    self,
-    face_up,
-    face_down,
-    face_south,
-    face_north,
-    face_west,
-    face_east, add_block
+    add_block
 };
 
 /*
