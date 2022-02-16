@@ -59,9 +59,16 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
     let mut texture_coord_count = 0;
     let mut colors_count = 0;
 
-    for _ in 0..32768 {
-        for _ in 0..6 {
-            dry_run(&mut pos_count, &mut indice_count, &mut texture_coord_count, &mut colors_count)
+    let mut debug_array: [bool; 32768] = [false; 32768];
+
+    for i in 0..32768 {
+
+        debug_array[i] = randy.gen::<f32>() > 0.8;
+
+        if debug_array[i] {
+            for _ in 0..6 {
+                dry_run(&mut pos_count, &mut indice_count, &mut texture_coord_count, &mut colors_count)
+            }
         }
     }
     
@@ -89,7 +96,7 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
 
     for i in 0..32768 {
 
-        // if randy.gen::<f32>() > 0.0 {
+        if debug_array[i as usize] {
 
             
             let light = randy.gen::<f32>();
@@ -206,7 +213,7 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
                 z,
                 light
             );
-        // }
+        }
     }
 
     let returning_mesh: Mesh = mesh::new(
