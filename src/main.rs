@@ -6,7 +6,6 @@ mod time;
 mod game_debug;
 mod world;
 
-use glam::Vec3;
 use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
@@ -40,7 +39,7 @@ use crate::{
         gl_safety_wrappers,
         window_variables::{
             *, self
-        }
+        }, render::{self, Renderer}
     },
 
     controls::{
@@ -108,25 +107,22 @@ fn main() {
 
     println!("Current Working Path: {}", path);
 
-    let mut test_shader_program: ShaderProgram = shader_program::new(
-        path.to_string() + "/shader_code/vertex_shader.vs",
-        path.to_string() + "/shader_code/fragment_shader.fs"
-    );
-
-    test_shader_program.create_uniform("projectionMatrix".to_string());
-    test_shader_program.create_uniform("modelViewMatrix".to_string());
-    test_shader_program.test();
-
-
-    let debug_texture: Texture = texture::new(path.to_string() + "/textures/dirt.png");
-
-    
-    let mut tranformation = transformation::new();
+    let debug_texture: Texture = texture::new(path.to_string() + "/textures/dirt.png");    
 
     let mut mouse: Mouse = mouse::new(&window);
     let mut keyboard: Keyboard = keyboard::new();
 
-    let mut camera: Camera = camera::new();
+    // construct the renderer
+    let mut renderer: Renderer = render::new();
+    let mut default_shader: ShaderProgram = shader_program::new(
+        path.to_string() + "/shader_code/vertex_shader.vs",
+        path.to_string() + "/shader_code/fragment_shader.fs"
+    );
+    default_shader.create_uniform("projectionMatrix".to_string());
+    default_shader.create_uniform("modelViewMatrix".to_string());
+    default_shader.test();
+    renderer.add_shader_program("default".to_string(), default_shader);
+
 
     let mut window_variables: WindowVariables = window_variables::new();
 
@@ -134,9 +130,7 @@ fn main() {
     // main program loop
     while !window.should_close() {       
 
-        gl_safety_wrappers::clear_depth_and_color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 1.0);
-
-        test_shader_program.bind();
+        
 
         glfw.poll_events();
 
@@ -146,13 +140,13 @@ fn main() {
         process_events(&mut glfw, &mut window, &events, &mut mouse, &mut keyboard, &mut window_variables);
 
 
-        camera.on_tick(&keyboard, &mouse, delta as f32);
+        renderer.get_camera_mut().on_tick(&keyboard, &mouse, delta as f32);
+
+        renderer.render(&window, &debug_texture, &mut randy);
 
         // START fps debug
 
         let returned_value = time_object.count_fps(&glfw);
-
-
 
         if returned_value {
 
@@ -167,29 +161,11 @@ fn main() {
         
         delta = time_object.calculate_delta(&glfw);
 
-        tranformation.reset_projection_matrix(&camera, window.get_size().0 as f32, window.get_size().1 as f32, 0.01, 1000.0);
-
-        test_shader_program.set_uniform_mat4("projectionMatrix".to_string(), tranformation.get_projection_matrix());
-
-        test_shader_program.set_uniform_mat4("modelViewMatrix".to_string(), tranformation.update_model_matrix(Vec3::new(0.0,0.0, -2.0), Vec3::new(0.0, 0.0, 0.0)));
-
-    
-        let texture_clone = texture::clone(&debug_texture);
-        
-        let debug_mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(texture_clone, &mut randy);
-
-        debug_mesh.render();
-
-        debug_mesh.clean_up(false);
-
-        test_shader_program.unbind();
-
         window.swap_buffers();
      
     }
 
-    test_shader_program.clean_up();
-
+    renderer.clean_up();
 
     println!("Program exited successfully!");
 
