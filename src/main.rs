@@ -126,7 +126,7 @@ fn main() {
 
     let mut world: World = world::world::new();
 
-    const RENDER_DISTANCE: i32 = 10;
+    const RENDER_DISTANCE: i32 = 20;
 
     let mut debug_x = -RENDER_DISTANCE;
     let mut debug_y = -RENDER_DISTANCE;
@@ -142,6 +142,7 @@ fn main() {
         if continue_debug {
             
             let generated_chunk: Chunk = world::chunk::new(debug_x, debug_y);
+            
             world.add(generated_chunk);
 
             let mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(texture::clone(&debug_texture), &mut randy);
