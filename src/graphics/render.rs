@@ -91,7 +91,7 @@ impl Renderer {
 pub fn new() -> Renderer {
     Renderer {
         shaders: HashMap::new(),
-        transformation: transformation::new(),
+        transformation: Transformation::new(),
         camera: Camera::new()
     }
 }

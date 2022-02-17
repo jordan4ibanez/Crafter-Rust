@@ -14,6 +14,14 @@ pub struct Transformation {
 
 impl Transformation {
 
+    pub fn new() -> Self {
+        Self {
+            projection_matrix: Mat4::IDENTITY,
+            model_matrix: Mat4::IDENTITY,
+            view_matrix: Mat4::IDENTITY
+        }
+    }
+
     pub fn get_projection_matrix(&self) -> Mat4 {
         self.projection_matrix
     }
@@ -58,16 +66,4 @@ impl Transformation {
 
         self.model_matrix
     }
-}
-
-
-pub fn new() -> Transformation {
-
-    let returning_transformation: Transformation = Transformation {
-        projection_matrix: Mat4::IDENTITY,
-        model_matrix: Mat4::IDENTITY,
-        view_matrix: Mat4::IDENTITY
-    };
-    
-    returning_transformation
 }
