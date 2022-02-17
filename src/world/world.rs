@@ -28,8 +28,8 @@ impl World {
     }
 
     pub fn clean_up(&mut self){
-        self.map.iter_mut().for_each(| this_chunk |{
-            match this_chunk.1.get_mesh_mut() {
+        self.map.values().into_iter().for_each( | chunk: &Chunk | {
+            match chunk.get_mesh_mut() {
                 Some(mesh) => mesh.clean_up(false),
                 None => (),
             }
@@ -47,8 +47,8 @@ impl World {
     }
 
     // gets a chunk
-    pub fn get_chunk(&self, key: String) -> &Chunk {
-        &self.map.get(&key).unwrap()
+    pub fn get_chunk(&self, key: String) -> &Option<&Chunk> {
+        &self.map.get(&key)
     }
 
     // gets a mutable chunk
