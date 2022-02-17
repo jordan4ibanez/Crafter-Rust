@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 
-use glam::{Vec2, IVec2};
-
 use super::chunk::Chunk;
 
 pub struct World {
