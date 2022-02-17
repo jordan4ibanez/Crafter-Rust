@@ -11,7 +11,7 @@ edition = "2021"
 [dependencies]
 
 
-noise = "*"
+perlin2d = "0.2.6"
 
 gl = "0.14.0" # openGL bindings
 glfw = "0.43.0" # GLFW
