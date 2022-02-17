@@ -9,7 +9,7 @@ mod world;
 use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
-use noise::Perlin;
+use perlin2d::PerlinNoise2D;
 
 use std::{
     sync::mpsc::Receiver
@@ -53,7 +53,7 @@ use crate::{
         },
         world::{
             *,
-        }
+        }, biome_generator::gen_biome
     }
 };
 
@@ -81,7 +81,7 @@ fn main() {
     // testing of 3D camera
     window.set_cursor_mode(glfw::CursorMode::Disabled);
 
-    let mut noise: Perlin = noise::Perlin::new();
+    let mut perlin: PerlinNoise2D = PerlinNoise2D::new(1, 0.5, 1.0, 1.0, 1.0, (10.0, 10.0), 0.5, 1213);
 
     // fps counter object
     let mut time_object: Time = Time::new(&glfw);
@@ -127,11 +127,13 @@ fn main() {
 
         if continue_debug {
             
-            let generated_chunk: Chunk = Chunk::new(debug_x, debug_y);
-            
-            world.add(generated_chunk);
+            let mut generated_chunk: Chunk = Chunk::new(debug_x, debug_y);
 
-            let mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(Texture::clone(&debug_texture));
+            gen_biome(&mut generated_chunk, &mut perlin);
+
+            let mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(&generated_chunk, Texture::clone(&debug_texture));
+
+            world.add(generated_chunk);
 
             world.get_chunk_mut(debug_x.to_string() + " " + &debug_y.to_string()).set_mesh(mesh);
 
