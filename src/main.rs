@@ -122,7 +122,7 @@ fn main() {
     renderer.add_shader_program("default".to_string(), default_shader);
 
 
-    let mut window_variables: WindowVariables = window_variables::new();
+    let mut window_variables: WindowVariables = WindowVariables::new();
 
     let mut world: World = world::world::new();
 
