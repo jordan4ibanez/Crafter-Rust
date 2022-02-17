@@ -1,5 +1,3 @@
-use rand::{prelude::ThreadRng, Rng};
-
 use crate::{graphics::{
     mesh::{
         Mesh
@@ -7,7 +5,7 @@ use crate::{graphics::{
     texture::{
         Texture
     }
-}, game_debug::chunk_mesh_boilerplate::dry_run};
+}, game_debug::chunk_mesh_boilerplate::dry_run, world::chunk::Chunk};
 
 use super::chunk_mesh_boilerplate::{
     add_block
@@ -42,20 +40,17 @@ pub fn index_to_pos ( i: &u16 ) -> (f32,f32,f32) {
 
 
 
-pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {      
+pub fn create_chunk_mesh(chunk: &Chunk, texture: Texture) -> Mesh {      
 
     // dry run to get capacities
 
     let mut float_count: u32 = 0;
     let mut indices_count: u32 = 0;
 
-    let mut debug_array: [bool; 32768] = [false; 32768];
+    let mut debug_array: [u32; 32768] = *chunk.get_block_aray();
 
     for i in 0..32768 {
-
-        debug_array[i] = randy.gen::<f32>() > 0.0;
-
-        if debug_array[i] {
+        if debug_array[i] != 0 {
             for _ in 0..6 {
                 dry_run(&mut float_count, &mut indices_count)
             }
@@ -81,11 +76,11 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
 
     for i in 0..32768 {
 
-        if debug_array[i] {
+        if debug_array[i] != 0 {
 
-            
-            let light = randy.gen::<f32>();
             let (x,y,z) = index_to_pos(&(i as u16) as &u16);
+
+            let light = 1.0;
 
             add_block(
                 &mut float_data,
