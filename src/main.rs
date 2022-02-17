@@ -111,7 +111,7 @@ fn main() {
     let mut keyboard: Keyboard = keyboard::new();
 
     // construct the renderer
-    let mut renderer: Renderer = render::new();
+    let mut renderer: Renderer = Renderer::new();
     let mut default_shader: ShaderProgram = ShaderProgram::new(
         path.to_string() + "/shader_code/vertex_shader.vs",
         path.to_string() + "/shader_code/fragment_shader.fs"

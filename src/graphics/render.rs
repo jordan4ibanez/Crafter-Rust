@@ -14,6 +14,15 @@ pub struct Renderer {
 }
 
 impl Renderer {
+
+    pub fn new() -> Self {
+        Self {
+            shaders: HashMap::new(),
+            transformation: Transformation::new(),
+            camera: Camera::new()
+        }
+    }
+
     pub fn add_shader_program(&mut self, shader_name: String, shader_program: ShaderProgram) {
         self.shaders.insert(shader_name, shader_program);
     }
@@ -85,14 +94,6 @@ impl Renderer {
         // debug_mesh.clean_up(false);
 
         default_shader.unbind();
-    }
-}
-
-pub fn new() -> Renderer {
-    Renderer {
-        shaders: HashMap::new(),
-        transformation: Transformation::new(),
-        camera: Camera::new()
     }
 }
 
