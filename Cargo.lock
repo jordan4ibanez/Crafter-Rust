@@ -3,6 +3,18 @@
 version = 3
 
 [[package]]
+name = "Crafter"
+version = "0.0.0"
+dependencies = [
+ "alto",
+ "gl",
+ "glam",
+ "glfw",
+ "rand 0.8.5",
+ "stb_image_rust",
+]
+
+[[package]]
 name = "al-sys"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -173,18 +185,6 @@ name = "maybe-uninit"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "60302e4db3a61da70c0cb7991976248362f30319e88850c487b9b95bbf059e00"
-
-[[package]]
-name = "my_game"
-version = "0.1.0"
-dependencies = [
- "alto",
- "gl",
- "glam",
- "glfw",
- "rand 0.8.5",
- "stb_image_rust",
-]
 
 [[package]]
 name = "objc"
