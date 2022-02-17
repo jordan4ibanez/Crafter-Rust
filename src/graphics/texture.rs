@@ -12,6 +12,32 @@ pub struct Texture {
 
 impl Texture {
 
+
+    // constructor
+    pub fn new(texture_path: String) -> Self {
+        let mut returning_texture: Self = Self {
+            id: 0,
+            width: 0,
+            height: 0,
+        };
+        returning_texture.construct(texture_path);
+
+        returning_texture
+    }
+
+    pub fn clone(original: &Self) -> Self {
+
+        let id: u32 = original.get_id();
+        let width: i32 = original.get_width();
+        let height: i32 = original.get_height();
+
+        Self {
+            id,
+            width,
+            height,
+        }
+    }
+
     // this is only for debugging
     pub fn test(&self) {
         println!("-- BEGINNING TEXTURE TEST ---");
@@ -115,30 +141,5 @@ impl Texture {
         }
 
         drop(self);
-    }
-}
-
-// constructor
-pub fn new(texture_path: String) -> Texture {
-    let mut returning_texture: Texture = Texture {
-        id: 0,
-        width: 0,
-        height: 0,
-    };
-    returning_texture.construct(texture_path);
-
-    returning_texture
-}
-
-pub fn clone(original: &Texture) -> Texture {
-
-    let id: u32 = original.get_id();
-    let width: i32 = original.get_width();
-    let height: i32 = original.get_height();
-
-    Texture {
-        id,
-        width,
-        height,
     }
 }

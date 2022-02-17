@@ -105,7 +105,7 @@ fn main() {
 
     println!("Current Working Path: {}", path);
 
-    let debug_texture: Texture = texture::new(path.to_string() + "/textures/dirt.png");    
+    let debug_texture: Texture = Texture::new(path.to_string() + "/textures/dirt.png");    
 
     let mut mouse: Mouse = mouse::new(&window);
     let mut keyboard: Keyboard = keyboard::new();
@@ -145,7 +145,7 @@ fn main() {
             
             world.add(generated_chunk);
 
-            let mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(texture::clone(&debug_texture), &mut randy);
+            let mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(Texture::clone(&debug_texture), &mut randy);
 
             world.get_chunk_mut(debug_x.to_string() + " " + &debug_y.to_string()).set_mesh(mesh);
 
