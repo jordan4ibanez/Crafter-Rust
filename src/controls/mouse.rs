@@ -22,6 +22,24 @@ pub struct Mouse {
 
 impl Mouse {
 
+    pub fn new(window: &Window) -> Self {
+
+        let pos_f64: (f64, f64) = window.get_cursor_pos();
+    
+        let def: (f32, f32) = (pos_f64.0 as f32, pos_f64.1 as f32);
+    
+        Self {
+            position: Vec2::new(def.0, def.1),
+            old_position: Vec2::new(def.0, def.1),
+            position_vector: Vec2::new(def.0, def.1),
+            left_mouse_button: false,
+            right_mouse_button: false,
+            scroll: 0.0,
+            in_window: false,
+            locked_to_window: false
+        }
+    }
+
     // public getters
 
     pub fn get_pos(&self) -> Vec2 {
@@ -103,23 +121,5 @@ impl Mouse {
             _ => ()
 
         }
-    }
-}
-
-pub fn new(window: &Window) -> Mouse {
-
-    let pos_f64: (f64, f64) = window.get_cursor_pos();
-
-    let def: (f32, f32) = (pos_f64.0 as f32, pos_f64.1 as f32);
-
-    Mouse {
-        position: Vec2::new(def.0, def.1),
-        old_position: Vec2::new(def.0, def.1),
-        position_vector: Vec2::new(def.0, def.1),
-        left_mouse_button: false,
-        right_mouse_button: false,
-        scroll: 0.0,
-        in_window: false,
-        locked_to_window: false
     }
 }

@@ -107,7 +107,7 @@ fn main() {
 
     let debug_texture: Texture = Texture::new(path.to_string() + "/textures/dirt.png");    
 
-    let mut mouse: Mouse = mouse::new(&window);
+    let mut mouse: Mouse = Mouse::new(&window);
     let mut keyboard: Keyboard = keyboard::new();
 
     // construct the renderer
