@@ -14,6 +14,15 @@ pub struct Camera {
 
 impl Camera {
 
+    pub fn new() -> Self {
+        Self {
+            position: Vec3::new(0.0, 1.0,0.0),
+            rotation: Vec3::new(0.0, 0.0,0.0),
+            rotation_vector: Vec3::new(0.0, 0.0,0.0),
+            fov: 60.0,
+        }
+    }
+
     // setters and getters
 
     pub fn set_pos(&mut self, new_position: &Vec3) {
@@ -125,13 +134,4 @@ impl Camera {
 
     }
 
-}
-
-pub fn new() -> Camera {
-    Camera {
-        position: Vec3::new(0.0, 129.0,0.0),
-        rotation: Vec3::new(0.0, 0.0,0.0),
-        rotation_vector: Vec3::new(0.0, 0.0,0.0),
-        fov: 60.0,
-    }
 }

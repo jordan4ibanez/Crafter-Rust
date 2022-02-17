@@ -92,7 +92,7 @@ pub fn new() -> Renderer {
     Renderer {
         shaders: HashMap::new(),
         transformation: transformation::new(),
-        camera: camera::new()
+        camera: Camera::new()
     }
 }
 
