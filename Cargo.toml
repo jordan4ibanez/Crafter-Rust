@@ -1,5 +1,5 @@
 [package]
-name = "Crafter"
+name = "crafter"
 version = "0.0.0"
 edition = "2021"
 
@@ -11,7 +11,7 @@ edition = "2021"
 [dependencies]
 
 
-rand = "0.8.4" # math.random() in rust
+noise = "*"
 
 gl = "0.14.0" # openGL bindings
 glfw = "0.43.0" # GLFW
