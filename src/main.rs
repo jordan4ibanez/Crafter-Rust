@@ -124,7 +124,7 @@ fn main() {
 
     let mut window_variables: WindowVariables = WindowVariables::new();
 
-    let mut world: World = world::world::new();
+    let mut world: World = World::new();
 
     const RENDER_DISTANCE: i32 = 10;
 

@@ -10,6 +10,12 @@ pub struct World {
 
 impl World {
 
+    pub fn new() -> Self {
+        Self {
+            map: HashMap::new(),
+        }
+    }
+
     // adds a chunk to the map - returns success
     pub fn add(&mut self, chunk: Chunk) -> bool {
 
@@ -50,11 +56,5 @@ impl World {
     // gets a mutable chunk
     pub fn get_chunk_mut(&mut self, key: String) -> &mut Chunk {
         self.map.get_mut(&key).unwrap()
-    }
-}
-
-pub fn new() -> World {
-    World {
-        map: HashMap::new(),
     }
 }
