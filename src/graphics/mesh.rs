@@ -131,7 +131,7 @@ impl Mesh {
     pub fn batch_render(&self) {
         unsafe {
             // this is for debug, wireframe mode
-            gl::PolygonMode(gl::FRONT_AND_BACK,gl::LINE);
+            // gl::PolygonMode(gl::FRONT_AND_BACK,gl::LINE);
 
             // bind the mesh vertex array
             gl::BindVertexArray(self.vao_id);
