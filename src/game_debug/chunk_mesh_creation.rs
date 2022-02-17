@@ -47,10 +47,8 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
 
     // dry run to get capacities
 
-    let mut pos_count: u32 = 0;
-    let mut indice_count: u32 = 0;
-    let mut texture_coord_count: u32 = 0;
-    let mut colors_count: u32 = 0;
+    let mut float_count: u32 = 0;
+    let mut indices_count: u32 = 0;
 
     let mut debug_array: [bool; 32768] = [false; 32768];
 
@@ -60,29 +58,24 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
 
         if debug_array[i] {
             for _ in 0..6 {
-                dry_run(&mut pos_count, &mut indice_count, &mut texture_coord_count, &mut colors_count)
+                dry_run(&mut float_count, &mut indices_count)
             }
         }
     }
     
-    let mut positions: Vec<f32> = vec![0.0; pos_count as usize];
-
-    let mut indices: Vec<u32> = vec![0; indice_count as usize];
-
-    let mut texture_coordinates: Vec<f32> = vec![0.0; texture_coord_count as usize];
-
-    // this is the light attrib in crafter
-    let mut colors: Vec<f32> = vec![0.0; colors_count as usize];
+    // end dry run
 
 
     // println!("CALCULATED: {}", pos_count);
 
+    // create the vectors with predetermined size
+    let mut float_data: Vec<f32> = vec![0.0; float_count as usize];
+    let mut indices_data: Vec<u32> = vec![0; indices_count as usize];
 
-    // create the counters
-    let mut pos_count: u32 = 0;
-    let mut indice_count: u32 = 0;
-    let mut texture_count: u32 = 0;
-    let mut color_count: u32 = 0;
+
+    // reset the counters
+    float_count = 0;
+    indices_count = 0;
 
     // this part is EXTREMELY important, this allows all the vertex points to link together
     let mut face_count: u32 = 0;
@@ -96,16 +89,12 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
             let (x,y,z) = index_to_pos(&(i as u16) as &u16);
 
             add_block(
-                &mut positions,
-                &mut indices,
-                &mut texture_coordinates,
-                &mut colors,
-        
-                &mut pos_count,
-                &mut indice_count,
-                &mut texture_count,
-                &mut color_count,
+                &mut float_data,
+                &mut indices_data,
+
+                &mut float_count,
                 &mut face_count,
+                &mut indices_count,
         
                 x,
                 y,
@@ -116,11 +105,9 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
         }
     }
 
-    let returning_mesh: Mesh = mesh::new(
-        positions,
-        colors,
-        indices,
-        texture_coordinates,
+    let returning_mesh: Mesh = Mesh::new(
+        float_data,
+        indices_data,
         texture
     );
 
