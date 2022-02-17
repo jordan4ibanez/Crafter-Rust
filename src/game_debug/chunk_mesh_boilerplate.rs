@@ -27,9 +27,7 @@ this is extremely similar to RAID-0 with hard drive/ssd technology
 
 // pushes the adjusted xyz into the vertex data
 fn set_pos(pos: &mut [f32], x: f32, y: f32, z: f32) {
-
     let mut xyz_index: i8 = 0;
-
     // iterate and modify for xyz values
     pos.iter_mut().for_each( | value: &mut f32 | {
         match xyz_index {
@@ -49,12 +47,10 @@ fn set_pos(pos: &mut [f32], x: f32, y: f32, z: f32) {
 
 // adjusts the indices to the correct value from base
 fn adjust_indices(index: &mut [u32], face_count: &mut u32) {
-
     index.iter_mut().for_each( | value: &mut u32 | {
         *value += *face_count;
     });
-
-    *face_count += 6;
+    *face_count += 4;
 }
 
 // pushes the array slice into vector
@@ -68,9 +64,9 @@ fn assign_indices(vector: &mut Vec<u32>, array: &[u32], current_count: &mut u32)
 
 // a precalculator for capacity information
 pub fn dry_run(float_count: &mut u32, indices_count: &mut u32) {
-    *float_count += 18; // pos
-    *float_count += 18; // color
-    *float_count += 12; // texture
+    *float_count += 12; // pos
+    *float_count += 12; // color
+    *float_count += 8; // texture
 
     *indices_count += 6;
 }
@@ -78,7 +74,7 @@ pub fn dry_run(float_count: &mut u32, indices_count: &mut u32) {
 // this interlaces the mesh data for the gpu
 fn stripe(float_data: &mut Vec<f32>, pos: &[f32], color: &[f32], texture: &[f32], float_count: &mut u32) {
 
-    for index in 0..6 {
+    for index in 0..4 {
 
         // pos
         for i in 0..3 {
@@ -100,7 +96,6 @@ fn stripe(float_data: &mut Vec<f32>, pos: &[f32], color: &[f32], texture: &[f32]
     }
 }
 
-
 pub fn face_up(
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
@@ -119,47 +114,29 @@ pub fn face_up(
 
     // vertex data
 
-    let mut pos: [f32; 18] = [
-
-        // tri 1
-        0., 1., 0.,
-        0., 1., 1.,
-        1., 1., 1.,
-
-        // tri 2
-        1., 1., 0.,
-        0., 1., 0.,
-        1., 1., 1.
+    let mut pos: [f32; 12] = [
+        0., 1., 0., // 0
+        0., 1., 1., // 1
+        1., 1., 1., // 2
+        1., 1., 0., // 3
     ];
     set_pos(&mut pos, x, y, z);
 
     // light/color data
-    let color: [f32; 18] = [
-
-        // tri 1
-        light, light, light,
-        light, light, light,
-        light, light, light,
-
-        // tri 2
-        light, light, light,
-        light, light, light,
-        light, light, light,
+    let color: [f32; 12] = [
+        light, light, light, // 0
+        light, light, light, // 1
+        light, light, light, // 2
+        light, light, light, // 3
     ];
 
     // texture coordinates
 
-    let texture: [f32; 12] = [
-
-        // tri 1
-        0., 0.,
-        0., 1.,
-        1., 1.,
-
-        // tri 2
-        1., 0.,
-        0., 0.,
-        1., 1.
+    let texture: [f32; 8] = [
+        0., 0., // 0
+        0., 1., // 1
+        1., 1., // 2
+        1., 0., // 3
     ];
 
     stripe(float_data, &pos, &color, &texture, float_count);
@@ -174,16 +151,12 @@ pub fn face_up(
         0,1,2,
 
         // tri 2
-        3,4,5
+        2,3,0
     ];
     adjust_indices(&mut index, face_count);
     
     assign_indices(indices_data, &index, indices_count);
 }
-
-
-
-
 
 
 pub fn face_down(
@@ -202,46 +175,28 @@ pub fn face_down(
 
         // vertex data
 
-        let mut pos: [f32; 18] = [
-
-            // tri 1
-            0., 0., 1.,
-            0., 0., 0.,
-            1., 0., 0.,
-    
-            // tri 2
-            1., 0., 1.,
-            0., 0., 1.,
-            1., 0., 0.
+        let mut pos: [f32; 12] = [
+            0., 0., 1., // 0
+            0., 0., 0., // 1
+            1., 0., 0., // 2
+            1., 0., 1., // 3
         ];
         set_pos(&mut pos, x, y, z);        
 
         // light/color data
-        let color: [f32; 18] = [
-    
-            // tri 1
-            light, light, light,
-            light, light, light,
-            light, light, light,
-
-            // tri 2
-            light, light, light,
-            light, light, light,
-            light, light, light,
+        let color: [f32; 12] = [
+            light, light, light, // 0
+            light, light, light, // 1
+            light, light, light, // 2
+            light, light, light, // 3
         ];
 
         // texture coordinates
-        let texture: [f32; 12] = [
-    
-            // tri 1
-            0., 1.,
-            0., 0.,
-            1., 0.,
-    
-            // tri 2
-            1., 1.,
-            0., 1.,
-            1., 0.
+        let texture: [f32; 8] = [
+            0., 1., // 0
+            0., 0., // 1
+            1., 0., // 2
+            1., 1., // 3
         ];
     
         stripe(float_data, &pos, &color, &texture, float_count);
@@ -251,15 +206,16 @@ pub fn face_down(
     
         let mut index: [u32; 6] = [
             // tri 1
-            0,1,2,
-    
+            0,1,2,    
             // tri 2
-            3,4,5
+            2,3,0
         ];
         adjust_indices(&mut index, face_count);
 
         assign_indices(indices_data, &index, indices_count);
 }
+
+
 
 pub fn face_south(
     float_data: &mut Vec<f32>,
@@ -277,46 +233,28 @@ pub fn face_south(
 
     // vertex data
 
-    let mut pos: [f32; 18] = [
-
-        // tri 1
-        0., 1., 1.,
-        0., 0., 1.,
-        1., 0., 1.,
-
-        // tri 2
-        1., 1., 1.,
-        0., 1., 1.,
-        1., 0., 1.
+    let mut pos: [f32; 12] = [
+        0., 1., 1., // 0
+        0., 0., 1., // 1
+        1., 0., 1., // 2
+        1., 1., 1., // 3
     ];
     set_pos(&mut pos, x, y, z);
 
     // light/color data
-    let color: [f32; 18] = [
-
-        // tri 1
-        light, light, light,
-        light, light, light,
-        light, light, light,
-
-        // tri 2
-        light, light, light,
-        light, light, light,
-        light, light, light,
+    let color: [f32; 12] = [
+        light, light, light, // 0
+        light, light, light, // 1
+        light, light, light, // 2
+        light, light, light, // 3
     ];
 
     // texture coordinates
-    let texture: [f32; 12] = [
-
-        // tri 1
-        0., 1.,
-        0., 0.,
-        1., 0.,
-
-        // tri 2
-        1., 1.,
-        0., 1.,
-        1., 0.
+    let texture: [f32; 8] = [
+        0., 1., // 0
+        0., 0., // 1
+        1., 0., // 2
+        1., 1., // 3   
     ];
 
     stripe(float_data, &pos, &color, &texture, float_count);
@@ -327,16 +265,14 @@ pub fn face_south(
     let mut index: [u32; 6] = [
         // tri 1
         0,1,2,
-
         // tri 2
-        3,4,5
+        2,3,0
     ];
 
     adjust_indices(&mut index, face_count);
     
     assign_indices(indices_data, &index, indices_count);
 }
-
 
 pub fn face_north(
     float_data: &mut Vec<f32>,
@@ -354,47 +290,29 @@ pub fn face_north(
     
     // vertex data
 
-    let mut pos: [f32; 18] = [
-
-        // tri 1
-        0., 0., 0.,
-        0., 1., 0.,
-        1., 1., 0.,
-
-        // tri 2
-        1., 0., 0.,
-        0., 0., 0.,
-        1., 1., 0.
+    let mut pos: [f32; 12] = [
+        0., 0., 0., // 0
+        0., 1., 0., // 1
+        1., 1., 0., // 2
+        1., 0., 0., // 3
     ];
     set_pos(&mut pos, x, y, z);
 
     // light/color data
-    let color: [f32; 18] = [
-
-        // tri 1
-        light, light, light,
-        light, light, light,
-        light, light, light,
-
-        // tri 2
-        light, light, light,
-        light, light, light,
-        light, light, light,
+    let color: [f32; 12] = [
+        light, light, light, // 0
+        light, light, light, // 1
+        light, light, light, // 2
+        light, light, light, // 3
     ];
 
     // texture coordinates
 
-    let texture: [f32; 12] = [
-
-        // tri 1
-        0., 0.,
-        0., 1.,
-        1., 1.,
-
-        // tri 2
-        1., 0.,
-        0., 0.,
-        1., 1.
+    let texture: [f32; 8] = [
+        0., 0., // 0
+        0., 1., // 1
+        1., 1., // 2
+        1., 0., // 3
     ];
 
     stripe(float_data, &pos, &color, &texture, float_count);
@@ -405,14 +323,14 @@ pub fn face_north(
     let mut index: [u32; 6] = [
         // tri 1
         0,1,2,
-
         // tri 2
-        3,4,5
+        2,3,0
     ];
     adjust_indices(&mut index, face_count);
     
     assign_indices(indices_data, &index, indices_count);    
 }
+
 
 pub fn face_west(
     float_data: &mut Vec<f32>,
@@ -430,47 +348,29 @@ pub fn face_west(
     
     // vertex data
 
-    let mut pos: [f32; 18] = [
-
-        // tri 1
-        1., 0., 1.,
-        1., 0., 0.,
-        1., 1., 0.,
-
-        // tri 2
-        1., 1., 1.,
-        1., 0., 1.,
-        1., 1., 0.
+    let mut pos: [f32; 12] = [
+        1., 0., 1., // 0
+        1., 0., 0., // 1
+        1., 1., 0., // 2
+        1., 1., 1., // 3
     ];
     set_pos(&mut pos, x, y, z);
 
     // light/color data
-    let color: [f32; 18] = [
-
-        // tri 1
-        light, light, light,
-        light, light, light,
-        light, light, light,
-
-        // tri 2
-        light, light, light,
-        light, light, light,
-        light, light, light,
+    let color: [f32; 12] = [
+        light, light, light, // 0
+        light, light, light, // 1
+        light, light, light, // 2
+        light, light, light, // 3   
     ];
 
     // texture coordinates
 
-    let texture: [f32; 12] = [
-
-        // tri 1
-        0., 0.,
-        0., 1.,
-        1., 1.,
-
-        // tri 2
-        1., 0.,
-        0., 0.,
-        1., 1.
+    let texture: [f32; 8] = [
+        0., 0., // 0
+        0., 1., // 1
+        1., 1., // 2
+        1., 0., // 3
     ];
 
     stripe(float_data, &pos, &color, &texture, float_count);
@@ -481,15 +381,15 @@ pub fn face_west(
     let mut index: [u32; 6] = [
         // tri 1
         0,1,2,
-
         // tri 2
-        3,4,5
+        2,3,0
     ];
 
     adjust_indices(&mut index, face_count);
 
     assign_indices(indices_data, &index, indices_count);
 }
+
 
 
 pub fn face_east(
@@ -508,48 +408,30 @@ pub fn face_east(
     
     // vertex data
 
-    let mut pos: [f32; 18] = [
-
-        // tri 1
-        0., 0., 0.,
-        0., 0., 1.,
-        0., 1., 1.,
-
-        // tri 2
-        0., 1., 0.,
-        0., 0., 0.,
-        0., 1., 1.
+    let mut pos: [f32; 12] = [
+        0., 0., 0., // 0
+        0., 0., 1., // 1
+        0., 1., 1., // 2
+        0., 1., 0., // 3
     ];
     set_pos(&mut pos, x, y, z);
 
     // light/color data
     
-    let color: [f32; 18] = [
-
-        // tri 1
-        light, light, light,
-        light, light, light,
-        light, light, light,
-
-        // tri 2
-        light, light, light,
-        light, light, light,
-        light, light, light,
+    let color: [f32; 12] = [
+        light, light, light, // 0
+        light, light, light, // 1
+        light, light, light, // 2
+        light, light, light, // 3
     ];   
 
     // texture coordinates
 
-    let texture: [f32; 12] = [
-
-        // tri 1
-        0., 1.,
-        0., 0.,
-        1., 0.,
-
-        // tri 2
-        1., 1.,
-        0., 1.,
-        1., 0.
+    let texture: [f32; 8] = [        
+        0., 1., // 0
+        0., 0., // 1
+        1., 0., // 2
+        1., 1., // 3
     ];
 
     stripe(float_data, &pos, &color, &texture, float_count);
@@ -559,15 +441,15 @@ pub fn face_east(
     let mut index: [u32; 6] = [
         // tri 1
         0,1,2,
-
         // tri 2
-        3,4,5
+        2,3,0
     ];
 
     adjust_indices(&mut index, face_count);
     
     assign_indices(indices_data, &index, indices_count);
 }
+
 
 
 // the packed boilerplate to allow a single function call
@@ -597,7 +479,7 @@ pub fn add_block(
         z,
         light
     );
-
+    
     face_down(
         float_data,
         indices_data,
@@ -613,6 +495,7 @@ pub fn add_block(
     );
 
     
+    
     face_south(
         float_data,
         indices_data,
@@ -627,7 +510,6 @@ pub fn add_block(
         light
     );
 
-    
     face_north(
         float_data,
         indices_data,
@@ -657,6 +539,7 @@ pub fn add_block(
         light
     );
 
+    
     face_east(
         float_data,
         indices_data,
