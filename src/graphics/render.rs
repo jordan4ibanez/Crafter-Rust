@@ -40,8 +40,8 @@ impl Renderer {
     }
 
     pub fn clean_up(&mut self) {
-        self.shaders.iter_mut().for_each( | shader |{
-            shader.1.clean_up();
+        self.shaders.values().into_iter().for_each( | shader: &ShaderProgram | {
+            shader.clean_up();
         });
     }
 
