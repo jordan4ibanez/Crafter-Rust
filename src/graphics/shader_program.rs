@@ -16,6 +16,35 @@ pub struct ShaderProgram {
 // "class methods"
 impl ShaderProgram {
 
+    pub fn new(vertex_code_path: String, fragment_code_path: String) -> Self {
+
+        // we must create a mutable version of this object
+        let mut shader_program: Self = Self {
+            program_id: 0,
+            vertex_shader_id: 0,
+            fragment_shader_id: 0,
+            uniforms: HashMap::new(),
+        };
+    
+        unsafe {
+            shader_program.program_id = gl::CreateProgram();
+        }
+    
+        shader_program.uniforms = HashMap::new();
+    
+        let vertex_code: String = resource_loader::load_resource(vertex_code_path);
+    
+        shader_program.vertex_shader_id = shader_program.create_vertex_shader(vertex_code);
+    
+        let fragment_code: String = resource_loader::load_resource(fragment_code_path);
+    
+        shader_program.fragment_shader_id = shader_program.create_fragment_shader(fragment_code);
+    
+        shader_program.link();
+    
+        shader_program
+    }
+
     // this isn't in the original, it's just for me to test
     pub fn test(&self) {
         println!("----STARTING SHADER OBJECT TEST---");
@@ -192,34 +221,4 @@ impl ShaderProgram {
         // remove self from memory
         drop(self);
     }
-}
-
-// "class constructor"
-pub fn new(vertex_code_path: String, fragment_code_path: String) -> ShaderProgram {
-
-    // we must create a mutable version of this object
-    let mut shader_program: ShaderProgram = ShaderProgram {
-        program_id: 0,
-        vertex_shader_id: 0,
-        fragment_shader_id: 0,
-        uniforms: HashMap::new(),
-    };
-
-    unsafe {
-        shader_program.program_id = gl::CreateProgram();
-    }
-
-    shader_program.uniforms = HashMap::new();
-
-    let vertex_code: String = resource_loader::load_resource(vertex_code_path);
-
-    shader_program.vertex_shader_id = shader_program.create_vertex_shader(vertex_code);
-
-    let fragment_code: String = resource_loader::load_resource(fragment_code_path);
-
-    shader_program.fragment_shader_id = shader_program.create_fragment_shader(fragment_code);
-
-    shader_program.link();
-
-    shader_program
 }

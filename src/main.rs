@@ -112,7 +112,7 @@ fn main() {
 
     // construct the renderer
     let mut renderer: Renderer = render::new();
-    let mut default_shader: ShaderProgram = shader_program::new(
+    let mut default_shader: ShaderProgram = ShaderProgram::new(
         path.to_string() + "/shader_code/vertex_shader.vs",
         path.to_string() + "/shader_code/fragment_shader.fs"
     );
@@ -126,7 +126,7 @@ fn main() {
 
     let mut world: World = world::world::new();
 
-    const RENDER_DISTANCE: i32 = 20;
+    const RENDER_DISTANCE: i32 = 10;
 
     let mut debug_x = -RENDER_DISTANCE;
     let mut debug_y = -RENDER_DISTANCE;
