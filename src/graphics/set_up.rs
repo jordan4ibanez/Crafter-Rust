@@ -93,7 +93,7 @@ pub fn set_up_glfw(glfw: &mut Glfw, path: &str) -> (glfw::Window, Receiver<(f64,
     window.set_cursor_pos_polling(true);
 
     // enable adaptive vsync
-    glfw.set_swap_interval(glfw::SwapInterval::Adaptive);
+    glfw.set_swap_interval(glfw::SwapInterval::None);
 
     // load the opengl function pointers
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
