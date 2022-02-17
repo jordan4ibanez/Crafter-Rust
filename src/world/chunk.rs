@@ -17,6 +17,18 @@ pub struct Chunk {
 }
 
 impl Chunk {
+    pub fn new(x: i32, y: i32) -> Self {
+        Self {
+            key: x.to_string() + " " + &y.to_string(),
+            position: IVec2::new(x, y),
+            block: [0; 32768],
+            rotation: [0; 32768],
+            light: [0; 32768],
+            heightmap: [0; 256],
+            mesh: None
+        }
+    }
+
     pub fn get_pos(&self) -> IVec2 {
         self.position
     }
@@ -38,19 +50,6 @@ impl Chunk {
             Some(existing_mesh) => existing_mesh.clean_up(false),
             None => self.mesh = Some(mesh),
         }
-    }
-}
-
-
-pub fn new(x: i32, y: i32) -> Chunk {
-    Chunk {
-        key: x.to_string() + " " + &y.to_string(),
-        position: IVec2::new(x, y),
-        block: [0; 32768],
-        rotation: [0; 32768],
-        light: [0; 32768],
-        heightmap: [0; 256],
-        mesh: None
     }
 }
 

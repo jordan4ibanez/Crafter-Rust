@@ -141,7 +141,7 @@ fn main() {
 
         if continue_debug {
             
-            let generated_chunk: Chunk = world::chunk::new(debug_x, debug_y);
+            let generated_chunk: Chunk = Chunk::new(debug_x, debug_y);
             
             world.add(generated_chunk);
 
