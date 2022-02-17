@@ -109,15 +109,6 @@ pub fn create_chunk_mesh(chunk: &Chunk, texture: Texture) -> Mesh {
     // this part is EXTREMELY important, this allows all the vertex points to link together
     let mut face_count: u32 = 0;
 
-    let mut x_plus: bool = false;
-    let mut x_minus: bool = false;
-
-    let mut y_plus: bool = false;
-    let mut y_minus: bool = false;
-
-    let mut z_plus: bool = false;
-    let mut z_minus: bool = false;    
-
     for i in 0..32768 {
         if debug_array[i] != 0 {
 
@@ -125,14 +116,14 @@ pub fn create_chunk_mesh(chunk: &Chunk, texture: Texture) -> Mesh {
 
             let (x,y,z) = mini_index_to_pos(i as u16);
             
-            x_plus = x + 1 <= 15 && debug_array[mini_pos_to_index(x + 1, y, z) as usize] == 0;
-            x_minus = x - 1 >= 0 && debug_array[mini_pos_to_index(x - 1, y, z) as usize] == 0;
+            let x_plus = x + 1 <= 15 && debug_array[mini_pos_to_index(x + 1, y, z) as usize] == 0;
+            let x_minus = x - 1 >= 0 && debug_array[mini_pos_to_index(x - 1, y, z) as usize] == 0;
 
-            y_plus = y == 127 || (y < 127 && debug_array[mini_pos_to_index(x, y + 1, z) as usize] == 0);
-            y_minus = y - 1 >= 0 && debug_array[mini_pos_to_index(x, y - 1, z) as usize] == 0;
+            let y_plus = y == 127 || (y < 127 && debug_array[mini_pos_to_index(x, y + 1, z) as usize] == 0);
+            let y_minus = y - 1 >= 0 && debug_array[mini_pos_to_index(x, y - 1, z) as usize] == 0;
 
-            z_plus = z + 1 <= 15 && debug_array[mini_pos_to_index(x, y, z + 1) as usize] == 0;
-            z_minus = z - 1 >= 0 && debug_array[mini_pos_to_index(x, y, z - 1) as usize] == 0;
+            let z_plus = z + 1 <= 15 && debug_array[mini_pos_to_index(x, y, z + 1) as usize] == 0;
+            let z_minus = z - 1 >= 0 && debug_array[mini_pos_to_index(x, y, z - 1) as usize] == 0;
 
             if x_plus || x_minus || y_plus || y_minus || z_plus || z_minus {
                 add_block(
