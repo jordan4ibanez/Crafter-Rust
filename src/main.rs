@@ -9,9 +9,7 @@ mod world;
 use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
-use rand::{
-    thread_rng, prelude::ThreadRng
-};
+use noise::Perlin;
 
 use std::{
     sync::mpsc::Receiver
@@ -20,42 +18,31 @@ use std::{
 use crate::{
     graphics::{
         shader_program::{
-            ShaderProgram,
-            self
+            ShaderProgram
         },
         texture::{
-            self, Texture
+            Texture
         },
         mesh::{
             *
         },
-        transformation::{
-            self
-        }, 
-        camera::{
-            self,
-            Camera
-        },
-        gl_safety_wrappers,
         window_variables::{
-            *, self
-        }, render::{self, Renderer}
+            *
+        }, render::{Renderer}
     },
 
     controls::{
         mouse::{
-            self,
             Mouse
         },
         keyboard::{
-            self,
             Keyboard
         }
     },
 
     time::{
         time_object::{
-            self, Time
+            Time
         }
     },
     game_debug::chunk_mesh_creation,
@@ -94,8 +81,7 @@ fn main() {
     // testing of 3D camera
     window.set_cursor_mode(glfw::CursorMode::Disabled);
 
-    // a random number generator for debug
-    let mut randy: ThreadRng = thread_rng();
+    let mut noise: Perlin = noise::Perlin::new();
 
     // fps counter object
     let mut time_object: Time = Time::new(&glfw);
@@ -126,7 +112,7 @@ fn main() {
 
     let mut world: World = World::new();
 
-    const RENDER_DISTANCE: i32 = 6;
+    const RENDER_DISTANCE: i32 = 7;
 
     let mut debug_x = -RENDER_DISTANCE;
     let mut debug_y = -RENDER_DISTANCE;
@@ -145,7 +131,7 @@ fn main() {
             
             world.add(generated_chunk);
 
-            let mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(Texture::clone(&debug_texture), &mut randy);
+            let mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(Texture::clone(&debug_texture));
 
             world.get_chunk_mut(debug_x.to_string() + " " + &debug_y.to_string()).set_mesh(mesh);
 
