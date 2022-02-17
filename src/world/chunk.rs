@@ -33,6 +33,14 @@ impl Chunk {
         self.position
     }
 
+    pub fn get_block_aray_mut(&mut self) -> &mut [u32; 32768] {
+        &mut self.block
+    }
+
+    pub fn get_block_aray(&self) -> &[u32; 32768] {
+        &self.block
+    }
+
     pub fn get_key(&self) -> String {
         self.key.clone()
     }
