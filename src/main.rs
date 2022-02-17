@@ -55,7 +55,7 @@ use crate::{
 
     time::{
         time_object::{
-            self
+            self, Time
         }
     },
     game_debug::chunk_mesh_creation,
@@ -98,7 +98,7 @@ fn main() {
     let mut randy: ThreadRng = thread_rng();
 
     // fps counter object
-    let mut time_object = time_object::new(&glfw);
+    let mut time_object: Time = Time::new(&glfw);
 
     // window title - reused pointer
     let mut window_title: String = String::new();

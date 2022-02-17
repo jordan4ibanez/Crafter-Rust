@@ -13,6 +13,22 @@ pub struct Time {
 }
 
 impl Time {
+
+    pub fn new(glfw: &glfw::Glfw) -> Self {
+        let current_time = glfw.get_time();
+        Self {
+            // timer fields
+            previous_time: current_time,
+            current_time,
+            frame_count: 0,
+            reset: false,
+    
+            // delta fields
+            previous_delta: current_time,
+            current_delta: current_time
+        }
+    }
+
     pub fn count_fps(&mut self, glfw: &glfw::Glfw) -> bool {
 
         if self.reset {
@@ -48,20 +64,5 @@ impl Time {
 
     pub fn get_fps(&self) -> i32 {
         self.frame_count
-    }
-}
-
-pub fn new(glfw: &glfw::Glfw) -> Time {
-    let current_time = glfw.get_time();
-    Time {
-        // timer fields
-        previous_time: current_time,
-        current_time,
-        frame_count: 0,
-        reset: false,
-
-        // delta fields
-        previous_delta: current_time,
-        current_delta: current_time
     }
 }
