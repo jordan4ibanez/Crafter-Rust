@@ -63,12 +63,12 @@ impl Renderer {
         let mut batch_hook = false;
 
         for chunk in world.iter_map() {
-            match chunk.1.get_mesh(){
+            match chunk.get_mesh(){
                 Some(mesh) => {
                     default_shader.set_uniform_mat4(
                         "modelViewMatrix".to_string(), 
                         self.transformation.update_model_matrix(
-                            Vec3::new(*&chunk.1.get_pos().x as f32 * 16.0,0.0, *&chunk.1.get_pos().y as f32 * 16.0), 
+                            Vec3::new(*&chunk.get_pos().x as f32 * 16.0,0.0, *&chunk.get_pos().y as f32 * 16.0), 
                             Vec3::new(0.0, 0.0, 0.0)
                         )
                     );

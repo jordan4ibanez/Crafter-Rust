@@ -1,6 +1,6 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, hash_map::Values};
 
-use super::chunk::Chunk;
+use super::chunk::{Chunk, self};
 
 pub struct World {
     map: HashMap<String, Chunk>
@@ -37,8 +37,8 @@ impl World {
     }
     
     // returns a map iterator
-    pub fn iter_map(&self) -> std::collections::hash_map::Iter<String, Chunk> {
-        self.map.iter()
+    pub fn iter_map(&self) -> Values<'_, String, chunk::Chunk> {
+        self.map.values().into_iter()
     }
 
     // removes a chunk from the world
