@@ -2,8 +2,7 @@ use rand::{prelude::ThreadRng, Rng};
 
 use crate::{graphics::{
     mesh::{
-        Mesh,
-        self
+        Mesh
     },
     texture::{
         Texture
@@ -27,15 +26,15 @@ pub fn index_to_pos ( i: &u16 ) -> (f32,f32,f32) {
 
     let mut index :u16 = i.clone();
 
-    let x: u8 = (index / 2048).try_into().unwrap();
+    let x: f32 = (index / 2048) as f32;
 
     index = index % 2048;
 
-    let z: u8 = (index / 128).try_into().unwrap();
+    let z: f32 = (index / 128) as f32;
 
     index = index % 128;
 
-    let y: u8 = index.try_into().unwrap();
+    let y: f32 = index as f32;
 
     (x as f32, y as f32, z as f32)
 
@@ -54,7 +53,7 @@ pub fn create_chunk_mesh(texture: Texture, randy: &mut ThreadRng) -> Mesh {
 
     for i in 0..32768 {
 
-        debug_array[i] = randy.gen::<f32>() > 0.9;
+        debug_array[i] = randy.gen::<f32>() > 0.0;
 
         if debug_array[i] {
             for _ in 0..6 {
