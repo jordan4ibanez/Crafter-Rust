@@ -13,6 +13,19 @@ pub struct Keyboard {
 
 // only getters for keyboard right now except polling
 impl Keyboard {
+
+    pub fn new() -> Self {
+        Self {
+            forward: false,
+            backward: false,
+            left: false,
+            right: false,
+            jump: false,
+            sneak: false,
+        }
+    }
+
+
     pub fn get_forward(&self) -> bool {
         self.forward
     }
@@ -69,16 +82,5 @@ impl Keyboard {
 
             _ => ()
         }
-    }
-}
-
-pub fn new() -> Keyboard {
-    Keyboard {
-        forward: false,
-        backward: false,
-        left: false,
-        right: false,
-        jump: false,
-        sneak: false,
     }
 }
