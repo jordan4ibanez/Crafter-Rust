@@ -12,18 +12,18 @@ intake rotation and pass back texture coordinates for up and down
 intake size and generate positions with a function
 
 
+information
+
+the function stripe() is an interlacing function. In openGL this is called interlacing vertex data.
+it is called stripe because it is easier to type, simpler to read, and easier to understand that it's striping data.
+
+this is extremely similar to RAID-0 with hard drive/ssd technology
+
+
 */
 
 
 // generic functions to reduce boilerplate
-
-// pushes the array slice into vector
-fn assign<T: Copy> (vector: &mut Vec<T>, array: &[T], current_count: &mut u32) {
-    array.iter().for_each( | value: &T | {
-        vector[*current_count as usize] = *value;
-        *current_count += 1;
-    });
-}
 
 // pushes the adjusted xyz into the vertex data
 fn set_pos(pos: &mut [f32], x: f32, y: f32, z: f32) {
@@ -57,26 +57,56 @@ fn adjust_indices(index: &mut [u32], face_count: &mut u32) {
     *face_count += 6;
 }
 
-// a precalculator for capacity information
-pub fn dry_run(pos_count: &mut u32, indice_count: &mut u32, texture_coord_count: &mut u32, colors_count: &mut u32) {
-    *pos_count += 18;
-    *indice_count += 6;
-    *texture_coord_count += 12;
-    *colors_count += 18;
+// pushes the array slice into vector
+fn assign_indices(vector: &mut Vec<u32>, array: &[u32], current_count: &mut u32) {
+    array.iter().for_each( | value: &u32 | {
+        vector[*current_count as usize] = *value;
+        *current_count += 1;
+    });
 }
 
 
+// a precalculator for capacity information
+pub fn dry_run(float_count: &mut u32, indices_count: &mut u32) {
+    *float_count += 18; // pos
+    *float_count += 18; // color
+    *float_count += 12; // texture
+
+    *indices_count += 6;
+}
+
+// this interlaces the mesh data for the gpu
+fn stripe(float_data: &mut Vec<f32>, pos: &[f32], color: &[f32], texture: &[f32], float_count: &mut u32) {
+
+    for index in 0..6 {
+
+        // pos
+        for i in 0..3 {
+            float_data[*float_count as usize] = pos[(index * 3) + i];
+            *float_count += 1;
+        }
+
+        // color
+        for i in 0..3 {
+            float_data[*float_count as usize] = color[(index * 3) + i];
+            *float_count += 1;
+        }
+
+        // texture
+        for i in 0..2 {
+            float_data[*float_count as usize] = texture[(index * 2) + i];
+            *float_count += 1;
+        }
+    }
+}
+
 
 pub fn face_up(
-    positions: &mut Vec<f32>,
-    indices: &mut Vec<u32>,
-    texture_coordinates: &mut Vec<f32>,
-    colors: &mut Vec<f32>,
+    float_data: &mut Vec<f32>,
+    indices_data: &mut Vec<u32>,
 
-    pos_count: &mut u32,
-    indice_count: &mut u32,
-    texture_count: &mut u32,
-    color_count: &mut u32,
+    float_count: &mut u32,
+    indices_count: &mut u32,
     face_count: &mut u32,
 
     x: f32,
@@ -84,6 +114,8 @@ pub fn face_up(
     z: f32,
     light: f32
 ) {
+
+    // first assign all float data
 
     // vertex data
 
@@ -99,24 +131,21 @@ pub fn face_up(
         0., 1., 0.,
         1., 1., 1.
     ];
-
     set_pos(&mut pos, x, y, z);
 
-    assign(positions, &pos, pos_count);
+    // light/color data
+    let color: [f32; 18] = [
 
-    // index (face/indices) data
-
-    let mut index: [u32; 6] = [
         // tri 1
-        0,1,2,
+        light, light, light,
+        light, light, light,
+        light, light, light,
 
         // tri 2
-        3,4,5
+        light, light, light,
+        light, light, light,
+        light, light, light,
     ];
-
-    adjust_indices(&mut index, face_count);
-    
-    assign(indices, &index, indice_count);
 
     // texture coordinates
 
@@ -133,41 +162,36 @@ pub fn face_up(
         1., 1.
     ];
 
-    assign(texture_coordinates, &texture, texture_count);
+    stripe(float_data, &pos, &color, &texture, float_count);
 
 
+    // finally assign vertices data
 
-    // light/color data
-    // TODO: intake as a parameter
-    let color: [f32; 18] = [
+    // index (face/indices) data
 
+    let mut index: [u32; 6] = [
         // tri 1
-        light, light, light,
-        light, light, light,
-        light, light, light,
+        0,1,2,
 
         // tri 2
-        light, light, light,
-        light, light, light,
-        light, light, light,
+        3,4,5
     ];
-
-    assign(colors, &color, color_count);
+    adjust_indices(&mut index, face_count);
+    
+    assign_indices(indices_data, &index, indices_count);
 }
 
 
 
 
-pub fn face_down(
-    positions: &mut Vec<f32>,
-    indices: &mut Vec<u32>,
-    texture_coordinates: &mut Vec<f32>,
-    colors: &mut Vec<f32>,
 
-    pos_count: &mut u32,
-    indice_count: &mut u32,
-    texture_count: &mut u32,
-    color_count: &mut u32,
+
+pub fn face_down(
+    float_data: &mut Vec<f32>,
+    indices_data: &mut Vec<u32>,
+
+    float_count: &mut u32,
+    indices_count: &mut u32,
     face_count: &mut u32,
 
     x: f32,
@@ -190,29 +214,23 @@ pub fn face_down(
             0., 0., 1.,
             1., 0., 0.
         ];
+        set_pos(&mut pos, x, y, z);        
+
+        // light/color data
+        let color: [f32; 18] = [
     
-        set_pos(&mut pos, x, y, z);
-    
-        assign(positions, &pos, pos_count);
-    
-    
-        // index (face/indices) data
-    
-        let mut index: [u32; 6] = [
             // tri 1
-            0,1,2,
-    
+            light, light, light,
+            light, light, light,
+            light, light, light,
+
             // tri 2
-            3,4,5
+            light, light, light,
+            light, light, light,
+            light, light, light,
         ];
-    
-        adjust_indices(&mut index, face_count);
-        
-        assign(indices, &index, indice_count);
-    
-    
+
         // texture coordinates
-    
         let texture: [f32; 12] = [
     
             // tri 1
@@ -226,41 +244,29 @@ pub fn face_down(
             1., 0.
         ];
     
-        assign(texture_coordinates, &texture, texture_count);
-    
-    
-    
-        // light/color data
-        // TODO: intake as a parameter
-        let color: [f32; 18] = [
-    
-            // tri 1
-            light, light, light,
-            light, light, light,
-            light, light, light,
+        stripe(float_data, &pos, &color, &texture, float_count);
 
-            // tri 2
-            light, light, light,
-            light, light, light,
-            light, light, light,
-        ];
+
+        // index (face/indices) data
     
-        assign(colors, &color, color_count);
+        let mut index: [u32; 6] = [
+            // tri 1
+            0,1,2,
+    
+            // tri 2
+            3,4,5
+        ];
+        adjust_indices(&mut index, face_count);
+
+        assign_indices(indices_data, &index, indices_count);
 }
 
-
-
-
 pub fn face_south(
-    positions: &mut Vec<f32>,
-    indices: &mut Vec<u32>,
-    texture_coordinates: &mut Vec<f32>,
-    colors: &mut Vec<f32>,
+    float_data: &mut Vec<f32>,
+    indices_data: &mut Vec<u32>,
 
-    pos_count: &mut u32,
-    indice_count: &mut u32,
-    texture_count: &mut u32,
-    color_count: &mut u32,
+    float_count: &mut u32,
+    indices_count: &mut u32,
     face_count: &mut u32,
 
     x: f32,
@@ -283,10 +289,37 @@ pub fn face_south(
         0., 1., 1.,
         1., 0., 1.
     ];
-
     set_pos(&mut pos, x, y, z);
 
-    assign(positions, &pos, pos_count);
+    // light/color data
+    let color: [f32; 18] = [
+
+        // tri 1
+        light, light, light,
+        light, light, light,
+        light, light, light,
+
+        // tri 2
+        light, light, light,
+        light, light, light,
+        light, light, light,
+    ];
+
+    // texture coordinates
+    let texture: [f32; 12] = [
+
+        // tri 1
+        0., 1.,
+        0., 0.,
+        1., 0.,
+
+        // tri 2
+        1., 1.,
+        0., 1.,
+        1., 0.
+    ];
+
+    stripe(float_data, &pos, &color, &texture, float_count);
 
 
     // index (face/indices) data
@@ -301,59 +334,16 @@ pub fn face_south(
 
     adjust_indices(&mut index, face_count);
     
-    assign(indices, &index, indice_count);
-
-
-    // texture coordinates
-
-    let texture: [f32; 12] = [
-
-        // tri 1
-        0., 1.,
-        0., 0.,
-        1., 0.,
-
-        // tri 2
-        1., 1.,
-        0., 1.,
-        1., 0.
-    ];
-
-    assign(texture_coordinates, &texture, texture_count);
-
-
-
-    // light/color data
-    // TODO: intake as a parameter
-    let color: [f32; 18] = [
-
-        // tri 1
-        light, light, light,
-        light, light, light,
-        light, light, light,
-
-        // tri 2
-        light, light, light,
-        light, light, light,
-        light, light, light,
-    ];
-
-    assign(colors, &color, color_count);
+    assign_indices(indices_data, &index, indices_count);
 }
 
 
-
-
 pub fn face_north(
-    positions: &mut Vec<f32>,
-    indices: &mut Vec<u32>,
-    texture_coordinates: &mut Vec<f32>,
-    colors: &mut Vec<f32>,
+    float_data: &mut Vec<f32>,
+    indices_data: &mut Vec<u32>,
 
-    pos_count: &mut u32,
-    indice_count: &mut u32,
-    texture_count: &mut u32,
-    color_count: &mut u32,
+    float_count: &mut u32,
+    indices_count: &mut u32,
     face_count: &mut u32,
 
     x: f32,
@@ -376,26 +366,21 @@ pub fn face_north(
         0., 0., 0.,
         1., 1., 0.
     ];
-
     set_pos(&mut pos, x, y, z);
 
-    assign(positions, &pos, pos_count);
+    // light/color data
+    let color: [f32; 18] = [
 
-
-    // index (face/indices) data
-
-    let mut index: [u32; 6] = [
         // tri 1
-        0,1,2,
+        light, light, light,
+        light, light, light,
+        light, light, light,
 
         // tri 2
-        3,4,5
+        light, light, light,
+        light, light, light,
+        light, light, light,
     ];
-
-    adjust_indices(&mut index, face_count);
-    
-    assign(indices, &index, indice_count);
-
 
     // texture coordinates
 
@@ -412,41 +397,29 @@ pub fn face_north(
         1., 1.
     ];
 
-    assign(texture_coordinates, &texture, texture_count);
+    stripe(float_data, &pos, &color, &texture, float_count);
 
 
+    // index (face/indices) data
 
-    // light/color data
-    // TODO: intake as a parameter
-    let color: [f32; 18] = [
-
+    let mut index: [u32; 6] = [
         // tri 1
-        light, light, light,
-        light, light, light,
-        light, light, light,
+        0,1,2,
 
         // tri 2
-        light, light, light,
-        light, light, light,
-        light, light, light,
+        3,4,5
     ];
-
-    assign(colors, &color, color_count);
+    adjust_indices(&mut index, face_count);
+    
+    assign_indices(indices_data, &index, indices_count);    
 }
 
-
-
-
 pub fn face_west(
-    positions: &mut Vec<f32>,
-    indices: &mut Vec<u32>,
-    texture_coordinates: &mut Vec<f32>,
-    colors: &mut Vec<f32>,
+    float_data: &mut Vec<f32>,
+    indices_data: &mut Vec<u32>,
 
-    pos_count: &mut u32,
-    indice_count: &mut u32,
-    texture_count: &mut u32,
-    color_count: &mut u32,
+    float_count: &mut u32,
+    indices_count: &mut u32,
     face_count: &mut u32,
 
     x: f32,
@@ -469,26 +442,21 @@ pub fn face_west(
         1., 0., 1.,
         1., 1., 0.
     ];
-
     set_pos(&mut pos, x, y, z);
 
-    assign(positions, &pos, pos_count);
+    // light/color data
+    let color: [f32; 18] = [
 
-
-    // index (face/indices) data
-
-    let mut index: [u32; 6] = [
         // tri 1
-        0,1,2,
+        light, light, light,
+        light, light, light,
+        light, light, light,
 
         // tri 2
-        3,4,5
+        light, light, light,
+        light, light, light,
+        light, light, light,
     ];
-
-    adjust_indices(&mut index, face_count);
-    
-    assign(indices, &index, indice_count);
-
 
     // texture coordinates
 
@@ -505,41 +473,31 @@ pub fn face_west(
         1., 1.
     ];
 
-    assign(texture_coordinates, &texture, texture_count);
+    stripe(float_data, &pos, &color, &texture, float_count);
 
 
+    // index (face/indices) data
 
-    // light/color data
-    // TODO: intake as a parameter
-    let color: [f32; 18] = [
-
+    let mut index: [u32; 6] = [
         // tri 1
-        light, light, light,
-        light, light, light,
-        light, light, light,
+        0,1,2,
 
         // tri 2
-        light, light, light,
-        light, light, light,
-        light, light, light,
+        3,4,5
     ];
 
-    assign(colors, &color, color_count);
+    adjust_indices(&mut index, face_count);
+
+    assign_indices(indices_data, &index, indices_count);
 }
 
 
-
-
 pub fn face_east(
-    positions: &mut Vec<f32>,
-    indices: &mut Vec<u32>,
-    texture_coordinates: &mut Vec<f32>,
-    colors: &mut Vec<f32>,
+    float_data: &mut Vec<f32>,
+    indices_data: &mut Vec<u32>,
 
-    pos_count: &mut u32,
-    indice_count: &mut u32,
-    texture_count: &mut u32,
-    color_count: &mut u32,
+    float_count: &mut u32,
+    indices_count: &mut u32,
     face_count: &mut u32,
 
     x: f32,
@@ -562,26 +520,22 @@ pub fn face_east(
         0., 0., 0.,
         0., 1., 1.
     ];
-
     set_pos(&mut pos, x, y, z);
 
-    assign(positions, &pos, pos_count);
+    // light/color data
+    
+    let color: [f32; 18] = [
 
-
-    // index (face/indices) data
-
-    let mut index: [u32; 6] = [
         // tri 1
-        0,1,2,
+        light, light, light,
+        light, light, light,
+        light, light, light,
 
         // tri 2
-        3,4,5
-    ];
-
-    adjust_indices(&mut index, face_count);
-    
-    assign(indices, &index, indice_count);
-
+        light, light, light,
+        light, light, light,
+        light, light, light,
+    ];   
 
     // texture coordinates
 
@@ -598,50 +552,32 @@ pub fn face_east(
         1., 0.
     ];
 
-    assign(texture_coordinates, &texture, texture_count);
+    stripe(float_data, &pos, &color, &texture, float_count);
 
+    // index (face/indices) data
 
-
-    // light/color data
-    // TODO: intake as a parameter
-    let color: [f32; 18] = [
-
+    let mut index: [u32; 6] = [
         // tri 1
-        light, light, light,
-        light, light, light,
-        light, light, light,
+        0,1,2,
 
         // tri 2
-        light, light, light,
-        light, light, light,
-        light, light, light,
+        3,4,5
     ];
 
-    assign(colors, &color, color_count);
+    adjust_indices(&mut index, face_count);
+    
+    assign_indices(indices_data, &index, indices_count);
 }
-
-
-
-
-
-
-
-
-
 
 
 // the packed boilerplate to allow a single function call
 pub fn add_block(
-    positions: &mut Vec<f32>,
-    indices: &mut Vec<u32>,
-    texture_coordinates: &mut Vec<f32>,
-    colors: &mut Vec<f32>,
-
-    pos_count: &mut u32,
-    indice_count: &mut u32,
-    texture_count: &mut u32,
-    color_count: &mut u32,
+    float_data: &mut Vec<f32>,
+    indices_data: &mut Vec<u32>,
+    
+    float_count: &mut u32,
     face_count: &mut u32,
+    indices_count: &mut u32,
 
     x: f32,
     y: f32,
@@ -649,15 +585,11 @@ pub fn add_block(
     light: f32
 ) {
     face_up(
-        positions,
-        indices,
-        texture_coordinates,
-        colors,
+        float_data,
+        indices_data,
 
-        pos_count,
-        indice_count,
-        texture_count,
-        color_count,
+        float_count,
+        indices_count,
         face_count,
 
         x,
@@ -667,15 +599,11 @@ pub fn add_block(
     );
 
     face_down(
-        positions,
-        indices,
-        texture_coordinates,
-        colors,
+        float_data,
+        indices_data,
 
-        pos_count,
-        indice_count,
-        texture_count,
-        color_count,
+        float_count,
+        indices_count,
         face_count,
 
         x,
@@ -684,16 +612,13 @@ pub fn add_block(
         light
     );
 
+    
     face_south(
-        positions,
-        indices,
-        texture_coordinates,
-        colors,
+        float_data,
+        indices_data,
 
-        pos_count,
-        indice_count,
-        texture_count,
-        color_count,
+        float_count,
+        indices_count,
         face_count,
 
         x,
@@ -702,17 +627,13 @@ pub fn add_block(
         light
     );
 
-
+    
     face_north(
-        positions,
-        indices,
-        texture_coordinates,
-        colors,
+        float_data,
+        indices_data,
 
-        pos_count,
-        indice_count,
-        texture_count,
-        color_count,
+        float_count,
+        indices_count,
         face_count,
 
         x,
@@ -721,17 +642,13 @@ pub fn add_block(
         light
     );
 
-
+    
     face_west(
-        positions,
-        indices,
-        texture_coordinates,
-        colors,
+        float_data,
+        indices_data,
 
-        pos_count,
-        indice_count,
-        texture_count,
-        color_count,
+        float_count,
+        indices_count,
         face_count,
 
         x,
@@ -739,18 +656,13 @@ pub fn add_block(
         z,
         light
     );
-
 
     face_east(
-        positions,
-        indices,
-        texture_coordinates,
-        colors,
+        float_data,
+        indices_data,
 
-        pos_count,
-        indice_count,
-        texture_count,
-        color_count,
+        float_count,
+        indices_count,
         face_count,
 
         x,
