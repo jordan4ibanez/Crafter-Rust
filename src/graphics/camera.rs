@@ -129,7 +129,7 @@ impl Camera {
 
 pub fn new() -> Camera {
     Camera {
-        position: Vec3::new(0.0, 0.0,0.0),
+        position: Vec3::new(0.0, 129.0,0.0),
         rotation: Vec3::new(0.0, 0.0,0.0),
         rotation_vector: Vec3::new(0.0, 0.0,0.0),
         fov: 60.0,
