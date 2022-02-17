@@ -5,7 +5,7 @@ use glfw::Window;
 
 use crate::{world::world::World};
 
-use super::{gl_safety_wrappers, shader_program::{ShaderProgram}, transformation::{Transformation, self}, camera::{Camera, self}};
+use super::{gl_safety_wrappers, shader_program::{ShaderProgram}, transformation::{Transformation}, camera::{Camera}};
 
 pub struct Renderer {
     shaders: HashMap<String, ShaderProgram>,
