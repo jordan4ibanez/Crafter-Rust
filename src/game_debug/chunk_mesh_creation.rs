@@ -20,24 +20,40 @@ this_texture
 */
 
 // Convertes u16 1D position into (u8,u8,u8) 3D tuple position
-pub fn index_to_pos ( i: &u16 ) -> (f32,f32,f32) {
-
+fn index_to_pos ( i: &u16 ) -> (i32,i32,i32) {
     let mut index :u16 = i.clone();
-
-    let x: f32 = (index / 2048) as f32;
-
+    let x: i32 = (index / 2048) as i32;
     index = index % 2048;
-
-    let z: f32 = (index / 128) as f32;
-
+    let z: i32 = (index / 128) as i32;
     index = index % 128;
-
-    let y: f32 = index as f32;
-
-    (x as f32, y as f32, z as f32)
-
+    let y: i32 = index as i32;
+    (x, y, z)
 }
 
+fn mini_index_to_pos(i: u16) -> (i8,i8,i8) {
+    let mut index :u16 = i.clone();
+    let x: i8 = (index / 2048) as i8;
+    index = index % 2048;
+    let z: i8 = (index / 128) as i8;
+    index = index % 128;
+    let y: i8 = index as i8;
+    (x, y, z)
+}
+
+// Converts x,y,z (u8) 3D position into u16 1D position.
+pub fn pos_to_index ( x: u8, y: u8, z: u8 ) -> u16 {
+    let x_wide: u16 = x.clone().into();
+    let y_wide: u16 = y.clone().into();
+    let z_wide: u16 = z.clone().into();
+    (x_wide * 2048) + (z_wide * 128) + y_wide
+}
+
+pub fn mini_pos_to_index ( x: i8, y: i8, z: i8 ) -> u16 {
+    let x_wide: u16 = x as u16;
+    let y_wide: u16 = y as u16;
+    let z_wide: u16 = z as u16;
+    (x_wide * 2048) + (z_wide * 128) + y_wide
+}
 
 
 pub fn create_chunk_mesh(chunk: &Chunk, texture: Texture) -> Mesh {      
@@ -47,11 +63,30 @@ pub fn create_chunk_mesh(chunk: &Chunk, texture: Texture) -> Mesh {
     let mut float_count: u32 = 0;
     let mut indices_count: u32 = 0;
 
-    let mut debug_array: [u32; 32768] = *chunk.get_block_aray();
+    let debug_array: &[u32; 32768] = chunk.get_block_aray();
 
     for i in 0..32768 {
         if debug_array[i] != 0 {
-            for _ in 0..6 {
+            let (x,y,z) = mini_index_to_pos(i as u16);
+            
+            if x + 1 <= 15 && debug_array[mini_pos_to_index(x + 1, y, z) as usize] == 0 {
+                dry_run(&mut float_count, &mut indices_count)
+            }
+            if x - 1 >= 0 && debug_array[mini_pos_to_index(x - 1, y, z) as usize] == 0 {
+                dry_run(&mut float_count, &mut indices_count)
+            }
+
+            if y == 127 || (y < 127 && debug_array[mini_pos_to_index(x, y + 1, z) as usize] == 0) {
+                dry_run(&mut float_count, &mut indices_count)
+            }
+            if y - 1 >= 0 && debug_array[mini_pos_to_index(x, y - 1, z) as usize] == 0 {
+                dry_run(&mut float_count, &mut indices_count)
+            }
+
+            if z + 1 <= 15 && debug_array[mini_pos_to_index(x, y, z + 1) as usize] == 0 {
+                dry_run(&mut float_count, &mut indices_count)
+            }
+            if z - 1 >= 0 && debug_array[mini_pos_to_index(x, y, z - 1) as usize] == 0 {
                 dry_run(&mut float_count, &mut indices_count)
             }
         }
@@ -74,27 +109,53 @@ pub fn create_chunk_mesh(chunk: &Chunk, texture: Texture) -> Mesh {
     // this part is EXTREMELY important, this allows all the vertex points to link together
     let mut face_count: u32 = 0;
 
+    let mut x_plus: bool = false;
+    let mut x_minus: bool = false;
+
+    let mut y_plus: bool = false;
+    let mut y_minus: bool = false;
+
+    let mut z_plus: bool = false;
+    let mut z_minus: bool = false;    
+
     for i in 0..32768 {
-
         if debug_array[i] != 0 {
-
-            let (x,y,z) = index_to_pos(&(i as u16) as &u16);
 
             let light = 1.0;
 
-            add_block(
-                &mut float_data,
-                &mut indices_data,
+            let (x,y,z) = mini_index_to_pos(i as u16);
+            
+            x_plus = x + 1 <= 15 && debug_array[mini_pos_to_index(x + 1, y, z) as usize] == 0;
+            x_minus = x - 1 >= 0 && debug_array[mini_pos_to_index(x - 1, y, z) as usize] == 0;
 
-                &mut float_count,
-                &mut face_count,
-                &mut indices_count,
-        
-                x,
-                y,
-                z,
-                light
-            );
+            y_plus = y == 127 || (y < 127 && debug_array[mini_pos_to_index(x, y + 1, z) as usize] == 0);
+            y_minus = y - 1 >= 0 && debug_array[mini_pos_to_index(x, y - 1, z) as usize] == 0;
+
+            z_plus = z + 1 <= 15 && debug_array[mini_pos_to_index(x, y, z + 1) as usize] == 0;
+            z_minus = z - 1 >= 0 && debug_array[mini_pos_to_index(x, y, z - 1) as usize] == 0;
+
+            if x_plus || x_minus || y_plus || y_minus || z_plus || z_minus {
+                add_block(
+                    &mut float_data,
+                    &mut indices_data,
+
+                    &mut float_count,
+                    &mut face_count,
+                    &mut indices_count,
+
+                    x_plus,
+                    x_minus,
+                    y_plus,
+                    y_minus,
+                    z_plus,
+                    z_minus,
+            
+                    x as f32,
+                    y as f32,
+                    z as f32,
+                    light
+                );
+            }
 
         }
     }

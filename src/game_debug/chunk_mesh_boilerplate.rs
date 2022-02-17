@@ -461,96 +461,126 @@ pub fn add_block(
     face_count: &mut u32,
     indices_count: &mut u32,
 
+    x_plus: bool,
+    x_minus: bool,
+    y_plus: bool,
+    y_minus: bool,
+    z_plus: bool,
+    z_minus: bool,
+
     x: f32,
     y: f32,
     z: f32,
     light: f32
 ) {
-    face_up(
-        float_data,
-        indices_data,
 
-        float_count,
-        indices_count,
-        face_count,
+    if y_plus {
+        face_up(
+            float_data,
+            indices_data,
 
-        x,
-        y,
-        z,
-        light
-    );
+            float_count,
+            indices_count,
+            face_count,
+
+            x,
+            y,
+            z,
+            light
+        );
+    }
     
-    face_down(
-        float_data,
-        indices_data,
+    if y_minus {
+        face_down(
+            float_data,
+            indices_data,
 
-        float_count,
-        indices_count,
-        face_count,
+            float_count,
+            indices_count,
+            face_count,
 
-        x,
-        y,
-        z,
-        light
-    );
-
+            x,
+            y,
+            z,
+            light
+        );
+    }
     
     
-    face_south(
-        float_data,
-        indices_data,
+    if z_plus {
+        face_south(
+            float_data,
+            indices_data,
 
-        float_count,
-        indices_count,
-        face_count,
+            float_count,
+            indices_count,
+            face_count,
 
-        x,
-        y,
-        z,
-        light
-    );
+            x,
+            y,
+            z,
+            light
+        );
+    }
 
-    face_north(
-        float_data,
-        indices_data,
+    if z_minus {
+        face_north(
+            float_data,
+            indices_data,
 
-        float_count,
-        indices_count,
-        face_count,
+            float_count,
+            indices_count,
+            face_count,
 
-        x,
-        y,
-        z,
-        light
-    );
+            x,
+            y,
+            z,
+            light
+        );
+    }
 
+    /*
     
-    face_west(
-        float_data,
-        indices_data,
+    +z = south
+    -z = north
 
-        float_count,
-        indices_count,
-        face_count,
+    +y = up
+    -y = down
 
-        x,
-        y,
-        z,
-        light
-    );
+    +x = west
+    -x = east
 
+    */
+
+    if x_plus {
+        face_west(
+            float_data,
+            indices_data,
+
+            float_count,
+            indices_count,
+            face_count,
+
+            x,
+            y,
+            z,
+            light
+        );
+    }
     
-    face_east(
-        float_data,
-        indices_data,
+    if x_minus {
+        face_east(
+            float_data,
+            indices_data,
 
-        float_count,
-        indices_count,
-        face_count,
+            float_count,
+            indices_count,
+            face_count,
 
-        x,
-        y,
-        z,
-        light
-    );
+            x,
+            y,
+            z,
+            light
+        );
+    }
 }
