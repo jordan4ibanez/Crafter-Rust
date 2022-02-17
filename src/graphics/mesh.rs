@@ -6,32 +6,42 @@ use std::{
 
 use gl::types::{
     GLfloat,
-    GLsizeiptr
+    GLsizeiptr, GLsizei
 };
 
 use super::texture::Texture;
 
-// OOP in rust, don't yell at me plz
 pub struct Mesh {
-    vao_id: u32,
-    pos_vbo_id: u32,
-    color_vbo_id: u32,
-    texture_vbo_id: u32,
-    idx_vbo_id: u32, // this needs to be renames indices
+    vao_id: u32, // object ID in GPU memory
+    vbo_id: u32, // float data in GPU memory
+    ebo_id: u32, // indices data in GPU memory
     vertex_count: i32,
     texture: Texture
 }
 
 impl Mesh {
 
+    // constructor
+    pub fn new(float_data: Vec<f32>, indices: Vec<u32>, texture: Texture) -> Self {
+        let mut returning_mesh: Self = Self {
+            vao_id: 0,
+            vbo_id: 0,
+            ebo_id: 0,
+            vertex_count: 0,
+            texture
+        };
+        
+        returning_mesh.construct(float_data, indices);
+
+        returning_mesh
+    }
+
     // debug for prototyping meshes
     pub fn test(&self) {
         println!("---BEGIN MESH TEST--");
-        println!("ID: {}", self.vao_id);
-        println!("POS: {}", self.pos_vbo_id);
-        println!("COLOR: {}", self.color_vbo_id);
-        println!("TEXTURE: {}", self.texture_vbo_id);
-        println!("IDX: {}", self.idx_vbo_id);
+        println!("VAO: {}", self.vao_id);
+        println!("VBO: {}", self.vbo_id);
+        println!("EBO: {}", self.ebo_id);
         println!("V COUNT: {}", self.vertex_count);
         self.texture.test();
         println!("---END MESH TEST---");
@@ -39,88 +49,67 @@ impl Mesh {
 
     // internal constructor
     // the improvement is this allows dynamic allocations
-    pub fn construct(&mut self, positions: Vec<f32>, colors: Vec<f32>, indices: Vec<u32>, texture_coordinates: Vec<f32>){
+    pub fn construct(&mut self, float_data: Vec<f32>, indices: Vec<u32>) {
 
         unsafe {
-            // the VAO is basically the master key for the GL object
+
             gl::GenVertexArrays(1, &mut self.vao_id);
+            gl::GenBuffers(1, &mut self.vbo_id);
+            gl::GenBuffers(1, &mut self.ebo_id);
 
             gl::BindVertexArray(self.vao_id);
 
-
-            // position vbo - as index 0 in GL
-            gl::GenBuffers(1, &mut self.pos_vbo_id);
-
-            gl::BindBuffer(gl::ARRAY_BUFFER, self.pos_vbo_id);
-
-            gl::BufferData(
-                gl::ARRAY_BUFFER, 
-                (positions.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, 
-                &positions.as_slice()[0] as *const f32 as *const c_void,
-                gl::STATIC_DRAW
-            );
-
-            gl::EnableVertexAttribArray(0);
-
-            gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
-
-
-
-
-            // color vbo - as index 1 in GL
-            gl::GenBuffers(1, &mut self.color_vbo_id);
-
-            gl::BindBuffer(gl::ARRAY_BUFFER, self.color_vbo_id);
-
+            gl::BindBuffer(gl::ARRAY_BUFFER, self.vbo_id);
             gl::BufferData(
                 gl::ARRAY_BUFFER,
-                (colors.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
-                &colors.as_slice()[0] as *const f32 as *const c_void,
+                (float_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
+                &float_data[0] as *const f32 as *const c_void,
                 gl::STATIC_DRAW
             );
 
-            gl::EnableVertexAttribArray(1);
+            // IF THIS DOESN'T WORK REMEMBER IT WAS ORIGINALLY I32!!
 
-            gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
-
-
-
-            // texture coordinates vbo - as index 2 in GL
-            
-            gl::GenBuffers(1, &mut self.texture_vbo_id);
-
-            gl::BindBuffer(gl::ARRAY_BUFFER, self.texture_vbo_id);
-
-            gl::BufferData(
-                gl::ARRAY_BUFFER,
-                (texture_coordinates.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
-                &texture_coordinates.as_slice()[0] as *const f32 as *const c_void,
-                gl::STATIC_DRAW
-            );
-
-            gl::EnableVertexAttribArray(2);
-
-            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, 0, ptr::null());
-
-
-
-
-            // index (indices) vbo
-
-            gl::GenBuffers(1, &mut self.idx_vbo_id);
-
-            gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, self.idx_vbo_id);
-
+            gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, self.ebo_id);
             gl::BufferData(
                 gl::ELEMENT_ARRAY_BUFFER,
                 (indices.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
-                &indices.as_slice()[0] as *const u32 as *const c_void,
+                &indices[0] as *const u32 as *const c_void,
                 gl::STATIC_DRAW
             );
 
-            gl::BindBuffer(gl::ARRAY_BUFFER, 0);
-            gl::BindVertexArray(0);
+            /*
+            stride is the width of the values in a single vertex
+            Example in current production usage:
 
+            pos:
+            1.0, 1.0, 1.0
+            color:
+            0.0, 0.0, 0.0
+            texture (texture mapping):
+            0.5, 0.5
+
+            So when it is interlaced it will look like this in memory:
+            1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.5, 0.5
+
+            So now we count:
+            1    2    3    4    5    6    7    8
+            1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.5, 0.5
+
+            So therefore, the stride is 8
+            */
+
+            let stride = 8* mem::size_of::<GLfloat>() as GLsizei;
+
+            // position attribute
+            gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, stride, ptr::null());
+            gl::EnableVertexAttribArray(0);
+            // color attribute - skip over the first 3 (0,1,2) values of the vertex data
+            gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE, stride, (3 * mem::size_of::<GLfloat>()) as *const c_void);
+            gl::EnableVertexAttribArray(1);
+            // texture attribute - skip over the first 6 (0,1,2,3,4,5) values of the vertex data
+            gl::VertexAttribPointer(2, 2, gl::FLOAT, gl::FALSE, stride, (6 * mem::size_of::<GLfloat>()) as *const c_void);
+            gl::EnableVertexAttribArray(2);
+            
 
             // next add the vertex count to it's int
             self.vertex_count = indices.len() as i32;            
@@ -170,26 +159,11 @@ impl Mesh {
 
     pub fn clean_up(&self, delete_texture: bool){
         unsafe {
-            // bind buffer 0
-            gl::BindBuffer(gl::ARRAY_BUFFER, 0);
 
-            // disable all previously enabled vertex attribution arrays
-            gl::DisableVertexAttribArray(2);
-            gl::DisableVertexAttribArray(1);
-            gl::DisableVertexAttribArray(0);
-
-            // clear the buffer data in gpu
-            gl::DeleteBuffers(1, &self.pos_vbo_id);
-            gl::DeleteBuffers(1, &self.color_vbo_id);
-            gl::DeleteBuffers(1, &self.texture_vbo_id);
-            gl::DeleteBuffers(1, &self.idx_vbo_id);
-
-            // explicitly break the previous bindings
-            gl::BindVertexArray(0);
-
-            // delete the whole object
+            // de-allocate the memory in the GPU
             gl::DeleteVertexArrays(1, &self.vao_id);
-
+            gl::DeleteBuffers(1, &self.vbo_id);
+            gl::DeleteBuffers(1, &self.ebo_id);            
 
             // delete internal texture if specified to
             if delete_texture {
@@ -198,21 +172,4 @@ impl Mesh {
 
         }
     }
-}
-
-
-pub fn new(positions: Vec<f32>, colors: Vec<f32>, indices: Vec<u32>, texture_coordinates: Vec<f32>, texture: Texture) -> Mesh {
-    let mut returning_mesh: Mesh = Mesh {
-        vao_id: 0,
-        pos_vbo_id: 0,
-        color_vbo_id: 0,
-        texture_vbo_id: 0,
-        idx_vbo_id: 0,
-        vertex_count: 0,
-        texture,
-    };
-
-    returning_mesh.construct(positions, colors, indices, texture_coordinates);
-
-    returning_mesh
 }
