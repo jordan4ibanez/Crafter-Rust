@@ -131,11 +131,14 @@ fn main() {
 
             gen_biome(&mut generated_chunk, &mut perlin);
 
-            let mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(&generated_chunk, Texture::clone(&debug_texture));
-
             world.add(generated_chunk);
 
-            world.get_chunk_mut(debug_x.to_string() + " " + &debug_y.to_string()).set_mesh(mesh);
+            let mesh: Option<Mesh> = chunk_mesh_creation::create_chunk_mesh(&world, debug_x, debug_y, Texture::clone(&debug_texture));
+
+            match mesh {
+                Some(unwrapped_mesh) => world.set_chunk_mesh(debug_x.to_string() + " " + &debug_y.to_string(), unwrapped_mesh),
+                None => (),
+            }
 
             debug_x += 1;
 
