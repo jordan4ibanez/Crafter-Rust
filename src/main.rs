@@ -96,7 +96,7 @@ fn main() {
         "/shader_code/fragment_shader.fs"
     );
     default_shader.create_uniform("projection_matrix");
-    default_shader.create_uniform("model_view_matrix");
+    default_shader.create_uniform("model_matrix");
     default_shader.test();
     renderer.add_shader_program("default", default_shader);
 

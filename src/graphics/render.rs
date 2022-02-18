@@ -66,7 +66,7 @@ impl Renderer {
             match chunk.get_mesh(){
                 Some(mesh) => {
                     default_shader.set_uniform_mat4(
-                        "model_view_matrix".to_string(), 
+                        "model_matrix".to_string(), 
                         self.transformation.update_model_matrix(
                             Vec3::new(*&chunk.get_pos().x as f32 * 16.0,0.0, *&chunk.get_pos().y as f32 * 16.0), 
                             Vec3::new(0.0, 0.0, 0.0)
