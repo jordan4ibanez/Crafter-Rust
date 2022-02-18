@@ -16,7 +16,7 @@ use glfw::{
     }
 };
 
-use crate::graphics::resource_loader::{self, get_path_string};
+use crate::graphics::resource_loader::{self};
 
 // utility file
 
