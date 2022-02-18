@@ -55,7 +55,10 @@ impl Chunk {
 
     pub fn set_mesh(&mut self, mesh: Mesh) {
         match &self.mesh {
-            Some(existing_mesh) => existing_mesh.clean_up(false),
+            Some(existing_mesh) => {
+                existing_mesh.clean_up(false);
+                self.mesh = Some(mesh);
+            },
             None => self.mesh = Some(mesh),
         }
     }
