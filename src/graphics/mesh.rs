@@ -67,8 +67,6 @@ impl Mesh {
                 gl::STATIC_DRAW
             );
 
-            // IF THIS DOESN'T WORK REMEMBER IT WAS ORIGINALLY I32!!
-
             gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, self.ebo_id);
             gl::BufferData(
                 gl::ELEMENT_ARRAY_BUFFER,

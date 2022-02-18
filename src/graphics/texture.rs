@@ -2,7 +2,7 @@ use std::{ffi::c_void};
 
 use stb_image_rust;
 
-use super::resource_loader::{self, get_path_string};
+use super::resource_loader::{self};
 
 pub struct Texture {
     id: u32,
