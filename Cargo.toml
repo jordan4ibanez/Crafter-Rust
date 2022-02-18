@@ -10,7 +10,7 @@ edition = "2021"
 # It's easier for me.
 [dependencies]
 
-
+rand = "*"
 perlin2d = "0.2.6"
 
 gl = "0.14.0" # openGL bindings

@@ -60,6 +60,7 @@ dependencies = [
  "glam",
  "glfw",
  "perlin2d",
+ "rand",
  "stb_image_rust",
 ]
 

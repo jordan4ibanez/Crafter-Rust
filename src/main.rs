@@ -10,6 +10,7 @@ use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
 use perlin2d::PerlinNoise2D;
+use rand::ThreadRng;
 
 use std::{
     sync::mpsc::Receiver
@@ -82,6 +83,7 @@ fn main() {
     window.set_cursor_mode(glfw::CursorMode::Disabled);
 
     let mut perlin: PerlinNoise2D = PerlinNoise2D::new(1, 0.5, 1.0, 1.0, 1.0, (10.0, 10.0), 0.5, 1213);
+    let mut thread_rng: ThreadRng = rand::thread_rng();
 
     // fps counter object
     let mut time_object: Time = Time::new(&glfw);
@@ -133,7 +135,6 @@ fn main() {
             // does this update exist?
             match mesh_update_option {
                 Some(mesh_update) => {
-
                     // add neighbors to queue if told to do so
                     if mesh_update.update_neighbors() {
                         chunk_mesh_generator_queue.batch_neighbor_update(mesh_update.get_x(), mesh_update.get_z());
@@ -156,7 +157,7 @@ fn main() {
             
             let mut generated_chunk: Chunk = Chunk::new(debug_x, debug_y);
 
-            gen_biome(&mut generated_chunk, &mut perlin);
+            gen_biome(&mut generated_chunk, &mut perlin, Some(&mut thread_rng));
 
             world.add(generated_chunk);
 
