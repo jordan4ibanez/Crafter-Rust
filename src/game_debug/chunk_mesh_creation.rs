@@ -69,39 +69,71 @@ pub fn create_chunk_mesh(world: &World,pos_x: i32, pos_z: i32, texture: Texture)
     let mut indices_count: u32 = 0;
 
 
-    let current_chunk_option: Option<&Chunk> = world.get_chunk(pos_x.to_string() + " " + &pos_z.to_string());
+    let chunk_option: Option<&Chunk> = world.get_chunk(pos_x.to_string() + " " + &pos_z.to_string());
 
-    match current_chunk_option {
+    match chunk_option {
         Some(_) => (),
         None => return None,
     }
 
-    let chunk_data: &[u32; 32768] = current_chunk_option.unwrap().get_block_aray();
+    let chunk: &Chunk = chunk_option.unwrap();
 
+    let neighbor_plus_x_option: Option<&Chunk> = world.get_chunk((pos_x + 1).to_string() + " " + &pos_z.to_string());
+    let neighbor_minus_x_option: Option<&Chunk> = world.get_chunk((pos_x - 1).to_string() + " " + &pos_z.to_string());
+
+    let neighbor_plus_z_option: Option<&Chunk> = world.get_chunk(pos_x.to_string() + " " + &(pos_z + 1).to_string());
+    let neighbor_minus_z_option: Option<&Chunk> = world.get_chunk(pos_x .to_string() + " " + &(pos_z - 1).to_string());
+
+    match neighbor_minus_x_option {
+        Some(neighbor) => println!("YESSSSSSS"),
+        None => println!("NO"),
+    }
+
+
+    // slight performance loss at the expense of readibility
 
     for i in 0..32768 {
-        if chunk_data[i] != 0 {
-            let (x,y,z) = mini_index_to_pos(i as u16);
+
+        let (x,y,z) = mini_index_to_pos(i as u16);
+
+        if chunk.get_block(x, y, z) != 0 {
             
-            if x + 1 <= 15 && chunk_data[mini_pos_to_index(x + 1, y, z) as usize] == 0 {
+            // internal
+            if x + 1 <= 15 && chunk.get_block(x + 1, y, z) == 0 {
                 dry_run(&mut float_count, &mut indices_count)
             }
-            if x - 1 >= 0 && chunk_data[mini_pos_to_index(x - 1, y, z) as usize] == 0 {
-                dry_run(&mut float_count, &mut indices_count)
-            }
-
-            if y == 127 || (y < 127 && chunk_data[mini_pos_to_index(x, y + 1, z) as usize] == 0) {
-                dry_run(&mut float_count, &mut indices_count)
-            }
-            if y - 1 >= 0 && chunk_data[mini_pos_to_index(x, y - 1, z) as usize] == 0 {
+            if x - 1 >= 0 && chunk.get_block(x - 1, y, z) == 0 {
                 dry_run(&mut float_count, &mut indices_count)
             }
 
-            if z + 1 <= 15 && chunk_data[mini_pos_to_index(x, y, z + 1) as usize] == 0 {
+            if y == 127 || (y < 127 && chunk.get_block(x, y + 1, z) == 0) {
                 dry_run(&mut float_count, &mut indices_count)
             }
-            if z - 1 >= 0 && chunk_data[mini_pos_to_index(x, y, z - 1) as usize] == 0 {
+            if y - 1 >= 0 && chunk.get_block(x, y - 1, z) == 0 {
                 dry_run(&mut float_count, &mut indices_count)
+            }
+
+            if z + 1 <= 15 && chunk.get_block(x, y, z + 1) == 0 {
+                dry_run(&mut float_count, &mut indices_count)
+            }
+            if z - 1 >= 0 && chunk.get_block(x, y, z - 1) == 0 {
+                dry_run(&mut float_count, &mut indices_count)
+            }
+
+            // external
+
+            // x
+            if x == 0 {
+                match neighbor_minus_x_option {
+                    Some(neighbor_minus_x) => {
+                        let neighbor_array = neighbor_minus_x.get_block_array();
+
+                        if neighbor_array[mini_pos_to_index(x, y, z + 1) as usize] == 0 {
+
+                        }
+                    },
+                    None => (),
+                }
             }
         }
     }
@@ -124,20 +156,21 @@ pub fn create_chunk_mesh(world: &World,pos_x: i32, pos_z: i32, texture: Texture)
     let mut face_count: u32 = 0;
 
     for i in 0..32768 {
-        if chunk_data[i] != 0 {
+
+        let (x,y,z) = mini_index_to_pos(i as u16);
+
+        if chunk.get_block(x, y, z) != 0 {
 
             let light = 1.0;
-
-            let (x,y,z) = mini_index_to_pos(i as u16);
             
-            let x_plus = x + 1 <= 15 && chunk_data[mini_pos_to_index(x + 1, y, z) as usize] == 0;
-            let x_minus = x - 1 >= 0 && chunk_data[mini_pos_to_index(x - 1, y, z) as usize] == 0;
+            let x_plus = x + 1 <= 15 && chunk.get_block(x + 1, y, z) == 0;
+            let x_minus = x - 1 >= 0 && chunk.get_block(x - 1, y, z) == 0;
 
-            let y_plus = y == 127 || (y < 127 && chunk_data[mini_pos_to_index(x, y + 1, z) as usize] == 0);
-            let y_minus = y - 1 >= 0 && chunk_data[mini_pos_to_index(x, y - 1, z) as usize] == 0;
+            let y_plus = y == 127 || (y < 127 && chunk.get_block(x, y + 1, z) == 0);
+            let y_minus = y - 1 >= 0 && chunk.get_block(x, y - 1, z) == 0;
 
-            let z_plus = z + 1 <= 15 && chunk_data[mini_pos_to_index(x, y, z + 1) as usize] == 0;
-            let z_minus = z - 1 >= 0 && chunk_data[mini_pos_to_index(x, y, z - 1) as usize] == 0;
+            let z_plus = z + 1 <= 15 && chunk.get_block(x, y, z + 1) == 0;
+            let z_minus = z - 1 >= 0 && chunk.get_block(x, y, z - 1) == 0;
 
             if x_plus || x_minus || y_plus || y_minus || z_plus || z_minus {
                 add_block(
