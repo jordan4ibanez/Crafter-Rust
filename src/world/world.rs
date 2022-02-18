@@ -1,4 +1,6 @@
-use std::collections::{HashMap, hash_map::Values};
+use std::{collections::{HashMap, hash_map::Values}, iter::Map};
+
+use glam::{Vec3, Vec3Swizzles};
 
 use crate::graphics::mesh::Mesh;
 
@@ -51,6 +53,29 @@ impl World {
     // returns a map iterator
     pub fn iter_map(&self) -> Values<'_, String, chunk::Chunk> {
         self.map.values().into_iter()
+    }
+    
+    pub fn iter_map_sorted(&self, camera_pos: Vec3) -> Vec<&Chunk> {
+
+        let mut chunk_worker_vector_1: Vec3 = Vec3::new(0.0, 0.0, 0.0);
+        let mut chunk_worker_vector_2: Vec3 = Vec3::new(0.0, 0.0, 0.0);
+
+        let mut sorted_vec: Vec<&Chunk> = Vec::from_iter(self.map.values());
+
+        sorted_vec.sort_by(|chunk_1, chunk_2 |{
+
+            chunk_worker_vector_1.x = chunk_1.get_x() as f32 * 16.0;
+            // 2d so no Y
+            chunk_worker_vector_1.z = chunk_1.get_z() as f32 * 16.0;
+
+            chunk_worker_vector_2.x = chunk_2.get_x() as f32 * 16.0;
+            // 2d so no Y
+            chunk_worker_vector_2.z = chunk_2.get_z() as f32 * 16.0;
+
+            chunk_worker_vector_2.distance(camera_pos).partial_cmp(&chunk_worker_vector_1.distance(camera_pos)).unwrap()
+        });
+
+        sorted_vec
     }
 
     // removes a chunk from the world

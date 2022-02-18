@@ -33,6 +33,14 @@ impl Chunk {
         self.position
     }
 
+    pub fn get_x(&self) -> i32 {
+        self.position.x
+    }
+
+    pub fn get_z(&self) -> i32 {
+        self.position.y
+    }
+
     pub fn get_block(&self, x: i8, y: i8, z: i8) -> u32 {
         self.block[mini_pos_to_index(x, y, z) as usize]
     }

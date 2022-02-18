@@ -63,7 +63,7 @@ impl Renderer {
         // begin batched render
         let mut batch_hook = false;
 
-        for chunk in world.iter_map() {
+        for chunk in world.iter_map_sorted(self.camera.get_pos()) {
             match chunk.get_mesh(){
                 Some(mesh) => {
                     default_shader.set_uniform_mat4(

@@ -79,7 +79,7 @@ fn main() {
 
     println!("Current Working Path: {}", get_path_string());
 
-    let debug_texture: Texture = Texture::new("/textures/dirt.png");    
+    let debug_texture: Texture = Texture::new("/textures/debug_alpha.png");
 
     let mut controls: Controls = Controls::new(&window);
 
