@@ -1,10 +1,17 @@
-use super::{keyboard::Keyboard, mouse::Mouse};
+use glfw::Window;
+
+use super::{keyboard::{Keyboard}, mouse::Mouse};
 
 pub struct Controls {
-    keyboard: Keyboard,
-    mouse: Mouse
+    pub keyboard: Keyboard,
+    pub mouse: Mouse
 }
 
 impl Controls {
-        
+    pub fn new(window: &Window) -> Self {
+        Controls {
+            keyboard: Keyboard::new(),
+            mouse: Mouse::new(window),
+        }
+    }
 }

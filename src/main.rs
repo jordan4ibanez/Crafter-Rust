@@ -38,7 +38,7 @@ use crate::{
         },
         keyboard::{
             Keyboard
-        }
+        }, controls::Controls
     },
 
     time::{
@@ -86,8 +86,7 @@ fn main() {
 
     let debug_texture: Texture = Texture::new("/textures/dirt.png");    
 
-    let mut mouse: Mouse = Mouse::new(&window);
-    let mut keyboard: Keyboard = Keyboard::new();
+    let mut controls: Controls = Controls::new(&window);
 
     // construct the renderer
     let mut renderer: Renderer = Renderer::new();
@@ -174,13 +173,13 @@ fn main() {
 
         glfw.poll_events();
 
-        mouse.reset();
+        controls.mouse.reset();
 
         // this is where all events are processed
-        process_events(&mut glfw, &mut window, &events, &mut mouse, &mut keyboard, &mut window_variables);
+        process_events(&mut glfw, &mut window, &events, &mut controls, &mut window_variables);
 
 
-        renderer.get_camera_mut().on_tick(&keyboard, &mouse, delta as f32);
+        renderer.get_camera_mut().on_tick(&mut controls, delta as f32);
 
         renderer.render(&window, &world);
 
@@ -213,18 +212,17 @@ fn process_events(
     glfw: &mut Glfw,
     window: &mut glfw::Window,
     events: &Receiver<(f64, glfw::WindowEvent)>,
-    
-    mouse: &mut Mouse,
-    keyboard: &mut Keyboard,
+
+    controls: &mut Controls,
+
     window_variables: &mut WindowVariables
 ) {
     // iterate events
     for (_, event) in glfw::flush_messages(events) {
 
 
-        mouse.process_events(&event);
-
-        keyboard.process_events(&event);
+        controls.keyboard.process_events(&event);
+        controls.mouse.process_events(&event);
 
         // match event enums
         match event {
