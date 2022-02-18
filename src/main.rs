@@ -101,11 +101,11 @@ fn main() {
     // construct the renderer
     let mut renderer: Renderer = Renderer::new();
     let mut default_shader: ShaderProgram = ShaderProgram::new(
-        path.to_string() + "/shader_code/vertex_shader.vs",
-        path.to_string() + "/shader_code/fragment_shader.fs"
+         "/shader_code/vertex_shader.vs",
+        "/shader_code/fragment_shader.fs"
     );
-    default_shader.create_uniform("projectionMatrix".to_string());
-    default_shader.create_uniform("modelViewMatrix".to_string());
+    default_shader.create_uniform("projectionMatrix");
+    default_shader.create_uniform("modelViewMatrix");
     default_shader.test();
     renderer.add_shader_program("default".to_string(), default_shader);
 
@@ -114,7 +114,7 @@ fn main() {
 
     let mut world: World = World::new();
 
-    const RENDER_DISTANCE: i32 = 20;
+    const RENDER_DISTANCE: i32 = 30;
 
     let mut debug_x = -RENDER_DISTANCE;
     let mut debug_y = -RENDER_DISTANCE;

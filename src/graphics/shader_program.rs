@@ -16,7 +16,7 @@ pub struct ShaderProgram {
 // "class methods"
 impl ShaderProgram {
 
-    pub fn new(vertex_code_path: String, fragment_code_path: String) -> Self {
+    pub fn new(vertex_code_path: &str, fragment_code_path: &str) -> Self {
 
         // we must create a mutable version of this object
         let mut shader_program: Self = Self {
@@ -32,11 +32,11 @@ impl ShaderProgram {
     
         shader_program.uniforms = HashMap::new();
     
-        let vertex_code: String = resource_loader::load_resource(vertex_code_path);
+        let vertex_code: String = resource_loader::load_resource(vertex_code_path.to_string());
     
         shader_program.vertex_shader_id = shader_program.create_vertex_shader(vertex_code);
     
-        let fragment_code: String = resource_loader::load_resource(fragment_code_path);
+        let fragment_code: String = resource_loader::load_resource(fragment_code_path.to_string());
     
         shader_program.fragment_shader_id = shader_program.create_fragment_shader(fragment_code);
     
@@ -57,7 +57,7 @@ impl ShaderProgram {
 
     // the unsafe is wrapped around a safe
     // this is so you don't have to use unsafe blocks everywhere
-    pub fn create_uniform(&mut self, uniform_name: String) {
+    pub fn create_uniform(&mut self, uniform_name: &str) {
         unsafe {
             // convert name to C string
             let c_string: CString = CString::new(uniform_name.clone().as_bytes()).unwrap();
@@ -65,7 +65,7 @@ impl ShaderProgram {
             // get location
             let uniform_location: i32 = gl::GetUniformLocation(self.program_id, c_string.as_ptr());
 
-            self.uniforms.insert(uniform_name, uniform_location);
+            self.uniforms.insert(uniform_name.to_string(), uniform_location);
 
             // manual memory drop to ensure no memory leaks
             drop(c_string);

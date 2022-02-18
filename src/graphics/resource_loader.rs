@@ -7,8 +7,14 @@ use std::{
 };
 
 pub fn load_resource(path: String) -> String {
-
-    let resource_result = fs::read_to_string(&path);    
+    let system_path: String = std::env::current_dir()
+        .unwrap()
+        .as_os_str()
+        .to_str()
+        .unwrap()
+        .to_owned();
+    
+    let resource_result = fs::read_to_string(system_path + &path);    
 
     match resource_result {
         Ok(data) => data,
