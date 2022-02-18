@@ -45,7 +45,7 @@ use crate::{
             Time
         }
     },
-    game_debug::chunk_mesh_creation,
+    game_debug::{chunk_mesh_creation, chunk_mesh_generator_queue::{self, ChunkMeshGeneratorQueue, MeshUpdate}},
 
     world::{
         chunk::{
@@ -118,11 +118,38 @@ fn main() {
     let mut debug_y = -RENDER_DISTANCE;
 
     let mut continue_debug = true;
-    
 
+    let mut chunk_mesh_generator_queue: ChunkMeshGeneratorQueue = ChunkMeshGeneratorQueue::new();
+    
 
     // main program loop
     while !window.should_close() {
+
+        // here is testing for the logic of the chunk mesh generator queue
+        {
+
+            let mesh_update_option: Option<MeshUpdate> = chunk_mesh_generator_queue.pop();
+
+            // does this update exist?
+            match mesh_update_option {
+                Some(mesh_update) => {
+
+                    // add neighbors to queue if told to do so
+                    if mesh_update.update_neighbors() {
+                        chunk_mesh_generator_queue.batch_neighbor_update(mesh_update.get_x(), mesh_update.get_z());
+                    }
+
+                    let mesh: Option<Mesh> = chunk_mesh_creation::create_chunk_mesh(&world, mesh_update.get_x(), mesh_update.get_z(), Texture::clone(&debug_texture));
+                    match mesh {
+                        Some(unwrapped_mesh) => world.set_chunk_mesh(mesh_update.get_x().to_string() + " " + &mesh_update.get_z().to_string(), unwrapped_mesh),
+                        None => (),
+                    }
+                },
+                None => (),
+            }
+
+            
+        }
 
 
         if continue_debug {
@@ -133,12 +160,9 @@ fn main() {
 
             world.add(generated_chunk);
 
-            let mesh: Option<Mesh> = chunk_mesh_creation::create_chunk_mesh(&world, debug_x, debug_y, Texture::clone(&debug_texture));
+            chunk_mesh_generator_queue.put(debug_x, debug_y, true);
 
-            match mesh {
-                Some(unwrapped_mesh) => world.set_chunk_mesh(debug_x.to_string() + " " + &debug_y.to_string(), unwrapped_mesh),
-                None => (),
-            }
+
 
             debug_x += 1;
 
