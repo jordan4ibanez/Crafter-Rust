@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 
 // mesh updates hold data on which chunks should be updated
 pub struct MeshUpdate {
@@ -19,53 +21,46 @@ impl MeshUpdate {
 }
 
 pub struct ChunkMeshGeneratorQueue {
-    queue: Vec<MeshUpdate>
+    queue: VecDeque<MeshUpdate>
 }
 
 // this is a lot like Deque in Java - at least the parts that I use
 impl ChunkMeshGeneratorQueue {
     pub fn new() -> Self {
         ChunkMeshGeneratorQueue {
-            queue: Vec::new(),
+            queue: VecDeque::new(),
         }
     }
     // stores an update for all neighbors - does not recursively generate more
     pub fn batch_neighbor_update(&mut self, x: i32, z: i32){
-        let update_1: MeshUpdate = MeshUpdate {
-            x: x + 1,
-            z,
-            update_neighbors: false
-        };
-        let update_2: MeshUpdate = MeshUpdate {
-            x: x - 1,
-            z,
-            update_neighbors: false
-        };
-        let update_3: MeshUpdate = MeshUpdate {
-            x,
-            z: z + 1,
-            update_neighbors: false
-        };
-        let update_4: MeshUpdate = MeshUpdate {
-            x,
-            z: z - 1,
-            update_neighbors: false
-        };
-
-        self.queue.push(update_1);
-        self.queue.push(update_2);
-        self.queue.push(update_3);
-        self.queue.push(update_4);
+        self.push_front(x+1, z, false);
+        self.push_front(x-1, z, false);
+        self.push_front(x, z+1, false);
+        self.push_front(x, z-1, false);
     }
-    pub fn put(&mut self, x: i32, z: i32, update_neighbors: bool){
+
+    pub fn push_front(&mut self, x: i32, z: i32, update_neighbors: bool){
         let update: MeshUpdate = MeshUpdate {
             x,
             z,
             update_neighbors,
         };
-        self.queue.push(update);
+        self.queue.push_front(update);
     }
-    pub fn pop(&mut self) -> Option<MeshUpdate> {
-        self.queue.pop()
+
+    pub fn push_back(&mut self, x: i32, z: i32, update_neighbors: bool){
+        let update: MeshUpdate = MeshUpdate {
+            x,
+            z,
+            update_neighbors,
+        };
+        self.queue.push_back(update);
+    }
+
+    pub fn pop_front(&mut self) -> Option<MeshUpdate> {
+        self.queue.pop_front()
+    }
+    pub fn pop_back(&mut self) -> Option<MeshUpdate> {
+        self.queue.pop_back()
     }
 }
