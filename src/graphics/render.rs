@@ -7,6 +7,8 @@ use crate::{world::world::World};
 
 use super::{gl_safety_wrappers, shader_program::{ShaderProgram}, transformation::{Transformation}, camera::{Camera}};
 
+
+
 pub struct Renderer {
     shaders: HashMap<String, ShaderProgram>,
     transformation: Transformation,
@@ -43,7 +45,7 @@ impl Renderer {
         self.shaders.values().into_iter().for_each( | shader: &ShaderProgram | {
             shader.clean_up();
         });
-    }
+    }    
 
     // this is a test
     pub fn render(&mut self, window: &Window, world: &World) {
@@ -84,13 +86,6 @@ impl Renderer {
                 None => (),
             }
         }
-        // let texture_clone = texture::clone(texture_map);
-        
-        // let debug_mesh: Mesh = chunk_mesh_creation::create_chunk_mesh(texture_clone, randy);
-
-        // debug_mesh.render();
-
-        // debug_mesh.clean_up(false);
 
         default_shader.unbind();
     }

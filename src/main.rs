@@ -209,7 +209,15 @@ fn main() {
 
 
 // event processing, keys, mouse, etc
-fn process_events(glfw: &mut Glfw, window: &mut glfw::Window, events: &Receiver<(f64, glfw::WindowEvent)>, mouse: &mut Mouse, keyboard: &mut Keyboard, window_variables: &mut WindowVariables) {
+fn process_events(
+    glfw: &mut Glfw,
+    window: &mut glfw::Window,
+    events: &Receiver<(f64, glfw::WindowEvent)>,
+    
+    mouse: &mut Mouse,
+    keyboard: &mut Keyboard,
+    window_variables: &mut WindowVariables
+) {
     // iterate events
     for (_, event) in glfw::flush_messages(events) {
 
