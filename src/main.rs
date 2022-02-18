@@ -29,7 +29,7 @@ use crate::{
         },
         window_variables::{
             *
-        }, render::{Renderer}
+        }, render::{Renderer}, resource_loader::get_path_string
     },
 
     controls::{
@@ -60,15 +60,6 @@ use crate::{
 
 fn main() {
 
-    // gets current working directory
-    let path: String = std::env::current_dir()
-                                .unwrap()
-                                .as_os_str()
-                                .to_str()
-                                .unwrap()
-                                .to_owned();
-
-
     // glfw initialization and configuration
 
     // initalize glfw
@@ -76,7 +67,7 @@ fn main() {
 
     // borrow and mutate glfw
     // return created glfw window
-    let (mut window, events) = graphics::set_up::set_up_glfw(&mut glfw, &path);
+    let (mut window, events) = graphics::set_up::set_up_glfw(&mut glfw);
 
 
     // testing of 3D camera
@@ -91,9 +82,9 @@ fn main() {
     // window title - reused pointer
     let mut window_title: String = String::new();
 
-    println!("Current Working Path: {}", path);
+    println!("Current Working Path: {}", get_path_string());
 
-    let debug_texture: Texture = Texture::new(path.to_string() + "/textures/dirt.png");    
+    let debug_texture: Texture = Texture::new("/textures/dirt.png");    
 
     let mut mouse: Mouse = Mouse::new(&window);
     let mut keyboard: Keyboard = Keyboard::new();
