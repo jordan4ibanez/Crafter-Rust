@@ -2,7 +2,7 @@ use std::{ffi::c_void};
 
 use stb_image_rust;
 
-use super::resource_loader;
+use super::resource_loader::{self, get_path_string};
 
 pub struct Texture {
     id: u32,
@@ -14,7 +14,8 @@ impl Texture {
 
 
     // constructor
-    pub fn new(texture_path: String) -> Self {
+    pub fn new(texture_path: &str) -> Self {
+
         let mut returning_texture: Self = Self {
             id: 0,
             width: 0,
@@ -48,7 +49,7 @@ impl Texture {
     }
 
     
-    pub fn construct(&mut self, path: String) {
+    pub fn construct(&mut self, path: &str) {
 
         let mut data: Vec<u8> = resource_loader::load_texture(path);
 
