@@ -114,7 +114,7 @@ fn main() {
 
     let mut world: World = World::new();
 
-    const RENDER_DISTANCE: i32 = 30;
+    const RENDER_DISTANCE: i32 = 10;
 
     let mut debug_x = -RENDER_DISTANCE;
     let mut debug_y = -RENDER_DISTANCE;
