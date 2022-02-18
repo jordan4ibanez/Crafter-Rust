@@ -76,8 +76,8 @@ impl ShaderProgram {
         }
     }
 
-    pub fn get_uniform_location(&self, uniform_name: String) -> &i32 {
-        self.uniforms.get(&uniform_name).expect("TRIED TO GET A UNIFORM THAT DOES NOT EXIST!")
+    pub fn get_uniform_location(&self, uniform_name: &str) -> &i32 {
+        self.uniforms.get(uniform_name).expect("TRIED TO GET A UNIFORM THAT DOES NOT EXIST!")
     }
 
     pub fn get_program(&self) -> u32 {
@@ -85,8 +85,8 @@ impl ShaderProgram {
     }
 
     // cannot overload so the name will end with the value
-    pub fn set_uniform_mat4(&self, uniform_name: String, value: Mat4) {
-        let location: &i32 = self.uniforms.get(&uniform_name).expect("COULD NOT LOAD UNIFORM! (M<F32>)");
+    pub fn set_uniform_mat4(&self, uniform_name: &str, value: Mat4) {
+        let location: &i32 = self.uniforms.get(uniform_name).expect("COULD NOT LOAD UNIFORM! (M<F32>)");
         // todo: error handling
         unsafe {
             gl::UniformMatrix4fv(*location, 1, gl::FALSE, &value.to_cols_array()[0]);
@@ -96,32 +96,32 @@ impl ShaderProgram {
         // println!("{:#?}", &mut value.col(0)[0] as *const f32);
     }
 
-    pub fn set_light_uniform(&self, uniform_name: String, value: f32) {
-        let location: &i32 = self.uniforms.get(&uniform_name).expect("COULD NOT LOAD UNIFORM! (F32)");
+    pub fn set_light_uniform(&self, uniform_name: &str, value: f32) {
+        let location: &i32 = self.uniforms.get(uniform_name).expect("COULD NOT LOAD UNIFORM! (F32)");
         // todo: error handling
         unsafe {
             gl::Uniform1f(*location, value);
         }
     } 
 
-    pub fn set_uniform_i32(&self, uniform_name: String, value: i32) {
-        let location: &i32 = self.uniforms.get(&uniform_name).expect("COULD NOT LOAD UNIFORM! (I32)");
+    pub fn set_uniform_i32(&self, uniform_name: &str, value: i32) {
+        let location: &i32 = self.uniforms.get(uniform_name).expect("COULD NOT LOAD UNIFORM! (I32)");
         // todo: error handling
         unsafe {
             gl::Uniform1i(*location, value);
         }
     }
 
-    pub fn set_uniform_vec4(&self, uniform_name: String, value: Vec4) {
-        let location: &i32 = self.uniforms.get(&uniform_name).expect("COULD NOT LOAD UNIFORM! (Vec4)");
+    pub fn set_uniform_vec4(&self, uniform_name: &str, value: Vec4) {
+        let location: &i32 = self.uniforms.get(uniform_name).expect("COULD NOT LOAD UNIFORM! (Vec4)");
         unsafe {            
             // todo: error handling
             gl::Uniform4f(*location, value.x, value.y, value.z, value.w);
         }
     }
 
-    pub fn set_uniform_vec3(&self, uniform_name: String, value: Vec3) {      
-        let location: &i32 = self.uniforms.get(&uniform_name).expect("COULD NOT LOAD UNIFORM! (Vec3)");
+    pub fn set_uniform_vec3(&self, uniform_name: &str, value: Vec3) {      
+        let location: &i32 = self.uniforms.get(uniform_name).expect("COULD NOT LOAD UNIFORM! (Vec3)");
         unsafe {            
             // todo: error handling
             gl::Uniform3f(*location, value.x, value.y, value.z);

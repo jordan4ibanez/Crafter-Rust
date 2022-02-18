@@ -56,7 +56,7 @@ impl Renderer {
 
         self.transformation.reset_projection_matrix(&self.camera, window.get_size().0 as f32, window.get_size().1 as f32, 0.01, 1000.0);
 
-        default_shader.set_uniform_mat4("projection_matrix".to_string(), self.transformation.get_projection_matrix());
+        default_shader.set_uniform_mat4("projection_matrix", self.transformation.get_projection_matrix());
     
 
         // begin batched render
@@ -66,7 +66,7 @@ impl Renderer {
             match chunk.get_mesh(){
                 Some(mesh) => {
                     default_shader.set_uniform_mat4(
-                        "model_matrix".to_string(), 
+                        "model_matrix", 
                         self.transformation.update_model_matrix(
                             Vec3::new(*&chunk.get_pos().x as f32 * 16.0,0.0, *&chunk.get_pos().y as f32 * 16.0), 
                             Vec3::new(0.0, 0.0, 0.0)
