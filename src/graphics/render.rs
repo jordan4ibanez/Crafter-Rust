@@ -23,8 +23,8 @@ impl Renderer {
         }
     }
 
-    pub fn add_shader_program(&mut self, shader_name: String, shader_program: ShaderProgram) {
-        self.shaders.insert(shader_name, shader_program);
+    pub fn add_shader_program(&mut self, shader_name: &str, shader_program: ShaderProgram) {
+        self.shaders.insert(shader_name.to_string(), shader_program);
     }
 
     pub fn get_shader_program(&mut self, shader_name: String) -> &ShaderProgram {

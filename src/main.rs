@@ -98,14 +98,14 @@ fn main() {
     default_shader.create_uniform("projectionMatrix");
     default_shader.create_uniform("modelViewMatrix");
     default_shader.test();
-    renderer.add_shader_program("default".to_string(), default_shader);
+    renderer.add_shader_program("default", default_shader);
 
 
     let mut window_variables: WindowVariables = WindowVariables::new();
 
     let mut world: World = World::new();
 
-    const RENDER_DISTANCE: i32 = 30;
+    const RENDER_DISTANCE: i32 = 10;
 
     let mut debug_x = -RENDER_DISTANCE;
     let mut debug_y = -RENDER_DISTANCE;
