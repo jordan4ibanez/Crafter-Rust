@@ -154,6 +154,10 @@ pub fn create_chunk_mesh(world: &World,pos_x: i32, pos_z: i32, texture: Texture)
     
     // end dry run
 
+    // prevent crashing
+    if float_count == 0 {
+        return None;
+    }
 
     // println!("CALCULATED: {}", pos_count);
 
