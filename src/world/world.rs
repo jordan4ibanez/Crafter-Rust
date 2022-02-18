@@ -1,5 +1,7 @@
 use std::collections::{HashMap, hash_map::Values};
 
+use crate::graphics::mesh::Mesh;
+
 use super::chunk::{Chunk, self};
 
 pub struct World {
@@ -28,12 +30,22 @@ impl World {
     }
 
     pub fn clean_up(&mut self){
-        self.map.values().into_iter().for_each( | chunk: &Chunk | {
+        self.map.values_mut().into_iter().for_each( | chunk: &mut Chunk | {
             match chunk.get_mesh_mut() {
                 Some(mesh) => mesh.clean_up(false),
                 None => (),
             }
         });
+    }
+
+    pub fn set_chunk_mesh(&mut self, key: String, mesh: Mesh) {
+        let chunk_option: Option<&mut Chunk> = self.map.get_mut(&key);
+        
+        // does the chunk exist?
+        match chunk_option {
+            Some(chunk) => chunk.set_mesh(mesh),
+            None => mesh.clean_up(false),
+        }
     }
     
     // returns a map iterator
@@ -47,8 +59,8 @@ impl World {
     }
 
     // gets a chunk
-    pub fn get_chunk(&self, key: String) -> &Option<&Chunk> {
-        &self.map.get(&key)
+    pub fn get_chunk(&self, key: String) -> Option<&Chunk> {
+        self.map.get(&key)
     }
 
     // gets a mutable chunk
