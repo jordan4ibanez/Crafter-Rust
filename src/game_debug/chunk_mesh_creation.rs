@@ -5,7 +5,7 @@ use crate::{graphics::{
     texture::{
         Texture
     }
-}, game_debug::chunk_mesh_boilerplate::dry_run, world::chunk::Chunk};
+}, game_debug::chunk_mesh_boilerplate::dry_run, world::{chunk::Chunk, world::World}};
 
 use super::chunk_mesh_boilerplate::{
     add_block
@@ -30,6 +30,14 @@ fn index_to_pos ( i: &u16 ) -> (i32,i32,i32) {
     (x, y, z)
 }
 
+// Converts x,y,z (u8) 3D position into u16 1D position.
+pub fn pos_to_index ( x: u8, y: u8, z: u8 ) -> u16 {
+    let x_wide: u16 = x.clone().into();
+    let y_wide: u16 = y.clone().into();
+    let z_wide: u16 = z.clone().into();
+    (x_wide * 2048) + (z_wide * 128) + y_wide
+}
+
 fn mini_index_to_pos(i: u16) -> (i8,i8,i8) {
     let mut index :u16 = i.clone();
     let x: i8 = (index / 2048) as i8;
@@ -40,14 +48,6 @@ fn mini_index_to_pos(i: u16) -> (i8,i8,i8) {
     (x, y, z)
 }
 
-// Converts x,y,z (u8) 3D position into u16 1D position.
-pub fn pos_to_index ( x: u8, y: u8, z: u8 ) -> u16 {
-    let x_wide: u16 = x.clone().into();
-    let y_wide: u16 = y.clone().into();
-    let z_wide: u16 = z.clone().into();
-    (x_wide * 2048) + (z_wide * 128) + y_wide
-}
-
 pub fn mini_pos_to_index ( x: i8, y: i8, z: i8 ) -> u16 {
     let x_wide: u16 = x as u16;
     let y_wide: u16 = y as u16;
@@ -56,37 +56,51 @@ pub fn mini_pos_to_index ( x: i8, y: i8, z: i8 ) -> u16 {
 }
 
 
-pub fn create_chunk_mesh(chunk: &Chunk, texture: Texture) -> Mesh {      
+
+
+
+
+// borrow the entire world
+pub fn create_chunk_mesh(world: &World,pos_x: i32, pos_z: i32, texture: Texture) -> Option<Mesh> {      
 
     // dry run to get capacities
 
     let mut float_count: u32 = 0;
     let mut indices_count: u32 = 0;
 
-    let debug_array: &[u32; 32768] = chunk.get_block_aray();
+
+    let current_chunk_option: Option<&Chunk> = world.get_chunk(pos_x.to_string() + " " + &pos_z.to_string());
+
+    match current_chunk_option {
+        Some(_) => (),
+        None => return None,
+    }
+
+    let chunk_data: &[u32; 32768] = current_chunk_option.unwrap().get_block_aray();
+
 
     for i in 0..32768 {
-        if debug_array[i] != 0 {
+        if chunk_data[i] != 0 {
             let (x,y,z) = mini_index_to_pos(i as u16);
             
-            if x + 1 <= 15 && debug_array[mini_pos_to_index(x + 1, y, z) as usize] == 0 {
+            if x + 1 <= 15 && chunk_data[mini_pos_to_index(x + 1, y, z) as usize] == 0 {
                 dry_run(&mut float_count, &mut indices_count)
             }
-            if x - 1 >= 0 && debug_array[mini_pos_to_index(x - 1, y, z) as usize] == 0 {
-                dry_run(&mut float_count, &mut indices_count)
-            }
-
-            if y == 127 || (y < 127 && debug_array[mini_pos_to_index(x, y + 1, z) as usize] == 0) {
-                dry_run(&mut float_count, &mut indices_count)
-            }
-            if y - 1 >= 0 && debug_array[mini_pos_to_index(x, y - 1, z) as usize] == 0 {
+            if x - 1 >= 0 && chunk_data[mini_pos_to_index(x - 1, y, z) as usize] == 0 {
                 dry_run(&mut float_count, &mut indices_count)
             }
 
-            if z + 1 <= 15 && debug_array[mini_pos_to_index(x, y, z + 1) as usize] == 0 {
+            if y == 127 || (y < 127 && chunk_data[mini_pos_to_index(x, y + 1, z) as usize] == 0) {
                 dry_run(&mut float_count, &mut indices_count)
             }
-            if z - 1 >= 0 && debug_array[mini_pos_to_index(x, y, z - 1) as usize] == 0 {
+            if y - 1 >= 0 && chunk_data[mini_pos_to_index(x, y - 1, z) as usize] == 0 {
+                dry_run(&mut float_count, &mut indices_count)
+            }
+
+            if z + 1 <= 15 && chunk_data[mini_pos_to_index(x, y, z + 1) as usize] == 0 {
+                dry_run(&mut float_count, &mut indices_count)
+            }
+            if z - 1 >= 0 && chunk_data[mini_pos_to_index(x, y, z - 1) as usize] == 0 {
                 dry_run(&mut float_count, &mut indices_count)
             }
         }
@@ -110,20 +124,20 @@ pub fn create_chunk_mesh(chunk: &Chunk, texture: Texture) -> Mesh {
     let mut face_count: u32 = 0;
 
     for i in 0..32768 {
-        if debug_array[i] != 0 {
+        if chunk_data[i] != 0 {
 
             let light = 1.0;
 
             let (x,y,z) = mini_index_to_pos(i as u16);
             
-            let x_plus = x + 1 <= 15 && debug_array[mini_pos_to_index(x + 1, y, z) as usize] == 0;
-            let x_minus = x - 1 >= 0 && debug_array[mini_pos_to_index(x - 1, y, z) as usize] == 0;
+            let x_plus = x + 1 <= 15 && chunk_data[mini_pos_to_index(x + 1, y, z) as usize] == 0;
+            let x_minus = x - 1 >= 0 && chunk_data[mini_pos_to_index(x - 1, y, z) as usize] == 0;
 
-            let y_plus = y == 127 || (y < 127 && debug_array[mini_pos_to_index(x, y + 1, z) as usize] == 0);
-            let y_minus = y - 1 >= 0 && debug_array[mini_pos_to_index(x, y - 1, z) as usize] == 0;
+            let y_plus = y == 127 || (y < 127 && chunk_data[mini_pos_to_index(x, y + 1, z) as usize] == 0);
+            let y_minus = y - 1 >= 0 && chunk_data[mini_pos_to_index(x, y - 1, z) as usize] == 0;
 
-            let z_plus = z + 1 <= 15 && debug_array[mini_pos_to_index(x, y, z + 1) as usize] == 0;
-            let z_minus = z - 1 >= 0 && debug_array[mini_pos_to_index(x, y, z - 1) as usize] == 0;
+            let z_plus = z + 1 <= 15 && chunk_data[mini_pos_to_index(x, y, z + 1) as usize] == 0;
+            let z_minus = z - 1 >= 0 && chunk_data[mini_pos_to_index(x, y, z - 1) as usize] == 0;
 
             if x_plus || x_minus || y_plus || y_minus || z_plus || z_minus {
                 add_block(
@@ -147,7 +161,6 @@ pub fn create_chunk_mesh(chunk: &Chunk, texture: Texture) -> Mesh {
                     light
                 );
             }
-
         }
     }
 
@@ -157,5 +170,5 @@ pub fn create_chunk_mesh(chunk: &Chunk, texture: Texture) -> Mesh {
         texture
     );
 
-    returning_mesh
+    Some(returning_mesh)
 }
