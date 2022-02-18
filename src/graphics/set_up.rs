@@ -16,13 +16,13 @@ use glfw::{
     }
 };
 
-use crate::graphics::resource_loader;
+use crate::graphics::resource_loader::{self, get_path_string};
 
 // utility file
 
 // this is just a lonely set up file to clean up main()
 
-pub fn set_up_glfw(glfw: &mut Glfw, path: &str) -> (glfw::Window, Receiver<(f64, WindowEvent)>){
+pub fn set_up_glfw(glfw: &mut Glfw) -> (glfw::Window, Receiver<(f64, WindowEvent)>){
 
     // redundantly instatialize defaul hints in case of bad drivers
     glfw.default_window_hints();
@@ -44,7 +44,7 @@ pub fn set_up_glfw(glfw: &mut Glfw, path: &str) -> (glfw::Window, Receiver<(f64,
 
     println!("GLFW window initialized properly!");
 
-    set_window_icon(&window,path.to_string() + "/textures/icon.png");
+    set_window_icon(&window,"/textures/icon.png");
 
     // get primary monitor and size
     let mut monitor_size: (u32, u32) = (0, 0);
@@ -127,7 +127,8 @@ pub fn set_up_glfw(glfw: &mut Glfw, path: &str) -> (glfw::Window, Receiver<(f64,
     
 }
 
-fn set_window_icon(window: &Window, path: String) {
+fn set_window_icon(window: &Window, path: &str) {
+
 
     let mut data: Vec<u8> = resource_loader::load_texture(path);
 
