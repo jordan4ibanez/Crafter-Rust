@@ -5,19 +5,12 @@ use super::chunk::Chunk;
 
 // Convertes u16 1D position into (u8,u8,u8) 3D tuple position
 pub fn index_to_pos ( i: &u16 ) -> (f64,f64,f64) {
-
     let mut index :u16 = i.clone();
-
     let x: f64 = (index / 2048) as f64;
-
     index = index % 2048;
-
     let z: f64 = (index / 128) as f64;
-
     index = index % 128;
-
     let y: f64 = index as f64;
-
     (x, y, z)
 }
 
@@ -38,7 +31,7 @@ fn calculate_y_height(
 pub fn gen_biome(chunk: &mut Chunk, perlin: &mut PerlinNoise2D) {
     // directly working with chunk data
     let chunk_pos = chunk.get_pos();
-    let blocks: &mut [u32; 32768] = chunk.get_block_aray_mut();
+    let blocks: &mut [u32; 32768] = chunk.get_block_array_mut();
 
     // the base height - if noise is always 0 the blocks will always generate to 0
     let base_height = 70.0;
@@ -47,8 +40,6 @@ pub fn gen_biome(chunk: &mut Chunk, perlin: &mut PerlinNoise2D) {
     let noise_multiplier = 50.0;
 
     let mut y_height = calculate_y_height(0.0, 0.0, chunk_pos.x as f64, chunk_pos.y as f64, perlin, base_height, noise_multiplier);
-
-    // println!("Y HEIGHT: {}", y_height);
 
     for i in 0..32768 {
         let (x,y,z) = index_to_pos(&i);
