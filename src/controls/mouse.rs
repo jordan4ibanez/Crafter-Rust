@@ -5,7 +5,6 @@ use glfw::{
     Window
 };
 
-
 pub struct Mouse {
     position: Vec2,
     old_position: Vec2,

@@ -10,7 +10,7 @@ use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
 use perlin2d::PerlinNoise2D;
-use rand::ThreadRng;
+
 
 use std::{
     sync::mpsc::Receiver
@@ -33,12 +33,7 @@ use crate::{
     },
 
     controls::{
-        mouse::{
-            Mouse
-        },
-        keyboard::{
-            Keyboard
-        }, controls::Controls
+        controls::Controls
     },
 
     time::{
@@ -46,7 +41,7 @@ use crate::{
             Time
         }
     },
-    game_debug::{chunk_mesh_creation, chunk_mesh_generator_queue::{self, ChunkMeshGeneratorQueue, MeshUpdate}},
+    game_debug::{chunk_mesh_creation, chunk_mesh_generator_queue::{ChunkMeshGeneratorQueue, MeshUpdate}},
 
     world::{
         chunk::{

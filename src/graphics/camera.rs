@@ -2,7 +2,7 @@ use std::f32::consts::PI;
 
 use glam::Vec3;
 
-use crate::controls::{keyboard::Keyboard, mouse::Mouse, controls::Controls};
+use crate::controls::{controls::Controls};
 
 
 pub struct Camera {
