@@ -1,3 +1,3 @@
 pub mod chunk_mesh_creation;
 pub mod chunk_mesh_boilerplate;
-pub mod chunk_mesh_generator;
+pub mod chunk_mesh_generator_queue;
