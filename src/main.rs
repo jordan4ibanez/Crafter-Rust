@@ -114,7 +114,7 @@ fn main() {
 
     let mut world: World = World::new();
 
-    const RENDER_DISTANCE: i32 = 10;
+    const RENDER_DISTANCE: i32 = 20;
 
     let mut debug_x = -RENDER_DISTANCE;
     let mut debug_y = -RENDER_DISTANCE;
@@ -157,7 +157,7 @@ fn main() {
             
             let mut generated_chunk: Chunk = Chunk::new(debug_x, debug_y);
 
-            gen_biome(&mut generated_chunk, &mut perlin, Some(&mut thread_rng));
+            gen_biome(&mut generated_chunk, &mut perlin, None);//Some(&mut thread_rng));
 
             world.add(generated_chunk);
 
