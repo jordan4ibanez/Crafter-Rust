@@ -74,7 +74,7 @@ fn main() {
     window.set_cursor_mode(glfw::CursorMode::Disabled);
 
     let mut perlin: PerlinNoise2D = PerlinNoise2D::new(1, 0.5, 1.0, 1.0, 1.0, (10.0, 10.0), 0.5, 1213);
-    let mut thread_rng: ThreadRng = rand::thread_rng();
+    // let mut thread_rng: ThreadRng = rand::thread_rng();
 
     // fps counter object
     let mut time_object: Time = Time::new(&glfw);
