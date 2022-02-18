@@ -58,7 +58,6 @@ impl Renderer {
 
         default_shader.set_uniform_mat4("projection_matrix", self.transformation.get_projection_matrix());
     
-
         // begin batched render
         let mut batch_hook = false;
 
