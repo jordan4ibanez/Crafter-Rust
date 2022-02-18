@@ -1,6 +1,6 @@
-use std::{collections::{HashMap, hash_map::Values}, iter::Map};
+use std::{collections::{HashMap, hash_map::Values}};
 
-use glam::{Vec3, Vec3Swizzles};
+use glam::{Vec3};
 
 use crate::graphics::mesh::Mesh;
 
