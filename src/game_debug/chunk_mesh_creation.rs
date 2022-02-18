@@ -11,6 +11,8 @@ use super::chunk_mesh_boilerplate::{
     add_block
 };
 
+// this is procedurally generated
+
 /*
 positions,
 colors,
@@ -68,10 +70,12 @@ pub fn create_chunk_mesh(world: &World,pos_x: i32, pos_z: i32, texture: Texture)
     let neighbor_plus_z_option: Option<&Chunk> = world.get_chunk(pos_x.to_string() + " " + &(pos_z + 1).to_string());
     let neighbor_minus_z_option: Option<&Chunk> = world.get_chunk(pos_x .to_string() + " " + &(pos_z - 1).to_string());
 
+    /*
     match neighbor_minus_x_option {
-        Some(neighbor) => println!("YESSSSSSS"),
-        None => println!("NO"),
+        Some(_) => println!("YES NEIGHBOR DOES EXIST"),
+        None => println!("NO NEIGHBOR DOES NOT EXIST"),
     }
+    */
 
 
     // slight performance loss at the expense of readibility
