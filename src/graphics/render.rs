@@ -12,7 +12,8 @@ use super::{gl_safety_wrappers, shader_program::{ShaderProgram}, transformation:
 pub struct Renderer {
     shaders: HashMap<String, ShaderProgram>,
     transformation: Transformation,
-    camera: Camera
+    camera: Camera,
+    render_distance: f32
 }
 
 impl Renderer {
@@ -21,8 +22,13 @@ impl Renderer {
         Self {
             shaders: HashMap::new(),
             transformation: Transformation::new(),
-            camera: Camera::new()
+            camera: Camera::new(),
+            render_distance: 0.0
         }
+    }
+
+    pub fn set_render_distance(&mut self, distance: f32) {
+        self.render_distance = distance;
     }
 
     pub fn add_shader_program(&mut self, shader_name: &str, shader_program: ShaderProgram) {
@@ -56,9 +62,11 @@ impl Renderer {
 
         default_shader.bind();
 
-        self.transformation.reset_projection_matrix(&self.camera, window.get_size().0 as f32, window.get_size().1 as f32, 0.01, 1000.0);
+        self.transformation.reset_projection_matrix(&self.camera, window.get_size().0 as f32, window.get_size().1 as f32, 0.01, self.render_distance);
 
         default_shader.set_uniform_mat4("projection_matrix", self.transformation.get_projection_matrix());
+
+        default_shader.set_light_uniform("game_render_distance", self.render_distance);
     
         // begin batched render
         let mut batch_hook = false;
