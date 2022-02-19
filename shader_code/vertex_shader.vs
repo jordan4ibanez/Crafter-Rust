@@ -6,17 +6,34 @@ layout (location = 2) in vec2 texture_coord;
 
 out vec3 export_color;
 out vec2 output_texture_coord;
-// out float output_render_distance;
+out float export_fog;
 
 uniform mat4 model_matrix;
 uniform mat4 projection_matrix;
+uniform float game_render_distance;
 
-// uniform float render_distance;
+bool depth_check(float current_pos, float c_render_distance){
+    
+    if (current_pos > ((c_render_distance) - (4.0 * 16.0))){
+        return true;
+    }
+        
+    return false;
+}
 
 void main()
 {
+  
     gl_Position = projection_matrix * model_matrix * vec4(position, 1.0);
+
     export_color = input_color;
     output_texture_coord = texture_coord;
-    // output_render_distance = render_distance;
+
+
+    float distance = length(vec3(gl_Position.x, gl_Position.y, gl_Position.z));
+
+    float density = 2.0 / (game_render_distance);
+    float fog = 1.0 / exp( (distance * density) * (distance * density));
+
+    export_fog = fog;
 }
