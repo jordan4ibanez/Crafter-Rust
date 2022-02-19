@@ -34,7 +34,7 @@ pub fn gen_biome(chunk: &mut Chunk, perlin: &mut PerlinNoise2D, rand_option: Opt
 
     // directly working with chunk data
     let chunk_pos = chunk.get_pos();
-    let blocks: &mut [u32; 32768] = chunk.get_block_array_mut();
+    let blocks: &mut Vec<u32> = chunk.get_block_array_mut();
 
     // random noise is preferred over biome gen
     match rand_option {

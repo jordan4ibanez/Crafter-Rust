@@ -8,10 +8,10 @@ use crate::graphics::mesh::Mesh;
 pub struct Chunk {
     key: String,
     position:  IVec2,
-    block:     [u32; 32768],
-    rotation:  [u8;  32768],
-    light:     [u8;  32768],
-    heightmap: [u8;  256],
+    block:     Vec<u32>,
+    rotation:  Vec<u8>,
+    light:     Vec<u8>,
+    heightmap: Vec<u8>,
 
     mesh: Option<Mesh>
 }
@@ -21,10 +21,10 @@ impl Chunk {
         Self {
             key: x.to_string() + " " + &y.to_string(),
             position: IVec2::new(x, y),
-            block: [0; 32768],
-            rotation: [0; 32768],
-            light: [0; 32768],
-            heightmap: [0; 256],
+            block: vec![0; 32768],
+            rotation: vec![0; 32768],
+            light: vec![0; 32768],
+            heightmap: vec![0; 256],
             mesh: None
         }
     }
@@ -45,11 +45,11 @@ impl Chunk {
         self.block[mini_pos_to_index(x, y, z) as usize]
     }
 
-    pub fn get_block_array_mut(&mut self) -> &mut [u32; 32768] {
+    pub fn get_block_array_mut(&mut self) -> &mut Vec<u32> {
         &mut self.block
     }
 
-    pub fn get_block_array(&self) -> &[u32; 32768] {
+    pub fn get_block_array(&self) -> &Vec<u32> {
         &self.block
     }
 
