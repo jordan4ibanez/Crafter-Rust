@@ -1,5 +1,5 @@
 use std::{collections::HashMap, ffi::CString, ptr};
-use gl::types::GLint;
+use gl::types::{GLint, GLchar};
 use glam::{Vec4, Vec3, Mat4};
 
 use super::resource_loader;
@@ -155,6 +155,11 @@ impl ShaderProgram {
             gl::GetShaderiv(shader_id, gl::COMPILE_STATUS, &mut success);
             
             if success != gl::TRUE as GLint {
+                let mut info_log = vec![0; 512];
+
+                gl::GetShaderInfoLog(shader_id, 512, ptr::null_mut(), info_log.as_mut_ptr() as *mut GLchar);
+
+                println!("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n\n {}", String::from_utf8(info_log).unwrap());
                 panic!("ERROR COMPILING SHADER!");
             }
 
