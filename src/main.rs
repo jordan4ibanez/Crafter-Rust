@@ -29,7 +29,9 @@ use crate::{
         },
         window_variables::{
             *
-        }, render::{Renderer}, resource_loader::get_path_string
+        },
+        render::Renderer,
+        resource_loader::get_path_string
     },
 
     controls::{
@@ -41,15 +43,21 @@ use crate::{
             Time
         }
     },
-    game_debug::{chunk_mesh_creation, chunk_mesh_generator_queue::{ChunkMeshGeneratorQueue, MeshUpdate}},
-
+    game_debug::{
+        chunk_mesh_creation,
+        chunk_mesh_generator_queue::{
+            ChunkMeshGeneratorQueue,
+            MeshUpdate
+        }
+    },
     world::{
         chunk::{
             *
         },
         world::{
             *,
-        }, biome_generator::gen_biome
+        },
+        biome_generator::gen_biome
     }
 };
 
@@ -79,18 +87,22 @@ fn main() {
 
     println!("Current Working Path: {}", get_path_string());
 
-    let debug_texture: Texture = Texture::new("/textures/debug_alpha.png");
+    let debug_texture: Texture = Texture::new("/textures/dirt.png");
 
     let mut controls: Controls = Controls::new(&window);
 
+    const RENDER_DISTANCE: i32 = 5;
+
     // construct the renderer
     let mut renderer: Renderer = Renderer::new();
+    renderer.set_render_distance(RENDER_DISTANCE as f32 * 16.0);
     let mut default_shader: ShaderProgram = ShaderProgram::new(
          "/shader_code/vertex_shader.vs",
         "/shader_code/fragment_shader.fs"
     );
     default_shader.create_uniform("projection_matrix");
     default_shader.create_uniform("model_matrix");
+    default_shader.create_uniform("game_render_distance");
     default_shader.test();
     renderer.add_shader_program("default", default_shader);
 
@@ -99,7 +111,6 @@ fn main() {
 
     let mut world: World = World::new();
 
-    const RENDER_DISTANCE: i32 = 10;
 
     let mut debug_x = -RENDER_DISTANCE;
     let mut debug_y = -RENDER_DISTANCE;
