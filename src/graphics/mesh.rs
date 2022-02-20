@@ -16,19 +16,19 @@ pub struct Mesh {
     vbo_id: u32, // float data in GPU memory
     ebo_id: u32, // indices data in GPU memory
     vertex_count: i32,
-    texture: Texture
+    texture_id: u32
 }
 
 impl Mesh {
 
     // constructor
-    pub fn new(float_data: Vec<f32>, indices: Vec<u32>, texture: Texture) -> Self {
+    pub fn new(float_data: Vec<f32>, indices: Vec<u32>, texture_id: u32) -> Self {
         let mut returning_mesh: Self = Self {
             vao_id: 0,
             vbo_id: 0,
             ebo_id: 0,
             vertex_count: 0,
-            texture
+            texture_id
         };
         
         returning_mesh.construct(float_data, indices);
@@ -43,7 +43,6 @@ impl Mesh {
         println!("VBO: {}", self.vbo_id);
         println!("EBO: {}", self.ebo_id);
         println!("V COUNT: {}", self.vertex_count);
-        self.texture.test();
         println!("---END MESH TEST---");
     }
 
@@ -122,7 +121,7 @@ impl Mesh {
             gl::ActiveTexture(gl::TEXTURE0);
 
             // bind the texture
-            gl::BindTexture(gl::TEXTURE_2D, self.texture.get_id());
+            gl::BindTexture(gl::TEXTURE_2D, self.texture_id);
         }
     }
 
@@ -145,7 +144,7 @@ impl Mesh {
             gl::ActiveTexture(gl::TEXTURE0);
 
             // bind the texture
-            gl::BindTexture(gl::TEXTURE_2D, self.texture.get_id());
+            gl::BindTexture(gl::TEXTURE_2D, self.texture_id);
 
             // bind the mesh vertex array
             gl::BindVertexArray(self.vao_id);
@@ -168,7 +167,7 @@ impl Mesh {
 
             // delete internal texture if specified to
             if delete_texture {
-                self.texture.clean_up();
+                //self.texture.clean_up();
             }
 
         }

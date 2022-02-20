@@ -136,7 +136,7 @@ fn main() {
                         chunk_mesh_generator_queue.batch_neighbor_update(mesh_update.get_x(), mesh_update.get_z());
                     }
 
-                    let mesh: Option<Mesh> = chunk_mesh_creation::create_chunk_mesh(&world, mesh_update.get_x(), mesh_update.get_z(), Texture::clone(&debug_texture));
+                    let mesh: Option<Mesh> = chunk_mesh_creation::create_chunk_mesh(&world, mesh_update.get_x(), mesh_update.get_z(), debug_texture.get_id());
                     match mesh {
                         Some(unwrapped_mesh) => world.set_chunk_mesh(mesh_update.get_x().to_string() + " " + &mesh_update.get_z().to_string(), unwrapped_mesh),
                         None => (),
