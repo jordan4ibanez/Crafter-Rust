@@ -1,6 +1,6 @@
 use std::{collections::{HashMap, hash_map::Values}};
 
-use glam::{Vec3};
+use glam::{Vec3, Vec3A, Vec2};
 
 use crate::graphics::mesh::Mesh;
 
@@ -57,22 +57,23 @@ impl World {
     
     pub fn iter_map_sorted(&self, camera_pos: Vec3) -> Vec<&Chunk> {
 
-        let mut chunk_worker_vector_1: Vec3 = Vec3::new(0.0, 0.0, 0.0);
-        let mut chunk_worker_vector_2: Vec3 = Vec3::new(0.0, 0.0, 0.0);
+        let camer_pos_a = Vec2::new(camera_pos.x, camera_pos.z);
 
         let mut sorted_vec: Vec<&Chunk> = Vec::from_iter(self.map.values());
 
         sorted_vec.sort_by(|chunk_1, chunk_2 |{
 
-            chunk_worker_vector_1.x = chunk_1.get_x() as f32 * 16.0;
-            // 2d so no Y
-            chunk_worker_vector_1.z = chunk_1.get_z() as f32 * 16.0;
+            let chunk_worker_vector_1: Vec2 = Vec2::new(
+                chunk_1.get_x() as f32 * 16.0,
+                chunk_1.get_z() as f32 * 16.0
+            );
 
-            chunk_worker_vector_2.x = chunk_2.get_x() as f32 * 16.0;
-            // 2d so no Y
-            chunk_worker_vector_2.z = chunk_2.get_z() as f32 * 16.0;
+            let chunk_worker_vector_2: Vec2 = Vec2::new(
+                chunk_2.get_x() as f32 * 16.0,
+                chunk_2.get_z() as f32 * 16.0
+            );
 
-            chunk_worker_vector_2.distance(camera_pos).partial_cmp(&chunk_worker_vector_1.distance(camera_pos)).unwrap()
+            chunk_worker_vector_2.distance(camer_pos_a).partial_cmp(&chunk_worker_vector_1.distance(camer_pos_a)).unwrap()
         });
 
         sorted_vec
