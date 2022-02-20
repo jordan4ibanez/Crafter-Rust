@@ -91,7 +91,7 @@ fn main() {
 
     let mut controls: Controls = Controls::new(&window);
 
-    const RENDER_DISTANCE: i32 = 5;
+    const RENDER_DISTANCE: i32 = 20;
 
     // construct the renderer
     let mut renderer: Renderer = Renderer::new();
