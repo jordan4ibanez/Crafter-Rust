@@ -47,7 +47,7 @@ pub fn mini_pos_to_index ( x: i8, y: i8, z: i8 ) -> u16 {
 
 
 // borrow the entire world
-pub fn create_chunk_mesh(world: &World,pos_x: i32, pos_z: i32, texture: Texture) -> Option<Mesh> {      
+pub fn create_chunk_mesh(world: &World,pos_x: i32, pos_z: i32, texture_id: u32) -> Option<Mesh> {      
 
     // dry run to get capacities
 
@@ -266,7 +266,7 @@ pub fn create_chunk_mesh(world: &World,pos_x: i32, pos_z: i32, texture: Texture)
     let returning_mesh: Mesh = Mesh::new(
         float_data,
         indices_data,
-        texture
+        texture_id
     );
 
     Some(returning_mesh)
