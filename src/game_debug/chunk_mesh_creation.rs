@@ -183,7 +183,7 @@ pub fn create_chunk_mesh(world: &World,pos_x: i32, pos_z: i32, texture: Texture)
 
         if chunk.get_block(x, y, z) != 0 {
 
-            let light = 1.0;
+            let light = 16.0/16.0;
             
             let mut x_plus = x + 1 <= 15 && chunk.get_block(x + 1, y, z) == 0;
             let mut x_minus = x - 1 >= 0 && chunk.get_block(x - 1, y, z) == 0;

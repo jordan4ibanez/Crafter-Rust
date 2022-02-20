@@ -474,6 +474,9 @@ pub fn add_block(
     light: f32
 ) {
 
+
+    let side_face_light_subtraction =  0.75 / 16.0;
+
     if y_plus {
         face_up(
             float_data,
@@ -519,7 +522,7 @@ pub fn add_block(
             x,
             y,
             z,
-            light
+            light - side_face_light_subtraction
         );
     }
 
@@ -535,7 +538,7 @@ pub fn add_block(
             x,
             y,
             z,
-            light
+            light - side_face_light_subtraction
         );
     }
 
@@ -564,7 +567,7 @@ pub fn add_block(
             x,
             y,
             z,
-            light
+            light - side_face_light_subtraction
         );
     }
     
@@ -580,7 +583,7 @@ pub fn add_block(
             x,
             y,
             z,
-            light
+            light - side_face_light_subtraction
         );
     }
 }
