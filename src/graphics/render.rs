@@ -57,6 +57,8 @@ impl Renderer {
     pub fn render(&mut self, window: &Window, world: &World) {
         
         gl_safety_wrappers::clear_depth_and_color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 1.0);
+        // gl_safety_wrappers::clear_depth_and_color(113.0 / 255.0, 112.0 / 255.0, 114.0 / 255.0, 1.0);
+
     
         let default_shader = self.shaders.get("default").unwrap();
 
