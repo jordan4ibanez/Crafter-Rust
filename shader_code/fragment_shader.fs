@@ -15,5 +15,7 @@ void main()
 
     float fog_factor = clamp(export_fog, 0.0, 1.0);
     
-    frag_color = vec4(mix(vec3(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0), pre_mix.xyz, fog_factor), 1.0);
+    vec3 fog_color = vec3(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0);
+
+    frag_color = vec4(mix(fog_color, pre_mix.xyz, fog_factor), 1.0);
 }
