@@ -2,11 +2,9 @@
 use perlin2d::PerlinNoise2D;
 use rand::{ThreadRng, Rng};
 
-use super::chunk::Chunk;
-
 // Convertes u16 1D position into (u8,u8,u8) 3D tuple position
-pub fn index_to_pos ( i: &u16 ) -> (f64,f64,f64) {
-    let mut index :u16 = i.clone();
+pub fn index_to_pos ( i: usize ) -> (f64,f64,f64) {
+    let mut index :usize = i.clone();
     let x: f64 = (index / 2048) as f64;
     index = index % 2048;
     let z: f64 = (index / 128) as f64;
@@ -29,22 +27,19 @@ fn calculate_y_height(
 
 }
 
-pub fn gen_biome(chunk: &mut Chunk, perlin: &mut PerlinNoise2D, rand_option: Option<&mut ThreadRng>) {
+pub fn gen_biome(block_data: &mut Vec<u32>, pos_x: i32, pos_z: i32, perlin: &mut PerlinNoise2D, rand_option: Option<&mut ThreadRng>) {
 
-
-    // directly working with chunk data
-    let chunk_pos = chunk.get_pos();
-    let blocks: &mut Vec<u32> = chunk.get_block_array_mut();
 
     // random noise is preferred over biome gen
     match rand_option {
         Some(thread_rng) => {
             for i in 0..32768 {
                 if thread_rng.gen::<f64>() > 0.5 {
-                    blocks[i] = 1;
+                    block_data[i] = 1;
                 }
             }
         },
+
         None => {
             // the base height - if noise is always 0 the blocks will always generate to 0
             let base_height = 70.0;
@@ -52,17 +47,17 @@ pub fn gen_biome(chunk: &mut Chunk, perlin: &mut PerlinNoise2D, rand_option: Opt
             // the amount of fluctuation the blocks can have from base height
             let noise_multiplier = 50.0;
 
-            let mut y_height = calculate_y_height(0.0, 0.0, chunk_pos.x as f64, chunk_pos.y as f64, perlin, base_height, noise_multiplier);
+            let mut y_height = calculate_y_height(0.0, 0.0, pos_x as f64, pos_z as f64, perlin, base_height, noise_multiplier);
 
             for i in 0..32768 {
-                let (x,y,z) = index_to_pos(&i);
+                let (x,y,z) = index_to_pos(i);
 
-                if y as i8 == 0 {
-                    y_height = calculate_y_height(x, z, chunk_pos.x as f64, chunk_pos.y as f64, perlin, base_height, noise_multiplier);
+                if y as usize == 0 {
+                    y_height = calculate_y_height(x, z, pos_x as f64, pos_z as f64, perlin, base_height, noise_multiplier);
                 }
                 
                 if y <= y_height {
-                    blocks[i as usize] = 1;
+                    block_data[i] = 1;
                 }
             }
         }
