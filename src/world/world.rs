@@ -1,7 +1,7 @@
 use std::{
     collections::{
         hash_map::Values
-    }, slice::Iter, iter::Zip
+    }, slice::Iter, iter::Zip, vec
 };
 
 use glam::{Vec3, Vec2};
@@ -19,7 +19,9 @@ pub struct World {
     heightmap:  Vec<Vec<u8>>,
 
     // chunks NEED to have data, but their mesh COULD not be generated yet
-    mesh_id:    Vec<Option<u32>>
+    mesh_id:    Vec<Option<u32>>,
+
+    sorted_chunks: Vec<(Option<u32>, (i32, i32))>
 }
 
 impl World {
@@ -34,6 +36,7 @@ impl World {
             heightmap:  Vec::new(),
 
             mesh_id:    Vec::new(),
+            sorted_chunks: Vec::new()
         }
     }
 
@@ -92,6 +95,7 @@ impl World {
                 self.light.push(vec![0; 32768]);
                 self.heightmap.push(vec![0; 256]);
                 self.mesh_id.push(None);
+
                 return true;
             }
         }
@@ -131,7 +135,44 @@ impl World {
     
     // returns a map iterator
     pub fn iter_map(&self) -> Zip<Zip<Iter<i32>, Iter<i32>>, Iter<Option<u32>>> {
-        return self.position_x.iter().zip(self.position_z.iter()).zip(self.mesh_id.iter())
+        self.position_x.iter().zip(self.position_z.iter()).zip(self.mesh_id.iter())
+    }
+
+    // returns a map iterator
+    pub fn sort_map(&mut self, camera_pos: Vec3) {
+
+        println!("UPDATED CHUNK ORDERING!");
+
+        let mut index = 0;
+
+        self.sorted_chunks.clear();
+
+        for x in self.position_x.iter() {                        
+            self.sorted_chunks.push((self.mesh_id[index], (*x, self.position_z[index])));
+            index += 1;
+        }
+
+        let camera_pos_2d: Vec2 = Vec2::new(camera_pos.x, camera_pos.z);
+
+        self.sorted_chunks.sort_by(|chunk_1, chunk_2| {
+            let chunk_worker_vector_1: Vec2 = Vec2::new(
+                chunk_1.1.0 as f32 * 16.0,
+                chunk_1.1.1 as f32 * 16.0
+            );
+            let chunk_worker_vector_2: Vec2 = Vec2::new(
+                chunk_2.1.0 as f32 * 16.0,
+                chunk_2.1.1 as f32 * 16.0
+            );
+            chunk_worker_vector_2.distance(camera_pos_2d).partial_cmp(&chunk_worker_vector_1.distance(camera_pos_2d)).unwrap()
+        });
+
+        //self.sorted_chunks
+
+        //self.position_x.iter().zip(self.position_z.iter()).zip(self.mesh_id.iter())
+    }
+
+    pub fn get_map_sorted(&self) -> &Vec<(Option<u32>, (i32, i32))> {
+        &self.sorted_chunks
     }
 
     // returns the vector block data - mutably
