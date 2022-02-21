@@ -5,7 +5,7 @@ use glfw::Window;
 
 use crate::{world::world::World};
 
-use super::{gl_safety_wrappers, shader_program::{ShaderProgram}, transformation::{Transformation}, camera::{Camera}};
+use super::{gl_safety_wrappers, shader_program::{ShaderProgram}, transformation::{Transformation}, camera::{Camera}, mesh::MeshComponentSystem};
 
 
 
@@ -54,7 +54,7 @@ impl Renderer {
     }    
 
     // this is a test
-    pub fn render(&mut self, window: &Window, world: &World) {
+    pub fn render(&mut self, mcs: &MeshComponentSystem, window: &Window, world: &World) {
         
         gl_safety_wrappers::clear_depth_and_color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 1.0);
         // gl_safety_wrappers::clear_depth_and_color(113.0 / 255.0, 112.0 / 255.0, 114.0 / 255.0, 1.0);
@@ -74,8 +74,9 @@ impl Renderer {
         let mut batch_hook = false;
 
         for chunk in world.iter_map_sorted(self.camera.get_pos()) {
-            match chunk.get_mesh(){
-                Some(mesh) => {
+        // for chunk in world.iter_map(){
+            match chunk.get_mesh_id(){
+                Some(mesh_id) => {
                     default_shader.set_uniform_mat4(
                         "model_matrix", 
                         self.transformation.update_model_matrix(
@@ -87,10 +88,10 @@ impl Renderer {
                     // inialize batch
                     if !batch_hook {
                         batch_hook = true;
-                        mesh.batch_hook_texture();
+                        mcs.batch_hook_texture(*mesh_id);
                     }
 
-                    mesh.batch_render();
+                    mcs.batch_render(*mesh_id);
                     
                 },
                 None => (),
