@@ -68,20 +68,27 @@ impl Renderer {
 
         default_shader.set_uniform_mat4("projection_matrix", self.transformation.get_projection_matrix());
 
-        default_shader.set_light_uniform("game_render_distance", self.render_distance);
+        // default_shader.set_light_uniform("game_render_distance", self.render_distance);
     
         // begin batched render
         let mut batch_hook = false;
+
+        let mut worker_pos_vec = Vec3::splat(0.0);
+        let worker_rot_vec = Vec3::splat(0.0);
 
         for chunk in world.iter_map_sorted(self.camera.get_pos()) {
         // for chunk in world.iter_map(){
             match chunk.get_mesh_id(){
                 Some(mesh_id) => {
+
+                    worker_pos_vec.x = *&chunk.get_pos().x as f32 * 16.0;
+                    worker_pos_vec.z = *&chunk.get_pos().y as f32 * 16.0;
+
                     default_shader.set_uniform_mat4(
                         "model_matrix", 
                         self.transformation.update_model_matrix(
-                            Vec3::new(*&chunk.get_pos().x as f32 * 16.0,0.0, *&chunk.get_pos().y as f32 * 16.0), 
-                            Vec3::new(0.0, 0.0, 0.0)
+                            worker_pos_vec,
+                            worker_rot_vec
                         )
                     );
 
