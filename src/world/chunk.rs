@@ -66,7 +66,7 @@ impl Chunk {
         match &self.mesh_id {
             Some(existing_mesh) => {
                 // delete existing mesh
-                mcs.delete(*existing_mesh, false);
+                mcs.delete_mesh(*existing_mesh, false);
                 self.mesh_id = Some(mesh_id);
             },
             None => self.mesh_id = Some(mesh_id),

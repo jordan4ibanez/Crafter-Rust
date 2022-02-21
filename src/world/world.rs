@@ -34,7 +34,7 @@ impl World {
     pub fn clean_up(&mut self, mcs: &mut MeshComponentSystem){
         self.map.values_mut().into_iter().for_each( | chunk: &mut Chunk | {
             match chunk.get_mesh_id() {
-                Some(mesh_id) => mcs.delete(*mesh_id, false),
+                Some(mesh_id) => mcs.delete_mesh(*mesh_id, false),
                 None => (),
             }
         });
@@ -46,7 +46,7 @@ impl World {
         // does the chunk exist?
         match chunk_option {
             Some(chunk) => chunk.set_mesh(mcs, mesh_id),
-            None => mcs.delete(mesh_id, false),
+            None => mcs.delete_mesh(mesh_id, false),
         }
     }
     
