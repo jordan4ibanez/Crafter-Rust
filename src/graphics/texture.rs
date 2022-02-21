@@ -12,7 +12,6 @@ pub struct Texture {
 
 impl Texture {
 
-
     // constructor
     pub fn new(texture_path: &str) -> Self {
 
