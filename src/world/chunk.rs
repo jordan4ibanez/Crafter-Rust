@@ -2,7 +2,7 @@ use glam::{
     IVec2
 };
 
-use crate::graphics::mesh::Mesh;
+use crate::graphics::mesh::MeshComponentSystem;
 
 
 pub struct Chunk {
@@ -13,7 +13,7 @@ pub struct Chunk {
     light:     Vec<u8>,
     heightmap: Vec<u8>,
 
-    mesh: Option<Mesh>
+    mesh_id: Option<u32>
 }
 
 impl Chunk {
@@ -25,7 +25,7 @@ impl Chunk {
             rotation: vec![0; 32768],
             light: vec![0; 32768],
             heightmap: vec![0; 256],
-            mesh: None
+            mesh_id: None
         }
     }
 
@@ -57,21 +57,19 @@ impl Chunk {
         self.key.clone()
     }
 
-    pub fn get_mesh(&self) -> Option<&Mesh> {
-        self.mesh.as_ref()
+    pub fn get_mesh_id(&self) -> Option<&u32> {
+        self.mesh_id.as_ref()
     }
 
-    pub fn get_mesh_mut(&mut self) -> Option<&mut Mesh> {
-        self.mesh.as_mut()
-    }
+    pub fn set_mesh(&mut self, mcs: &mut MeshComponentSystem, mesh_id: u32) {
 
-    pub fn set_mesh(&mut self, mesh: Mesh) {
-        match &self.mesh {
+        match &self.mesh_id {
             Some(existing_mesh) => {
-                existing_mesh.clean_up(false);
-                self.mesh = Some(mesh);
+                // delete existing mesh
+                mcs.delete(*existing_mesh, false);
+                self.mesh_id = Some(mesh_id);
             },
-            None => self.mesh = Some(mesh),
+            None => self.mesh_id = Some(mesh_id),
         }
     }
 }
