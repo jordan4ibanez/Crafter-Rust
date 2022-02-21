@@ -76,13 +76,16 @@ impl Renderer {
         let mut worker_pos_vec = Vec3::splat(0.0);
         let worker_rot_vec = Vec3::splat(0.0);
 
-        for chunk in world.iter_map_sorted(self.camera.get_pos()) {
+        // ((&pos_x, &pos_z), &Option<mesh_id>)
+        // ((&i32, &i32), &Option<i32>)
+        for chunk_pos_mesh in world.iter_map() {
         // for chunk in world.iter_map(){
-            match chunk.get_mesh_id(){
+            match chunk_pos_mesh.1{
+
                 Some(mesh_id) => {
 
-                    worker_pos_vec.x = *&chunk.get_pos().x as f32 * 16.0;
-                    worker_pos_vec.z = *&chunk.get_pos().y as f32 * 16.0;
+                    worker_pos_vec.x = *chunk_pos_mesh.0.0 as f32 * 16.0;
+                    worker_pos_vec.z = *chunk_pos_mesh.0.1 as f32 * 16.0;
 
                     default_shader.set_uniform_mat4(
                         "model_matrix", 
