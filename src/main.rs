@@ -10,6 +10,7 @@ use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
 use perlin2d::PerlinNoise2D;
+use rand::ThreadRng;
 
 
 use std::{
@@ -48,9 +49,6 @@ use crate::{
         }
     },
     world::{
-        chunk::{
-            *
-        },
         world::{
             *,
         },
@@ -74,7 +72,7 @@ fn main() {
     window.set_cursor_mode(glfw::CursorMode::Disabled);
 
     let mut perlin: PerlinNoise2D = PerlinNoise2D::new(1, 0.5, 1.0, 1.0, 1.0, (10.0, 10.0), 0.5, 1213);
-    // let mut thread_rng: ThreadRng = rand::thread_rng();
+    let mut thread_rng: ThreadRng = rand::thread_rng();
 
     // fps counter object
     let mut time_object: Time = Time::new(&glfw);
@@ -86,7 +84,7 @@ fn main() {
 
     let mut controls: Controls = Controls::new(&window);
 
-    const RENDER_DISTANCE: i32 = 10;
+    const RENDER_DISTANCE: i32 = 20;
 
     // construct the renderer
     let mut renderer: Renderer = Renderer::new();
@@ -105,10 +103,10 @@ fn main() {
 
     let mut window_variables: WindowVariables = WindowVariables::new();
 
-    let mut world: World = World::new();
+    let mut world: World = World::initialize();
 
     let mut debug_x = -RENDER_DISTANCE;
-    let mut debug_y = -RENDER_DISTANCE;
+    let mut debug_z = -RENDER_DISTANCE;
 
     let mut continue_debug = true;
 
@@ -136,14 +134,14 @@ fn main() {
 
                     let mesh: Option<u32> = chunk_mesh_creation::create_chunk_mesh(&mut mcs, &world, mesh_update.get_x(), mesh_update.get_z(), debug_texture);
                     match mesh {
-                        Some(unwrapped_mesh) => world.set_chunk_mesh(&mut mcs, mesh_update.get_x().to_string() + " " + &mesh_update.get_z().to_string(), unwrapped_mesh),
+                        Some(unwrapped_mesh) => world.set_chunk_mesh(&mut mcs, mesh_update.get_x(), mesh_update.get_z(), unwrapped_mesh),
                         None => (),
                     }
                 },
                 None => {
                     if !continue_debug {
                         poll = false;
-                        println!("DONE")
+                        println!("DONE GENERATING MESHES!");
                     }
                 },
             } 
@@ -155,13 +153,14 @@ fn main() {
         // this needs to be turned into an async queue
         if continue_debug {
             
-            let mut generated_chunk: Chunk = Chunk::new(debug_x, debug_y);
+            // println!(" CREATING {} {}", debug_x, debug_y);
+            world.add_chunk(debug_x, debug_z);
 
-            gen_biome(&mut generated_chunk, &mut perlin, None);//Some(&mut thread_rng));
+            gen_biome(world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(), debug_x, debug_z, &mut perlin, None);//Some(&mut thread_rng));
 
-            world.add(generated_chunk);
+            // world.add(generated_chunk);
 
-            chunk_mesh_generator_queue.push_back(debug_x, debug_y, true);
+            chunk_mesh_generator_queue.push_back(debug_x, debug_z, true);
 
 
 
@@ -171,9 +170,9 @@ fn main() {
             if debug_x > RENDER_DISTANCE {
                 debug_x = -RENDER_DISTANCE;
 
-                debug_y += 1;
+                debug_z += 1;
 
-                if debug_y > RENDER_DISTANCE {
+                if debug_z > RENDER_DISTANCE {
                     continue_debug = false;
                     println!("DONE GENERATING CHUNKS!");
                 }
