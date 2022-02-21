@@ -1,8 +1,8 @@
 use std::{collections::{HashMap, hash_map::Values}};
 
-use glam::{Vec3, Vec3A, Vec2};
+use glam::{Vec3, Vec2};
 
-use crate::graphics::mesh::Mesh;
+use crate::graphics::mesh::MeshComponentSystem;
 
 use super::chunk::{Chunk, self};
 
@@ -31,22 +31,22 @@ impl World {
         false
     }
 
-    pub fn clean_up(&mut self){
+    pub fn clean_up(&mut self, mcs: &mut MeshComponentSystem){
         self.map.values_mut().into_iter().for_each( | chunk: &mut Chunk | {
-            match chunk.get_mesh_mut() {
-                Some(mesh) => mesh.clean_up(false),
+            match chunk.get_mesh_id() {
+                Some(mesh_id) => mcs.delete(*mesh_id, false),
                 None => (),
             }
         });
     }
 
-    pub fn set_chunk_mesh(&mut self, key: String, mesh: Mesh) {
+    pub fn set_chunk_mesh(&mut self, mcs: &mut MeshComponentSystem, key: String, mesh_id: u32) {
         let chunk_option: Option<&mut Chunk> = self.map.get_mut(&key);
         
         // does the chunk exist?
         match chunk_option {
-            Some(chunk) => chunk.set_mesh(mesh),
-            None => mesh.clean_up(false),
+            Some(chunk) => chunk.set_mesh(mcs, mesh_id),
+            None => mcs.delete(mesh_id, false),
         }
     }
     
@@ -57,23 +57,16 @@ impl World {
     
     pub fn iter_map_sorted(&self, camera_pos: Vec3) -> Vec<&Chunk> {
 
-        let camer_pos_a = Vec2::new(camera_pos.x, camera_pos.z);
+        let camera_pos_2d: Vec2 = Vec2::new(camera_pos.x, camera_pos.z);
 
         let mut sorted_vec: Vec<&Chunk> = Vec::from_iter(self.map.values());
 
         sorted_vec.sort_by(|chunk_1, chunk_2 |{
-
-            let chunk_worker_vector_1: Vec2 = Vec2::new(
-                chunk_1.get_x() as f32 * 16.0,
-                chunk_1.get_z() as f32 * 16.0
-            );
-
-            let chunk_worker_vector_2: Vec2 = Vec2::new(
-                chunk_2.get_x() as f32 * 16.0,
-                chunk_2.get_z() as f32 * 16.0
-            );
-
-            chunk_worker_vector_2.distance(camer_pos_a).partial_cmp(&chunk_worker_vector_1.distance(camer_pos_a)).unwrap()
+            chunk_1.get_pos().as_vec2()
+                        .distance(camera_pos_2d)
+                        .partial_cmp(
+                            &chunk_2.get_pos().as_vec2().distance(camera_pos_2d)
+                        ).unwrap()
         });
 
         sorted_vec
