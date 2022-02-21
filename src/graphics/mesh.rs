@@ -154,11 +154,11 @@ impl MeshComponentSystem {
         texture_id
     }
 
-    pub fn get_width(&self, id: u32) -> i32 {
+    pub fn get_texture_width(&self, id: u32) -> i32 {
         self.texture_width[id as usize]
     }
 
-    pub fn get_height(&self, id: u32) -> i32 {
+    pub fn get_texture_height(&self, id: u32) -> i32 {
         self.texture_height[id as usize]
     }
 
@@ -317,7 +317,7 @@ impl MeshComponentSystem {
             gl::BindTexture(gl::TEXTURE_2D, self.mesh_texture[id as usize]);
 
             // bind the mesh vertex array
-            gl::BindVertexArray(self.vao_id[id as usize]);
+            gl::BindVertexArray(id);
 
             // draw the mesh
             gl::DrawElements(gl::TRIANGLES, self.vertex_count[id as usize], gl::UNSIGNED_INT, ptr::null());
