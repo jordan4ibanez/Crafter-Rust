@@ -21,9 +21,6 @@ use crate::{
         shader_program::{
             ShaderProgram
         },
-        texture::{
-            Texture
-        },
         mesh::{
             *
         },
@@ -87,8 +84,6 @@ fn main() {
 
     println!("Current Working Path: {}", get_path_string());
 
-    let debug_texture: Texture = Texture::new("/textures/dirt.png");
-
     let mut controls: Controls = Controls::new(&window);
 
     const RENDER_DISTANCE: i32 = 20;
@@ -102,7 +97,7 @@ fn main() {
     );
     default_shader.create_uniform("projection_matrix");
     default_shader.create_uniform("model_matrix");
-    default_shader.create_uniform("game_render_distance");
+    // default_shader.create_uniform("game_render_distance");
     default_shader.test();
     renderer.add_shader_program("default", default_shader);
 
@@ -119,12 +114,15 @@ fn main() {
 
     let mut chunk_mesh_generator_queue: ChunkMeshGeneratorQueue = ChunkMeshGeneratorQueue::new();
     
+    let mut poll = true;
+    
+    let debug_texture: u32 = mcs.new_texture("/textures/dirt.png");
 
     // main program loop
     while !window.should_close() {
 
         // here is testing for the logic of the chunk mesh generator queue
-        {
+        if poll {
 
             let mesh_update_option: Option<MeshUpdate> = chunk_mesh_generator_queue.pop_front();
 
@@ -136,16 +134,20 @@ fn main() {
                         chunk_mesh_generator_queue.batch_neighbor_update(mesh_update.get_x(), mesh_update.get_z());
                     }
 
-                    let mesh: Option<u32> = chunk_mesh_creation::create_chunk_mesh(&mut mcs, &world, mesh_update.get_x(), mesh_update.get_z(), debug_texture.get_id());
+                    let mesh: Option<u32> = chunk_mesh_creation::create_chunk_mesh(&mut mcs, &world, mesh_update.get_x(), mesh_update.get_z(), debug_texture);
                     match mesh {
                         Some(unwrapped_mesh) => world.set_chunk_mesh(&mut mcs, mesh_update.get_x().to_string() + " " + &mesh_update.get_z().to_string(), unwrapped_mesh),
                         None => (),
                     }
                 },
-                None => (),
-            }
-
-            
+                None => {
+                    if !continue_debug {
+                        poll = false;
+                        println!("DONE")
+                    }
+                },
+            } 
+            // println!("RUNNING")     
         }
 
 
@@ -199,6 +201,7 @@ fn main() {
             window_title.clear();
         }
 
+        
         window.swap_buffers();
      
     }
@@ -206,7 +209,7 @@ fn main() {
     world.clean_up(&mut mcs);
     renderer.clean_up();
 
-    debug_texture.clean_up();
+    mcs.delete_texture(debug_texture);
 
     println!("Program exited successfully!");
 
