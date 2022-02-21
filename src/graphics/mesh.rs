@@ -9,50 +9,196 @@ use gl::types::{
     GLsizeiptr, GLsizei
 };
 
+use super::resource_loader;
+
 pub struct MeshComponentSystem {
-    current_index: u32, // how big this component system is
-    vao_id:        Vec<u32>, // object ID in GPU memory
-    vbo_id:        Vec<u32>, // float data in GPU memory
-    ebo_id:        Vec<u32>, // indices data in GPU memory
-    vertex_count:  Vec<i32>,
-    texture_id:    Vec<u32>
+
+    // mesh data
+    mesh_index:   u32, // how big this component system is
+    vao_id:       Vec<u32>, // object ID in GPU memory
+    vbo_id:       Vec<u32>, // float data in GPU memory
+    ebo_id:       Vec<u32>, // indices data in GPU memory
+    vertex_count: Vec<i32>,
+    mesh_texture: Vec<u32>,
+
+    // texture data
+    texture_index:  u32,
+    texture_id:     Vec<u32>,
+    texture_width:  Vec<i32>,
+    texture_height: Vec<i32>
 }
 
 impl MeshComponentSystem {
 
     // initializer
-    pub fn init() -> Self{
+    pub fn init() -> Self {
         MeshComponentSystem {
-            current_index: 0,
-            vao_id:        vec![0, 0],
-            vbo_id:        vec![0, 0],
-            ebo_id:        vec![0, 0],
-            vertex_count:  vec![0, 0],
-            texture_id:    vec![0, 0],
+            // mesh data
+            mesh_index:     0,
+            vao_id:         vec![0, 0],
+            vbo_id:         vec![0, 0],
+            ebo_id:         vec![0, 0],
+            vertex_count:   vec![0, 0],
+            mesh_texture:   vec![0, 0],
+
+            // texture data
+            texture_index:  0,
+            texture_id:     vec![0, 0],
+            texture_width:  vec![0, 0],
+            texture_height: vec![0, 0]
         }
     }
 
-    // returns the VAO ID that OpenGL needs to bind to
-    pub fn new_mesh(&mut self, float_data: Vec<f32>, indices: Vec<u32>, texture_id: u32) -> u32 {
-        self.construct(float_data, indices, texture_id)
+
+    // texture methods
+
+    fn grow_texture(&mut self, current_texture_id: u32) {
+        if current_texture_id >= self.texture_index {
+            self.texture_id.push(0);
+            self.texture_width.push(0);
+            self.texture_height.push(0);
+            self.texture_index += 1;
+        }
     }
 
-    fn grow(&mut self, current_vao_id: u32) {
-        if current_vao_id >= self.current_index {
+    pub fn new_texture(&mut self, texture_path: &str) -> u32 {
+        self.construct_texture(texture_path)
+    }
+
+    pub fn construct_texture(&mut self, path: &str) -> u32 {
+
+        let mut data: Vec<u8> = resource_loader::load_texture(path);
+
+        // next we will use rust to hold the memory
+        let mut computed: i32 = 0;
+        let image: *mut u8;
+
+        let mut width: i32 = 0;
+        let mut height: i32 = 0;
+
+        // calling to stbi unsafely
+        unsafe {
+            image = stb_image_rust::stbi_load_from_memory(
+                data.as_mut_ptr(),
+                data.len() as i32,
+                &mut width,
+                &mut height,
+                &mut computed,
+                stb_image_rust::STBI_rgb_alpha
+            );
+        }
+        
+        // do something with it
+        let id: u32 = self.create_gl_texture(image, width, height);
+
+        self.grow_texture(id);
+
+        let index: usize = id as usize;
+
+        self.texture_id[index] = id;
+        self.texture_width[index] = width;
+        self.texture_height[index] = height;
+
+        // finally free the memory, this uses a special call
+        unsafe {
+            stb_image_rust::c_runtime::free(image);
+        }
+
+        id
+    }
+
+
+    fn create_gl_texture(&self, texture: *mut u8, width: i32, height: i32) -> u32 {
+
+        let mut texture_id = 0;
+
+        unsafe {
+
+            // create a new texture in the gpu
+            gl::GenTextures(1, &mut texture_id);
+
+            // bind the texture
+            gl::BindTexture(gl::TEXTURE_2D, texture_id);
+
+            // tell opengl how to unpack the rgba bytes, each compenent is 1 byte in size
+            gl::PixelStorei(gl::UNPACK_ALIGNMENT, 1);
+
+            // gl::LINEAR gives it a smoothened look like an n64 game
+            // gl::NEAREST gives it a blocky look
+            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST as i32);
+            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST as i32);
+
+            // do not repeat texture
+            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::CLAMP_TO_EDGE as i32);
+            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::CLAMP_TO_EDGE as i32);
+            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_R, gl::CLAMP_TO_EDGE as i32);
+
+            // this was here in the original code
+            // Generate Mip Map
+            //glGenerateMipmap(GL_TEXTURE_2D);
+
+            // upload the texture data 
+            gl::TexImage2D(
+                gl::TEXTURE_2D,
+                0,
+                gl::RGBA as i32,
+                width,
+                height,
+                0,
+                gl::RGBA,
+                gl::UNSIGNED_BYTE,
+                texture as *const u8 as *const c_void);
+        }
+
+        // texture_id
+        texture_id
+    }
+
+    pub fn get_width(&self, id: u32) -> i32 {
+        self.texture_width[id as usize]
+    }
+
+    pub fn get_height(&self, id: u32) -> i32 {
+        self.texture_height[id as usize]
+    }
+
+    pub fn delete_texture(&mut self, id: u32) {
+        unsafe {
+            gl::DeleteTextures(1, &id);
+        }
+
+        let index: usize = id as usize;
+
+        self.texture_id[index] = 0;
+        self.texture_width[index] = 0;
+        self.texture_height[index] = 0;
+    }
+
+
+
+
+    // mesh methods
+
+    // returns the VAO ID that OpenGL needs to bind to
+    pub fn new_mesh(&mut self, float_data: Vec<f32>, indices: Vec<u32>, texture_id: u32) -> u32 {
+        self.construct_mesh(float_data, indices, texture_id)
+    }
+
+    fn grow_mesh(&mut self, current_vao_id: u32) {
+        if current_vao_id >= self.mesh_index {
             self.vao_id.push(0);
             self.vbo_id.push(0);
             self.ebo_id.push(0);
             self.vertex_count.push(0);
-            self.texture_id.push(0);
-            self.current_index += 1;
-            // println!("Mesh Component System is now: {}", self.current_index);
+            self.mesh_texture.push(0);
+            self.mesh_index += 1;
         }
     }
 
 
     // internal constructor
     // the improvement is this allows dynamic allocations
-    pub fn construct(&mut self, input_float_data: Vec<f32>, input_indices: Vec<u32>, input_texture_id: u32) -> u32 {
+    pub fn construct_mesh(&mut self, input_float_data: Vec<f32>, input_indices: Vec<u32>, input_texture_id: u32) -> u32 {
 
         let mut computed_vao_id:       u32 = 0;
         let mut computed_vbo_id:       u32 = 0;
@@ -124,13 +270,13 @@ impl MeshComponentSystem {
         // this is inserting into vao_id mainly as a debug for now
         let index: usize = computed_vao_id as usize;
         
-        self.grow(computed_vao_id);
+        self.grow_mesh(computed_vao_id);
         
         self.vao_id[index] = computed_vao_id;
         self.vbo_id[index] = computed_vbo_id;
         self.ebo_id[index] = computed_ebo_id;
         self.vertex_count[index] = computed_vertex_count;
-        self.texture_id[index] = input_texture_id;
+        self.mesh_texture[index] = input_texture_id;
 
         computed_vao_id
     }
@@ -142,19 +288,20 @@ impl MeshComponentSystem {
             gl::ActiveTexture(gl::TEXTURE0);
 
             // bind the texture
-            gl::BindTexture(gl::TEXTURE_2D, self.texture_id[id as usize]);
+            gl::BindTexture(gl::TEXTURE_2D, self.mesh_texture[id as usize]);
         }
     }
 
     pub fn batch_render(&self, id: u32) {
 
         let usize_id: usize = id as usize;
+
         unsafe {
             // this is for debug, wireframe mode
             // gl::PolygonMode(gl::FRONT_AND_BACK,gl::LINE);
 
             // bind the mesh vertex array
-            gl::BindVertexArray(self.vao_id[usize_id]);
+            gl::BindVertexArray(id);
 
             // draw the mesh
             gl::DrawElements(gl::TRIANGLES, self.vertex_count[usize_id], gl::UNSIGNED_INT, ptr::null());
@@ -167,7 +314,7 @@ impl MeshComponentSystem {
             gl::ActiveTexture(gl::TEXTURE0);
 
             // bind the texture
-            gl::BindTexture(gl::TEXTURE_2D, self.texture_id[id as usize]);
+            gl::BindTexture(gl::TEXTURE_2D, self.mesh_texture[id as usize]);
 
             // bind the mesh vertex array
             gl::BindVertexArray(self.vao_id[id as usize]);
@@ -180,7 +327,7 @@ impl MeshComponentSystem {
         }
     }
 
-    pub fn delete(&mut self, id: u32, delete_texture: bool){
+    pub fn delete_mesh(&mut self, id: u32, delete_texture: bool){
         let index: usize = id as usize;
         unsafe {
 
@@ -191,18 +338,15 @@ impl MeshComponentSystem {
 
             // delete internal texture if specified to
             if delete_texture {
-                println!("remember to hook in the texture component system into here, or move it into here");
-                //self.texture.clean_up();
+                self.delete_texture(self.mesh_texture[index]);
             }
 
         }
-
 
         self.vao_id[index] = 0;
         self.vbo_id[index] = 0;
         self.ebo_id[index] = 0;
         self.vertex_count[index] = 0;
-        self.texture_id[index] = 0;
-        //self.texture_id.insert(index, texture_id);
+        self.mesh_texture[index] = 0;
     }
 }
