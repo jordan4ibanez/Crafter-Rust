@@ -2,21 +2,15 @@ use glam::{
     IVec2
 };
 
-use crate::graphics::mesh::MeshComponentSystem;
+use crate::graphics::mesh_component_system::MeshComponentSystem;
 
 
 pub struct Chunk {
-    key: String,
-    position:  IVec2,
-    block:     Vec<u32>,
-    rotation:  Vec<u8>,
-    light:     Vec<u8>,
-    heightmap: Vec<u8>,
-
-    mesh_id: Option<u32>
+    
 }
 
 impl Chunk {
+    /*
     pub fn new(x: i32, y: i32) -> Self {
         Self {
             key: x.to_string() + " " + &y.to_string(),
@@ -27,18 +21,6 @@ impl Chunk {
             heightmap: vec![0; 256],
             mesh_id: None
         }
-    }
-
-    pub fn get_pos(&self) -> IVec2 {
-        self.position
-    }
-
-    pub fn get_x(&self) -> i32 {
-        self.position.x
-    }
-
-    pub fn get_z(&self) -> i32 {
-        self.position.y
     }
 
     pub fn get_block(&self, x: i8, y: i8, z: i8) -> u32 {
@@ -72,6 +54,7 @@ impl Chunk {
             None => self.mesh_id = Some(mesh_id),
         }
     }
+    */
 }
 
 fn mini_index_to_pos(i: u16) -> (i8,i8,i8) {
