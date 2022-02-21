@@ -46,24 +46,24 @@ fn set_pos(pos: &mut [f32], x: f32, y: f32, z: f32) {
 }
 
 // adjusts the indices to the correct value from base
-fn adjust_indices(index: &mut [u32], face_count: &mut u32) {
+fn adjust_indices(index: &mut [u32], face_count: &mut usize) {
     index.iter_mut().for_each( | value: &mut u32 | {
-        *value += *face_count;
+        *value += *face_count as u32;
     });
     *face_count += 4;
 }
 
 // pushes the array slice into vector
-fn assign_indices(vector: &mut Vec<u32>, array: &[u32], current_count: &mut u32) {
+fn assign_indices(vector: &mut Vec<u32>, array: &[u32], current_count: &mut usize) {
     array.iter().for_each( | value: &u32 | {
-        vector[*current_count as usize] = *value;
+        vector[*current_count] = *value;
         *current_count += 1;
     });
 }
 
 
 // a precalculator for capacity information
-pub fn dry_run(float_count: &mut u32, indices_count: &mut u32) {
+pub fn dry_run(float_count: &mut usize, indices_count: &mut usize) {
     *float_count += 12; // pos
     *float_count += 12; // color
     *float_count += 8; // texture
@@ -72,25 +72,25 @@ pub fn dry_run(float_count: &mut u32, indices_count: &mut u32) {
 }
 
 // this interlaces the mesh data for the gpu
-fn stripe(float_data: &mut Vec<f32>, pos: &[f32], color: &[f32], texture: &[f32], float_count: &mut u32) {
+fn stripe(float_data: &mut Vec<f32>, pos: &[f32], color: &[f32], texture: &[f32], float_count: &mut usize) {
 
     for index in 0..4 {
 
         // pos
         for i in 0..3 {
-            float_data[*float_count as usize] = pos[(index * 3) + i];
+            float_data[*float_count] = pos[(index * 3) + i];
             *float_count += 1;
         }
 
         // color
         for i in 0..3 {
-            float_data[*float_count as usize] = color[(index * 3) + i];
+            float_data[*float_count] = color[(index * 3) + i];
             *float_count += 1;
         }
 
         // texture
         for i in 0..2 {
-            float_data[*float_count as usize] = texture[(index * 2) + i];
+            float_data[*float_count] = texture[(index * 2) + i];
             *float_count += 1;
         }
     }
@@ -100,9 +100,9 @@ pub fn face_up(
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
 
-    float_count: &mut u32,
-    indices_count: &mut u32,
-    face_count: &mut u32,
+    float_count: &mut usize,
+    indices_count: &mut usize,
+    face_count: &mut usize,
 
     x: f32,
     y: f32,
@@ -163,9 +163,9 @@ pub fn face_down(
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
 
-    float_count: &mut u32,
-    indices_count: &mut u32,
-    face_count: &mut u32,
+    float_count: &mut usize,
+    indices_count: &mut usize,
+    face_count: &mut usize,
 
     x: f32,
     y: f32,
@@ -221,9 +221,9 @@ pub fn face_south(
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
 
-    float_count: &mut u32,
-    indices_count: &mut u32,
-    face_count: &mut u32,
+    float_count: &mut usize,
+    indices_count: &mut usize,
+    face_count: &mut usize,
 
     x: f32,
     y: f32,
@@ -278,9 +278,9 @@ pub fn face_north(
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
 
-    float_count: &mut u32,
-    indices_count: &mut u32,
-    face_count: &mut u32,
+    float_count: &mut usize,
+    indices_count: &mut usize,
+    face_count: &mut usize,
 
     x: f32,
     y: f32,
@@ -336,9 +336,9 @@ pub fn face_west(
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
 
-    float_count: &mut u32,
-    indices_count: &mut u32,
-    face_count: &mut u32,
+    float_count: &mut usize,
+    indices_count: &mut usize,
+    face_count: &mut usize,
 
     x: f32,
     y: f32,
@@ -396,9 +396,9 @@ pub fn face_east(
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
 
-    float_count: &mut u32,
-    indices_count: &mut u32,
-    face_count: &mut u32,
+    float_count: &mut usize,
+    indices_count: &mut usize,
+    face_count: &mut usize,
 
     x: f32,
     y: f32,
@@ -457,9 +457,9 @@ pub fn add_block(
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
     
-    float_count: &mut u32,
-    face_count: &mut u32,
-    indices_count: &mut u32,
+    float_count: &mut usize,
+    face_count: &mut usize,
+    indices_count: &mut usize,
 
     x_plus: bool,
     x_minus: bool,
