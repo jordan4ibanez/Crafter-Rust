@@ -54,7 +54,7 @@ impl Renderer {
     }    
 
     // this is a test
-    pub fn render(&mut self, mcs: &MeshComponentSystem, window: &Window, world: &World) {
+    pub fn render(&mut self, mcs: &MeshComponentSystem, window: &Window, world: &mut World) {
         
         gl_safety_wrappers::clear_depth_and_color(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 1.0);
         // gl_safety_wrappers::clear_depth_and_color(113.0 / 255.0, 112.0 / 255.0, 114.0 / 255.0, 1.0);
@@ -78,14 +78,16 @@ impl Renderer {
 
         // ((&pos_x, &pos_z), &Option<mesh_id>)
         // ((&i32, &i32), &Option<i32>)
-        for chunk_pos_mesh in world.iter_map() {
+        //for chunk_pos_mesh in world.iter_map() {
+
+        for chunk_mesh_pos in world.get_map_sorted() {
         // for chunk in world.iter_map(){
-            match chunk_pos_mesh.1{
+            match chunk_mesh_pos.0{
 
                 Some(mesh_id) => {
 
-                    worker_pos_vec.x = *chunk_pos_mesh.0.0 as f32 * 16.0;
-                    worker_pos_vec.z = *chunk_pos_mesh.0.1 as f32 * 16.0;
+                    worker_pos_vec.x = chunk_mesh_pos.1.0 as f32 * 16.0;
+                    worker_pos_vec.z = chunk_mesh_pos.1.1 as f32 * 16.0;
 
                     default_shader.set_uniform_mat4(
                         "model_matrix", 
@@ -98,10 +100,10 @@ impl Renderer {
                     // inialize batch
                     if !batch_hook {
                         batch_hook = true;
-                        mcs.batch_hook_texture(*mesh_id);
+                        mcs.batch_hook_texture(mesh_id);
                     }
 
-                    mcs.batch_render(*mesh_id);
+                    mcs.batch_render(mesh_id);
                     
                 },
                 None => (),
