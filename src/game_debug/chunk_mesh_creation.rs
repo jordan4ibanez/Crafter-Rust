@@ -1,11 +1,10 @@
-use crate::{graphics::{
-    mesh::{
-        Mesh
-    },
-    texture::{
-        Texture
-    }
-}, game_debug::chunk_mesh_boilerplate::dry_run, world::{chunk::Chunk, world::World}};
+use crate::{
+    game_debug::chunk_mesh_boilerplate::dry_run,
+    world::{
+        chunk::Chunk,
+        world::World
+    }, graphics::mesh::MeshComponentSystem
+};
 
 use super::chunk_mesh_boilerplate::{
     add_block
@@ -47,7 +46,7 @@ pub fn mini_pos_to_index ( x: i8, y: i8, z: i8 ) -> u16 {
 
 
 // borrow the entire world
-pub fn create_chunk_mesh(world: &World,pos_x: i32, pos_z: i32, texture_id: u32) -> Option<Mesh> {      
+pub fn create_chunk_mesh(mcs: &mut MeshComponentSystem, world: &World,pos_x: i32, pos_z: i32, texture_id: u32) -> Option<u32> {      
 
     // dry run to get capacities
 
@@ -263,11 +262,7 @@ pub fn create_chunk_mesh(world: &World,pos_x: i32, pos_z: i32, texture_id: u32) 
         }
     }
 
-    let returning_mesh: Mesh = Mesh::new(
-        float_data,
-        indices_data,
-        texture_id
-    );
+    let returning_mesh: u32 = mcs.new_mesh(float_data, indices_data, texture_id);
 
     Some(returning_mesh)
 }
