@@ -84,7 +84,7 @@ fn main() {
 
     let mut controls: Controls = Controls::new(&window);
 
-    const RENDER_DISTANCE: i32 = 20;
+    const RENDER_DISTANCE: i32 = 10;
 
     // construct the renderer
     let mut renderer: Renderer = Renderer::new();
@@ -134,7 +134,10 @@ fn main() {
 
                     let mesh: Option<u32> = chunk_mesh_creation::create_chunk_mesh(&mut mcs, &world, mesh_update.get_x(), mesh_update.get_z(), debug_texture);
                     match mesh {
-                        Some(unwrapped_mesh) => world.set_chunk_mesh(&mut mcs, mesh_update.get_x(), mesh_update.get_z(), unwrapped_mesh),
+                        Some(unwrapped_mesh) => {
+                            world.set_chunk_mesh(&mut mcs, mesh_update.get_x(), mesh_update.get_z(), unwrapped_mesh);
+                            world.sort_map(renderer.get_camera().get_pos());                            
+                        },
                         None => (),
                     }
                 },
@@ -163,7 +166,6 @@ fn main() {
             chunk_mesh_generator_queue.push_back(debug_x, debug_z, true);
 
 
-
             // this part just ticks up the generation value
             debug_x += 1;
 
@@ -189,9 +191,13 @@ fn main() {
         process_events(&mut glfw, &mut window, &events, &mut controls, &mut window_variables);
 
 
-        renderer.get_camera_mut().on_tick(&mut controls, delta as f32);
+        let update_chunk_ordering: bool = renderer.get_camera_mut().on_tick(&mut controls, delta as f32);
 
-        renderer.render(&mut mcs, &window, &world);
+        if update_chunk_ordering {
+            world.sort_map(renderer.get_camera().get_pos());
+        }
+
+        renderer.render(&mut mcs, &window, &mut world);
 
 
         let returned_value = time_object.count_fps(&glfw);
