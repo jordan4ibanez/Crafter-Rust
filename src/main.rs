@@ -106,11 +106,11 @@ fn main() {
     default_shader.test();
     renderer.add_shader_program("default", default_shader);
 
+    let mut mcs: MeshComponentSystem = MeshComponentSystem::init();
 
     let mut window_variables: WindowVariables = WindowVariables::new();
 
     let mut world: World = World::new();
-
 
     let mut debug_x = -RENDER_DISTANCE;
     let mut debug_y = -RENDER_DISTANCE;
@@ -136,9 +136,9 @@ fn main() {
                         chunk_mesh_generator_queue.batch_neighbor_update(mesh_update.get_x(), mesh_update.get_z());
                     }
 
-                    let mesh: Option<Mesh> = chunk_mesh_creation::create_chunk_mesh(&world, mesh_update.get_x(), mesh_update.get_z(), debug_texture.get_id());
+                    let mesh: Option<u32> = chunk_mesh_creation::create_chunk_mesh(&mut mcs, &world, mesh_update.get_x(), mesh_update.get_z(), debug_texture.get_id());
                     match mesh {
-                        Some(unwrapped_mesh) => world.set_chunk_mesh(mesh_update.get_x().to_string() + " " + &mesh_update.get_z().to_string(), unwrapped_mesh),
+                        Some(unwrapped_mesh) => world.set_chunk_mesh(&mut mcs, mesh_update.get_x().to_string() + " " + &mesh_update.get_z().to_string(), unwrapped_mesh),
                         None => (),
                     }
                 },
@@ -187,7 +187,7 @@ fn main() {
 
         renderer.get_camera_mut().on_tick(&mut controls, delta as f32);
 
-        renderer.render(&window, &world);
+        renderer.render(&mut mcs, &window, &world);
 
 
         let returned_value = time_object.count_fps(&glfw);
@@ -203,7 +203,7 @@ fn main() {
      
     }
 
-    world.clean_up();
+    world.clean_up(&mut mcs);
     renderer.clean_up();
 
     debug_texture.clean_up();
