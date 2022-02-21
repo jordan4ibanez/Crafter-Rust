@@ -1,12 +1,17 @@
 use std::f32::consts::PI;
 
-use glam::Vec3;
+use glam::{Vec3, IVec2};
 
 use crate::controls::{controls::Controls};
 
 
 pub struct Camera {
     position: Vec3,
+    // old_position: Vec3,
+
+    pos_floored: IVec2,
+    old_pos_floored: IVec2,
+
     rotation: Vec3,
     rotation_vector: Vec3,
     fov: f32
@@ -17,6 +22,9 @@ impl Camera {
     pub fn new() -> Self {
         Self {
             position: Vec3::new(0.0, 129.0,0.0),
+            // old_position: Vec3::new(0.0, 129.0,0.0),
+            pos_floored: IVec2::new(0, 0),
+            old_pos_floored: IVec2::new(0, 0),
             rotation: Vec3::new(0.0, 0.0,0.0),
             rotation_vector: Vec3::new(0.0, 0.0,0.0),
             fov: 60.0,
@@ -80,7 +88,9 @@ impl Camera {
 
     }
 
-    pub fn on_tick(&mut self, controls: &mut Controls, delta: f32) {
+    pub fn on_tick(&mut self, controls: &mut Controls, delta: f32) -> bool {
+
+        self.old_pos_floored.clone_from(&self.pos_floored);
 
         let movement_speed: f32 = delta * 40.0;
 
@@ -135,6 +145,19 @@ impl Camera {
             self.rotation.x = -90.0;
         }
 
+
+        // check if the world needs to resort the mesh order
+
+        self.pos_floored.x = (self.position.x / 16.0).floor() as i32;
+        self.pos_floored.y = (self.position.z / 16.0).floor() as i32;
+
+        let mut update_chunk_ordering: bool = false;
+        if self.old_pos_floored.ne(&self.pos_floored) {
+            update_chunk_ordering = true;
+        }
+        
+
+        update_chunk_ordering
     }
 
 }
