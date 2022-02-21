@@ -21,7 +21,7 @@ use crate::{
         shader_program::{
             ShaderProgram
         },
-        mesh::{
+        mesh_component_system::{
             *
         },
         window_variables::{
@@ -86,7 +86,7 @@ fn main() {
 
     let mut controls: Controls = Controls::new(&window);
 
-    const RENDER_DISTANCE: i32 = 20;
+    const RENDER_DISTANCE: i32 = 10;
 
     // construct the renderer
     let mut renderer: Renderer = Renderer::new();
@@ -151,6 +151,8 @@ fn main() {
         }
 
 
+        // this is chunk generation debug
+        // this needs to be turned into an async queue
         if continue_debug {
             
             let mut generated_chunk: Chunk = Chunk::new(debug_x, debug_y);
@@ -163,6 +165,7 @@ fn main() {
 
 
 
+            // this part just ticks up the generation value
             debug_x += 1;
 
             if debug_x > RENDER_DISTANCE {
@@ -172,7 +175,7 @@ fn main() {
 
                 if debug_y > RENDER_DISTANCE {
                     continue_debug = false;
-                    println!("DONE!");
+                    println!("DONE GENERATING CHUNKS!");
                 }
             }
         }

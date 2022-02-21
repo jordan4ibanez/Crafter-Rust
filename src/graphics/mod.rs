@@ -2,7 +2,7 @@
 
 pub mod set_up;
 pub mod shader_program;
-pub mod mesh;
+pub mod mesh_component_system;
 pub mod transformation;
 pub mod camera;
 pub mod resource_loader;

@@ -5,7 +5,7 @@ use glfw::Window;
 
 use crate::{world::world::World};
 
-use super::{gl_safety_wrappers, shader_program::{ShaderProgram}, transformation::{Transformation}, camera::{Camera}, mesh::MeshComponentSystem};
+use super::{gl_safety_wrappers, shader_program::{ShaderProgram}, transformation::{Transformation}, camera::{Camera}, mesh_component_system::MeshComponentSystem};
 
 
 

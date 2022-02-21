@@ -3,7 +3,7 @@ use crate::{
     world::{
         chunk::Chunk,
         world::World
-    }, graphics::mesh::MeshComponentSystem
+    }, graphics::mesh_component_system::MeshComponentSystem
 };
 
 use super::chunk_mesh_boilerplate::{
