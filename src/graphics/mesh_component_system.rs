@@ -1,13 +1,18 @@
 use std::{
     mem,
     ffi::c_void,
-    ptr
+    ptr,
+    io::{Cursor, BufRead, BufReader}, fs::File
 };
 
 use gl::types::{
     GLfloat,
     GLsizeiptr, GLsizei
 };
+
+use image::{io::Reader as ImageReader, ImageBuffer, Rgba};
+
+use crate::graphics::resource_loader::with_path;
 
 use super::resource_loader;
 
@@ -24,8 +29,8 @@ pub struct MeshComponentSystem {
     // texture data
     texture_index:  u32,
     texture_id:     Vec<u32>,
-    texture_width:  Vec<i32>,
-    texture_height: Vec<i32>
+    texture_width:  Vec<u32>,
+    texture_height: Vec<u32>
 }
 
 impl MeshComponentSystem {
@@ -67,29 +72,22 @@ impl MeshComponentSystem {
 
     pub fn construct_texture(&mut self, path: &str) -> u32 {
 
-        let mut data: Vec<u8> = resource_loader::load_texture(path);
+        let image: File = File::open(with_path(path)).expect(&("COULD NOT LOAD IMAGE IN ".to_string() + path));
 
-        // next we will use rust to hold the memory
-        let mut computed: i32 = 0;
-        let image: *mut u8;
+        let buffered_reader: BufReader<File> = BufReader::new(image);
 
-        let mut width: i32 = 0;
-        let mut height: i32 = 0;
+        let image_buffer: ImageBuffer<Rgba<u8>, Vec<u8>> = image::load(buffered_reader, image::ImageFormat::Png).unwrap().to_rgba8();
 
-        // calling to stbi unsafely
-        unsafe {
-            image = stb_image_rust::stbi_load_from_memory(
-                data.as_mut_ptr(),
-                data.len() as i32,
-                &mut width,
-                &mut height,
-                &mut computed,
-                stb_image_rust::STBI_rgb_alpha
-            );
-        }
+        let image_ptr = image_buffer.as_ptr();
+
+        let width: u32 = image_buffer.width();
+        let height: u32 = image_buffer.height();
         
         // do something with it
-        let id: u32 = self.create_gl_texture(image, width, height);
+        let id: u32 = self.create_gl_texture(image_ptr, width, height);
+
+        // manually free - probably don't have to do this
+        drop(image_ptr);
 
         self.grow_texture(id);
 
@@ -99,16 +97,11 @@ impl MeshComponentSystem {
         self.texture_width[index] = width;
         self.texture_height[index] = height;
 
-        // finally free the memory, this uses a special call
-        unsafe {
-            stb_image_rust::c_runtime::free(image);
-        }
-
         id
     }
 
 
-    fn create_gl_texture(&self, texture: *mut u8, width: i32, height: i32) -> u32 {
+    fn create_gl_texture(&self, texture: *const u8, width: u32, height: u32) -> u32 {
 
         let mut texture_id = 0;
 
@@ -142,23 +135,23 @@ impl MeshComponentSystem {
                 gl::TEXTURE_2D,
                 0,
                 gl::RGBA as i32,
-                width,
-                height,
+                width as i32,
+                height as i32,
                 0,
                 gl::RGBA,
                 gl::UNSIGNED_BYTE,
-                texture as *const u8 as *const c_void);
+                texture as *const c_void);
         }
 
         // texture_id
         texture_id
     }
 
-    pub fn get_texture_width(&self, id: u32) -> i32 {
+    pub fn get_texture_width(&self, id: u32) -> u32 {
         self.texture_width[id as usize]
     }
 
-    pub fn get_texture_height(&self, id: u32) -> i32 {
+    pub fn get_texture_height(&self, id: u32) -> u32 {
         self.texture_height[id as usize]
     }
 
