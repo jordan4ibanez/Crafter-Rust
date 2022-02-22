@@ -3,8 +3,10 @@ use std::{
         self,
         File
     },
-    io::Read
+    io::{Read, BufReader}
 };
+
+use image::{ImageBuffer, Rgba};
 
 pub fn get_path_string() -> String {
     std::env::current_dir()
@@ -26,6 +28,13 @@ pub fn load_resource(path: String) -> String {
         Ok(data) => data,
         Err(_) => panic!("FAILED TO LOAD: {}!", &path[..]),
     }    
+}
+
+// creates a usable image buffer in rgba 8 format
+pub fn create_image_buffer(path: &str) -> ImageBuffer<Rgba<u8>, Vec<u8>> {
+    let image: File = File::open(with_path(path)).expect(&("COULD NOT LOAD IMAGE IN ".to_string() + path));
+    let buffered_reader: BufReader<File> = BufReader::new(image);
+    image::load(buffered_reader, image::ImageFormat::Png).unwrap().to_rgba8()
 }
 
 pub fn load_texture(path: &str) -> Vec<u8>{
