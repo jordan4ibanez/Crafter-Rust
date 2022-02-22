@@ -19,7 +19,7 @@ use image::{ImageBuffer, Rgba};
 
 use crate::graphics::resource_loader::{self};
 
-use super::resource_loader::with_path;
+use super::resource_loader::{with_path, create_image_buffer};
 
 // utility file
 
@@ -132,20 +132,13 @@ pub fn set_up_glfw(glfw: &mut Glfw) -> (glfw::Window, Receiver<(f64, WindowEvent
 
 fn set_window_icon(window: &mut Window, path: &str) {
 
-    let image: File = File::open(with_path(path)).expect(&("COULD NOT LOAD IMAGE IN ".to_string() + path));
-
-    let buffered_reader: BufReader<File> = BufReader::new(image);
-
-    let image_buffer: ImageBuffer<Rgba<u8>, Vec<u8>> = image::load(buffered_reader, image::ImageFormat::Png).unwrap().to_rgba8();
+    let image_buffer: ImageBuffer<Rgba<u8>, Vec<u8>> = create_image_buffer(path);
     
     let glfw_image: GLFWimage = GLFWimage {
         width: image_buffer.width() as i32,
         height: image_buffer.height() as i32,
         pixels: image_buffer.as_ptr()
     };
-
-    let width: u32 = image_buffer.width();
-    let height: u32 = image_buffer.height();
 
     let test: Vec<PixelImage> = Vec::new();
 

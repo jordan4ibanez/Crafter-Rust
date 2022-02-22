@@ -14,7 +14,7 @@ use image::{io::Reader as ImageReader, ImageBuffer, Rgba};
 
 use crate::graphics::resource_loader::with_path;
 
-use super::resource_loader;
+use super::resource_loader::{self, create_image_buffer};
 
 pub struct MeshComponentSystem {
 
@@ -72,11 +72,7 @@ impl MeshComponentSystem {
 
     pub fn construct_texture(&mut self, path: &str) -> u32 {
 
-        let image: File = File::open(with_path(path)).expect(&("COULD NOT LOAD IMAGE IN ".to_string() + path));
-
-        let buffered_reader: BufReader<File> = BufReader::new(image);
-
-        let image_buffer: ImageBuffer<Rgba<u8>, Vec<u8>> = image::load(buffered_reader, image::ImageFormat::Png).unwrap().to_rgba8();
+        let image_buffer: ImageBuffer<Rgba<u8>, Vec<u8>> = create_image_buffer(path);
 
         let image_ptr = image_buffer.as_ptr();
 
