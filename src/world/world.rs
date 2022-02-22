@@ -141,7 +141,7 @@ impl World {
     // returns a map iterator
     pub fn sort_map(&mut self, camera_pos: Vec3) {
 
-        println!("UPDATED CHUNK ORDERING!");
+        // println!("UPDATED CHUNK ORDERING!");
 
         let mut index = 0;
 
