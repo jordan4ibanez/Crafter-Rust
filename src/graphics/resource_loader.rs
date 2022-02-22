@@ -15,6 +15,10 @@ pub fn get_path_string() -> String {
         .to_owned()
 }
 
+pub fn with_path(path: &str) -> String {
+    get_path_string() + path
+}
+
 pub fn load_resource(path: String) -> String {    
     let resource_result = fs::read_to_string(get_path_string() + &path);    
 
