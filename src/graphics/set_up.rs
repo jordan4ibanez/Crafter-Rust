@@ -1,4 +1,4 @@
-use std::{sync::mpsc::Receiver};
+use std::{sync::mpsc::Receiver, fs::File, io::BufReader};
 
 use glfw::{
 
@@ -13,10 +13,13 @@ use glfw::{
     ffi::{
         GLFWimage,
         glfwSetWindowIcon
-    }
+    }, PixelImage
 };
+use image::{ImageBuffer, Rgba};
 
 use crate::graphics::resource_loader::{self};
+
+use super::resource_loader::with_path;
 
 // utility file
 
@@ -44,7 +47,7 @@ pub fn set_up_glfw(glfw: &mut Glfw) -> (glfw::Window, Receiver<(f64, WindowEvent
 
     println!("GLFW window initialized properly!");
 
-    set_window_icon(&window,"/textures/icon.png");
+    set_window_icon(&mut window,"/textures/icon.png");
 
     // get primary monitor and size
     let mut monitor_size: (u32, u32) = (0, 0);
@@ -127,42 +130,32 @@ pub fn set_up_glfw(glfw: &mut Glfw) -> (glfw::Window, Receiver<(f64, WindowEvent
     
 }
 
-fn set_window_icon(window: &Window, path: &str) {
+fn set_window_icon(window: &mut Window, path: &str) {
+
+    let image: File = File::open(with_path(path)).expect(&("COULD NOT LOAD IMAGE IN ".to_string() + path));
+
+    let buffered_reader: BufReader<File> = BufReader::new(image);
+
+    let image_buffer: ImageBuffer<Rgba<u8>, Vec<u8>> = image::load(buffered_reader, image::ImageFormat::Png).unwrap().to_rgba8();
+    
+    let glfw_image: GLFWimage = GLFWimage {
+        width: image_buffer.width() as i32,
+        height: image_buffer.height() as i32,
+        pixels: image_buffer.as_ptr()
+    };
+
+    let width: u32 = image_buffer.width();
+    let height: u32 = image_buffer.height();
+
+    let test: Vec<PixelImage> = Vec::new();
+
+    window.set_icon_from_pixels(test);
 
 
-    let mut data: Vec<u8> = resource_loader::load_texture(path);
-
-    // next we will use rust to hold the memory
-    let mut computed: i32 = 0;
-    let mut width: i32 = 0;
-    let mut height: i32 = 0;
-
-    let image: *mut u8;
-
-    // calling to stbi unsafely
     unsafe {
-
-        image = stb_image_rust::stbi_load_from_memory(
-            data.as_mut_ptr(),
-            data.len() as i32,
-            &mut width,
-            &mut height,
-            &mut computed,
-            stb_image_rust::STBI_rgb_alpha
-        );
-
-        let glfw_image: GLFWimage = GLFWimage {
-            width: height,
-            height: width,
-            pixels: image
-        };
-
         glfwSetWindowIcon(window.window_ptr(), 1, &glfw_image as *const GLFWimage);
-
-        stb_image_rust::c_runtime::free(image);
-
-        drop(glfw_image);
     }
 
-    drop(data);
+    drop(glfw_image);
+
 }
