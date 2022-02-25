@@ -18,7 +18,4 @@ glfw = "0.43.0" # GLFW
 glam = "0.20.2" # JOML
 alto = "*" # openAL wrapper
 
-stb_image_rust = "2.27.2" # image loading (STBI wrapper)
 image = "0.24.1"
-
-# custom chunk object
