@@ -2,7 +2,7 @@ use std::f32::consts::PI;
 
 use glam::{Vec3, IVec2};
 
-use crate::controls::{controls::Controls};
+use crate::controls::{mouse::Mouse, keyboard::Keyboard};
 
 
 pub struct Camera {
@@ -88,14 +88,14 @@ impl Camera {
 
     }
 
-    pub fn on_tick(&mut self, controls: &mut Controls, delta: f32) -> bool {
+    pub fn on_tick(&mut self, mouse: &Mouse, keyboard: &Keyboard, delta: f32) -> bool {
 
         self.old_pos_floored.clone_from(&self.pos_floored);
 
         let movement_speed: f32 = delta * 40.0;
 
-        let keyboard = &controls.keyboard;
-        let mouse = &controls.mouse;
+        let keyboard = keyboard;
+        let mouse = mouse;
 
         // z axis
         if keyboard.get_forward() {

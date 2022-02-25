@@ -6,6 +6,7 @@ mod time;
 mod game_debug;
 mod world;
 
+use controls::keyboard;
 use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
@@ -29,10 +30,6 @@ use crate::{
         resource_loader::get_path_string, window_controls::WindowVariables
     },
 
-    controls::{
-        controls::Controls
-    },
-
     time::{
         time_object::{
             Time
@@ -50,7 +47,7 @@ use crate::{
             *,
         },
         biome_generator::gen_biome
-    }
+    }, controls::{keyboard::Keyboard, mouse::Mouse}
 };
 
 fn main() {
@@ -79,7 +76,8 @@ fn main() {
 
     println!("Current Working Path: {}", get_path_string());
 
-    let mut controls: Controls = Controls::new(&window);
+    let mut keyboard: Keyboard = Keyboard::new();
+    let mut mouse: Mouse = Mouse::new(&window);
 
     const RENDER_DISTANCE: i32 = 12;
 
@@ -182,13 +180,13 @@ fn main() {
 
         glfw.poll_events();
 
-        controls.mouse.reset();
+        mouse.reset();
 
         // this is where all events are processed
-        process_events(&mut glfw, &mut window, &events, &mut controls, &mut window_variables);
+        process_events(&mut glfw, &mut window, &events, &mut mouse, &mut keyboard, &mut window_variables);
 
 
-        let update_chunk_ordering: bool = renderer.get_camera_mut().on_tick(&mut controls, delta as f32);
+        let update_chunk_ordering: bool = renderer.get_camera_mut().on_tick(&mouse, &keyboard, delta as f32);
 
         if update_chunk_ordering {
             world.sort_map(renderer.get_camera().get_pos());
@@ -227,7 +225,8 @@ fn process_events(
     window: &mut glfw::Window,
     events: &Receiver<(f64, glfw::WindowEvent)>,
 
-    controls: &mut Controls,
+    mouse: &mut Mouse,
+    keyboard: &mut Keyboard,
 
     window_variables: &mut WindowVariables
 ) {
@@ -235,8 +234,8 @@ fn process_events(
     for (_, event) in glfw::flush_messages(events) {
 
 
-        controls.keyboard.process_events(&event);
-        controls.mouse.process_events(&event);
+        keyboard.process_events(&event);
+        mouse.process_events(&event);
 
         // match event enums
         match event {
