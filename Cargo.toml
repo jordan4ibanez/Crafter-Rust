@@ -19,3 +19,6 @@ glam = "0.20.2" # JOML
 alto = "*" # openAL wrapper
 
 image = "0.24.1"
+
+# lua jit
+mlua = { version = "0.7", features = ["luajit", "vendored"] }
