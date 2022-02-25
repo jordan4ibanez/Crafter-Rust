@@ -7,7 +7,7 @@ use std::{
 
 use gl::types::{
     GLfloat,
-    GLsizeiptr, GLsizei
+    GLsizeiptr, GLsizei, GLint
 };
 
 use image::{io::Reader as ImageReader, ImageBuffer, Rgba};
@@ -102,7 +102,7 @@ impl MeshComponentSystem {
         let mut texture_id = 0;
 
         unsafe {
-
+            
             // create a new texture in the gpu
             gl::GenTextures(1, &mut texture_id);
 

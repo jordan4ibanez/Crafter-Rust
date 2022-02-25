@@ -25,11 +25,8 @@ use crate::{
         mesh_component_system::{
             *
         },
-        window_variables::{
-            *
-        },
         render::Renderer,
-        resource_loader::get_path_string
+        resource_loader::get_path_string, window_controls::WindowVariables
     },
 
     controls::{
