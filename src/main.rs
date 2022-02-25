@@ -14,7 +14,6 @@ use graphics::window_controls::toggle_full_screen;
 use perlin2d::PerlinNoise2D;
 use rand::ThreadRng;
 
-
 use std::{
     sync::mpsc::Receiver
 };

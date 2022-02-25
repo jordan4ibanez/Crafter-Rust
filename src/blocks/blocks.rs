@@ -25,6 +25,8 @@ impl BlockComponentSystem {
         shape: Vec<f32>,
         draw_type: u32
     ) {
+        
+        self.id.push(self.id.len() as u32);
 
         self.name.push(name.to_string());
 
@@ -37,7 +39,7 @@ impl BlockComponentSystem {
 
         // panic if the shape is not evenly done
         if shape.len() % 6 != 0 {
-            panic!("BLOCK {} DOES NOT HAVE AN EVEN AMOUNT OF SHAPE!", name);
+            panic!("BLOCK {} DOES NOT HAVE AN EVEN AMOUNT OF SHAPE! (6 components per shape -x, -y, -z, +x +y +z)", name);
         }
 
         self.shape.push(shape);
