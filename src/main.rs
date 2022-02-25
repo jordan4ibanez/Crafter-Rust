@@ -11,7 +11,7 @@ use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
 use perlin2d::PerlinNoise2D;
-use rand::ThreadRng;
+use rand::{ThreadRng, distributions::Normal};
 
 use std::{
     sync::mpsc::Receiver
@@ -51,7 +51,7 @@ use crate::{
     controls::{
         keyboard::Keyboard, 
         mouse::Mouse
-    }, blocks::blocks::BlockComponentSystem,
+    }, blocks::blocks::{BlockComponentSystem, DrawType},
 
     
 };
@@ -121,7 +121,7 @@ fn main() {
     
     let debug_texture: u32 = mcs.new_texture("/textures/dirt.png");
 
-    bcs.register_block("dirt", vec![String::from("test.png")], vec![0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 1);
+    bcs.register_block("dirt", vec![String::from("test.png")], None, DrawType::Normal);
 
     // main program loop
     while !window.should_close() {
