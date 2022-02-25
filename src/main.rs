@@ -5,6 +5,7 @@ mod controls;
 mod time;
 mod game_debug;
 mod world;
+mod blocks;
 
 use controls::keyboard;
 use glfw::*;
@@ -47,7 +48,13 @@ use crate::{
             *,
         },
         biome_generator::gen_biome
-    }, controls::{keyboard::Keyboard, mouse::Mouse}
+    }, 
+    controls::{
+        keyboard::Keyboard, 
+        mouse::Mouse
+    },
+    
+    
 };
 
 fn main() {
@@ -110,6 +117,7 @@ fn main() {
     let mut poll = true;
     
     let debug_texture: u32 = mcs.new_texture("/textures/dirt.png");
+
 
     // main program loop
     while !window.should_close() {
