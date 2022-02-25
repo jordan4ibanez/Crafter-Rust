@@ -1,20 +1,19 @@
 use std::{
     mem,
     ffi::c_void,
-    ptr,
-    io::{Cursor, BufRead, BufReader}, fs::File
+    ptr
 };
 
 use gl::types::{
     GLfloat,
-    GLsizeiptr, GLsizei, GLint
+    GLsizeiptr, GLsizei
 };
 
-use image::{io::Reader as ImageReader, ImageBuffer, Rgba};
+use image::{ImageBuffer, Rgba};
 
-use crate::graphics::resource_loader::with_path;
 
-use super::resource_loader::{self, create_image_buffer};
+
+use super::resource_loader::{create_image_buffer};
 
 pub struct MeshComponentSystem {
 

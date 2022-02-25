@@ -17,9 +17,9 @@ use glfw::{
 };
 use image::{ImageBuffer, Rgba};
 
-use crate::graphics::resource_loader::{self};
 
-use super::resource_loader::{with_path, create_image_buffer};
+
+use super::resource_loader::{create_image_buffer};
 
 // utility file
 
