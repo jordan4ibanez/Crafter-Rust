@@ -7,7 +7,6 @@ mod game_debug;
 mod world;
 mod blocks;
 
-use controls::keyboard;
 use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
@@ -27,7 +26,8 @@ use crate::{
             *
         },
         render::Renderer,
-        resource_loader::get_path_string, window_controls::WindowVariables
+        resource_loader::get_path_string,
+        window_controls::WindowVariables
     },
 
     time::{
@@ -72,7 +72,9 @@ fn main() {
     window.set_cursor_mode(glfw::CursorMode::Disabled);
 
     let mut perlin: PerlinNoise2D = PerlinNoise2D::new(1, 0.5, 1.0, 1.0, 1.0, (10.0, 10.0), 0.5, 1213);
-    let mut thread_rng: ThreadRng = rand::thread_rng();
+
+    // uncomment this when testing drawtype performance
+    // let mut thread_rng: ThreadRng = rand::thread_rng();
 
     // fps counter object
     let mut time_object: Time = Time::new(&glfw);
