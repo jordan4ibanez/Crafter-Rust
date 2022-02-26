@@ -4,7 +4,7 @@ use image::{GenericImageView, DynamicImage};
 use mlua::{Lua, Table, prelude};
 use texture_packer::{importer::ImageImporter, TexturePackerConfig, TexturePacker, exporter::ImageExporter};
 
-use crate::{blocks::blocks::{BlockComponentSystem, DrawType}, graphics::mesh_component_system::MeshComponentSystem, helper::helper_functions::with_path};
+use crate::{blocks::blocks::{BlockComponentSystem, DrawType, BlockBox}, graphics::mesh_component_system::MeshComponentSystem, helper::helper_functions::with_path};
 
 
 fn get_texture_size(path_string: String) -> (u32, u32) {
@@ -162,15 +162,6 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
 
         // println!("{:?}", block_textures);
 
-        // precalculate mapping on texture atlas
-        for i in block_textures.iter() {
-            // println!("{}", i);
-            let test = packer.get_frame(i).unwrap();
-
-            println!("{:#?}", test.frame);
-            
-        }
-
         // begin the optional values
         let draw_type_option: Result<String, prelude::LuaError> = lua_table.get("draw_type");
 
@@ -182,11 +173,51 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
                 match draw_type_string.as_str() {
                     "normal" => draw_type = DrawType::Normal,
                     "airlike" => draw_type = DrawType::None,
+                    "block_box" => draw_type = DrawType::BlockBox,
                     _ => draw_type = DrawType::Normal
                 }
             },
             Err(_) => todo!(),
         }
+
+        /*
+        precalculate mapping on texture atlas - but only if it's a block box
+
+        this also will throw an error if there is no shape defined
+        */
+
+        let mut block_box_option: Option<BlockBox> = None;
+
+        if matches!(draw_type, DrawType::BlockBox) {
+
+            let lua_block_box: Result<Table, mlua::Error> = lua_table.get("block_box");
+
+            // assign from lua
+            let block_box: Table;
+
+            match lua_block_box {
+                Ok(lua_table) => block_box = lua_table,
+                Err(error) => {
+                    panic!("NO BLOCK BOX WAS DEFINED FOR {}! ERROR: {}", block_name, error);
+                },
+            }
+
+            
+
+
+
+
+
+            for i in block_textures.iter() {
+                // println!("{}", i);
+                let test = packer.get_frame(i).unwrap();
+
+                println!("{:#?}", test.frame);
+            }
+        }
+
+
+
 
         bcs.register_block(
             block_name,
