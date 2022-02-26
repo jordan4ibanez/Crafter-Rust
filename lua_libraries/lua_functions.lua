@@ -40,6 +40,16 @@ local function cache_texture_to_load(mod, texture_table)
     end
 end
 
+-- This function repeats the last texture in the table if the table length is less than 6.
+local function repeat_texture(texture_table)
+    if #texture_table < 6 then
+        local repeating_texture = texture_table[#texture_table]
+        for i = #texture_table + 1, 6 do
+            texture_table[i] = repeating_texture
+        end
+    end
+end
+
 -- This allows module creators to register blocks easily.
 crafter.register_block = function(table_data)
     -- Cache string pointer.
@@ -48,6 +58,13 @@ crafter.register_block = function(table_data)
 
     -- Create streamlined texture cache for Rust to work with.
     cache_texture_to_load(mod, table_data.textures)
+
+    --[[
+    Automatically repeats the texture.
+
+    This is useful when defining simple blocks like dirt or stone.
+    ]]--
+    repeat_texture(table_data.textures)
 
     crafter.blocks[table_data.name] = table_data
 end
