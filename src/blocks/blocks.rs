@@ -15,26 +15,31 @@ pub enum DrawType {
 
 impl BlockComponentSystem {
     pub fn new() -> Self {
-        BlockComponentSystem {
+        let mut component_system = BlockComponentSystem {
             id: Vec::new(),
             name: Vec::new(),
             texture: Vec::new(),
             shape: Vec::new(),
             draw_type: Vec::new(),
-        }
+        };
+
+        // built in definition for air
+        component_system.register_block("air".to_string(), vec!["".to_string()], None, DrawType::None);
+
+        component_system
     }
     
     pub fn register_block(
         &mut self,
-        name: &str,
+        name: String,
         mut textures: Vec<String>,
         shape: Option<Vec<f32>>,
         draw_type: DrawType
     ) {
-        
+
         self.id.push(self.id.len() as u32);
 
-        self.name.push(name.to_string());
+        self.name.push(name.clone());
 
         // fill the vector with unknown texture
         while textures.len() < 6 {
