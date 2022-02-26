@@ -10,3 +10,11 @@ crafter.register_block({
         "dirt.png",
     }
 })
+
+crafter.register_block({
+    name = "stone",
+    draw_type = "normal",
+    textures = {
+        "debug_alpha.png",
+    }
+})
