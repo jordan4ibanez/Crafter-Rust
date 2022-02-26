@@ -28,7 +28,9 @@ crafter = {
     -- Localization cached and then cached into table.
     operating_system = get_operating_system(),
     -- Current root directory of the program.
-    directory = io.popen"cd":read'*l'
+    directory = io.popen"cd":read'*l',
+    -- Caches textures for Rust.
+    texture_cache = {}
 }
 
 -- This is debug for testing on other operating systems.
@@ -56,4 +58,14 @@ elseif crafter.operating_system == "linux" then
     print("Linux Lua module loader needs to be written.")
 elseif crafter.operating_system == "mac" then
     print("I'm not even sure if this comes up as mac.")
+end
+
+
+
+-- Debugging texture cache.
+
+for mod, texture_table in pairs(crafter.texture_cache) do
+    for _,the_texture in ipairs(texture_table) do
+        print(mod .. " | " .. the_texture)
+    end
 end
