@@ -50,11 +50,22 @@ local function repeat_texture(texture_table)
     end
 end
 
+local function check_block_box(block_name, block_box)
+    if block_box ~= nil then
+        assert(#block_box < 6 == false, block_name .. " BLOCK BOX MUST BE AT LEAST 6 POINTS!")        
+        assert(#block_box % 6 == 0, block_name .. " MUST HAVE 6 POINTS IN EACH BLOCK SHAPE!")
+    end
+end
+
 -- This allows module creators to register blocks easily.
 crafter.register_block = function(table_data)
     -- Cache string pointer.
     local mod = current_loading_mod
     table_data.mod = mod
+
+
+    -- Check that the block_box has 6 points in each shape
+    check_block_box(table_data.name, table_data.block_box)
 
     -- Create streamlined texture cache for Rust to work with.
     cache_texture_to_load(mod, table_data.textures)
