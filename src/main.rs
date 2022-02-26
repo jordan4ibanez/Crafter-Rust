@@ -1,5 +1,6 @@
 extern crate glfw;
 
+mod helper;
 mod graphics;
 mod controls;
 mod time;
@@ -8,11 +9,11 @@ mod world;
 mod blocks;
 mod lua;
 
+
 use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
 use perlin2d::PerlinNoise2D;
-use rand::{ThreadRng, distributions::Normal};
 
 use std::{
     sync::mpsc::Receiver
@@ -27,7 +28,6 @@ use crate::{
             *
         },
         render::Renderer,
-        resource_loader::get_path_string,
         window_controls::WindowVariables
     },
 
@@ -52,7 +52,7 @@ use crate::{
     controls::{
         keyboard::Keyboard, 
         mouse::Mouse
-    }, blocks::blocks::{BlockComponentSystem, DrawType}, lua::lua_initialize::initialize_lua,
+    }, blocks::blocks::{BlockComponentSystem, DrawType}, lua::lua_initialize::initialize_lua, helper::helper_functions::get_path_string,
 
     
 };

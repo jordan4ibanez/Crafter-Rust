@@ -1,6 +1,7 @@
 use std::{fs::File, str::from_utf8, io::Read};
 
-use crate::graphics::resource_loader::with_path;
+use crate::helper::helper_functions::with_path;
+
 
 pub fn load_lua_file(path: &str) -> String {
     let mut file: File = File::open(with_path(path)).unwrap();

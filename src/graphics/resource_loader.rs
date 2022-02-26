@@ -8,18 +8,8 @@ use std::{
 
 use image::{ImageBuffer, Rgba};
 
-pub fn get_path_string() -> String {
-    std::env::current_dir()
-        .unwrap()
-        .as_os_str()
-        .to_str()
-        .unwrap()
-        .to_owned()
-}
+use crate::helper::helper_functions::{get_path_string, with_path};
 
-pub fn with_path(path: &str) -> String {
-    get_path_string() + path
-}
 
 pub fn load_resource(path: String) -> String {    
     let resource_result = fs::read_to_string(get_path_string() + &path);    
