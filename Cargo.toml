@@ -27,10 +27,10 @@ glam = "0.20.2"
 alto = "*"
 
 # Rust stb
-image = "0.23.14"
+image = "0.24.1"
 
 # Creates a texture atlas
-texture_packer = "0.23.1"
+texture_packer = "0.24.0"
 
 # lua jit
 mlua = { version = "0.7", features = ["luajit", "vendored"] }
