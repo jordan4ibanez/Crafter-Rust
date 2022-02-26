@@ -10,6 +10,7 @@
 
 ]]--
 
+require("lua_libraries.lua_helpers")
 
 --[[
     This is the base building block of the entire Crafter api.
@@ -20,5 +21,10 @@
 ]]--
 
 crafter = {
-    blocks = {}
+    blocks = {},
+    -- localization cached & cached into table
+    get_operating_system = get_operating_system
 }
+
+
+print("lua operating system detection: " .. crafter.get_operating_system());
