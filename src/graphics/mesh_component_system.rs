@@ -95,6 +95,35 @@ impl MeshComponentSystem {
         id
     }
 
+    pub fn new_texture_from_memory(&mut self, existing_image: ImageBuffer<Rgba<u8>, Vec<u8>>) -> u32 {
+        self.construct_texture_from_memory(existing_image)
+    }
+
+    pub fn construct_texture_from_memory(&mut self, existing_image: ImageBuffer<Rgba<u8>, Vec<u8>>) -> u32 {
+
+
+        let image_ptr = existing_image.as_ptr();
+
+        let width: u32 = existing_image.width();
+        let height: u32 = existing_image.height();
+        
+        // do something with it
+        let id: u32 = self.create_gl_texture(image_ptr, width, height);
+
+        // manually free - probably don't have to do this
+        drop(image_ptr);
+
+        self.grow_texture(id);
+
+        let index: usize = id as usize;
+
+        self.texture_id[index] = id;
+        self.texture_width[index] = width;
+        self.texture_height[index] = height;
+
+        id
+    }
+
 
     fn create_gl_texture(&self, texture: *const u8, width: u32, height: u32) -> u32 {
 
