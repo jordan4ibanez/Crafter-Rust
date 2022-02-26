@@ -74,7 +74,7 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
         }
     }
 
-    println!("{:#?}", cached_table_values);
+    // println!("{:#?}", cached_table_values);
 
     // find the biggest size, and number of textures
 
@@ -94,7 +94,7 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
 
     // automatically configure the texture atlas with the supplied information
 
-    println!("width: {} | height: {}, number of textures: {}", biggest_width, biggest_height, number_of_textures);
+    // println!("width: {} | height: {}, number of textures: {}", biggest_width, biggest_height, number_of_textures);
 
     // configged width is the number of textures it can fit on that axis
     let configged_width: u32 = (number_of_textures + 2) / 2;
@@ -134,7 +134,7 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
     }
     */
 
-    println!("atlas width: {} | atlas height: {}", atlas.width(), atlas.height());
+    // println!("atlas width: {} | atlas height: {}", atlas.width(), atlas.height());
 
     // iterate blocks to be put into Block Component System
 
@@ -150,7 +150,7 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
         let block_name: String = lua_table.get("name").unwrap();
         let block_mod: String = lua_table.get("mod").unwrap();
 
-        println!("{}, {}", block_name, block_mod);
+        // println!("{}, {}", block_name, block_mod);
 
         // pull lua texture table into Rust String vector
         let lua_block_textures: Table = lua_table.get("textures").unwrap();
@@ -160,7 +160,16 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
             block_textures.push(value.unwrap().1);
         }
 
-        println!("{:?}", block_textures);
+        // println!("{:?}", block_textures);
+
+        // precalculate mapping on texture atlas
+        for i in block_textures.iter() {
+            // println!("{}", i);
+            let test = packer.get_frame(i).unwrap();
+
+            println!("{:#?}", test.frame);
+            
+        }
 
         // begin the optional values
         let draw_type_option: Result<String, prelude::LuaError> = lua_table.get("draw_type");
