@@ -2,7 +2,7 @@ use std::{fs::File, str::from_utf8, io::Read};
 
 use crate::helper::helper_functions::with_path;
 
-
+// loads a lua file within the root directory of the program
 pub fn load_lua_file(path: &str) -> String {
     let mut file: File = File::open(with_path(path)).unwrap();
 
