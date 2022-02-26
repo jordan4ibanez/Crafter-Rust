@@ -4,3 +4,11 @@ crafter.register_block({
         "dirt.png"
     }
 })
+
+
+crafter.register_block({
+    name = "stone",
+    textures = {
+        "stone.png"
+    }
+})
