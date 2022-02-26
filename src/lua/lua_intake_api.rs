@@ -1,7 +1,7 @@
 use std::{path::Path, fmt::Error};
 
 use image::{GenericImageView, DynamicImage};
-use mlua::{Lua, Table, prelude};
+use mlua::{Lua, Table, prelude, Integer};
 use texture_packer::{importer::ImageImporter, TexturePackerConfig, TexturePacker, exporter::ImageExporter};
 
 use crate::{blocks::blocks::{BlockComponentSystem, DrawType, BlockBox}, graphics::mesh_component_system::MeshComponentSystem, helper::helper_functions::with_path};
@@ -193,21 +193,26 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
             let lua_block_box: Result<Table, mlua::Error> = lua_table.get("block_box");
 
             // assign from lua
-            let block_box: Table;
+            let block_box_table: Table;
 
             match lua_block_box {
-                Ok(lua_table) => block_box = lua_table,
+                Ok(lua_table) => block_box_table = lua_table,
                 Err(error) => {
                     // if this gets hit something truly unspeakable has happened
                     panic!("NO BLOCK BOX WAS DEFINED FOR {}! ERROR: {}", block_name, error);
                 },
             }
 
+            // shove all the lua floats into a vector
+            let mut block_box: Vec<f32> = Vec::new();
+
+            for value in block_box_table.pairs::<Integer, f32>() {
+                let (_, float_component) = value.unwrap();
+                block_box.push(float_component);
+            }
+
+            block_box_option = Some(BlockBox::new(block_box));
             
-
-
-
-
 
             for i in block_textures.iter() {
                 // println!("{}", i);
@@ -223,7 +228,7 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
         bcs.register_block(
             block_name,
             block_textures,
-            None,
+            block_box_option,
             draw_type,
             Vec::new()
         )
