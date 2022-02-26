@@ -34,10 +34,11 @@ crafter = {
 -- This is debug for testing on other operating systems.
 print("lua operating system detection: " .. crafter.operating_system);
 
+-- Run the function builder.
+dofile("lua_libraries/lua_functions.lua")
 
 -- This is a simple way to hold the file directory without creating an on-disk cache.
 current_loading_mod = nil
-
 
 -- The Windows module loader.
 if crafter.operating_system == "windows" then
