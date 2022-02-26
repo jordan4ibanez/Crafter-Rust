@@ -61,13 +61,4 @@ elseif crafter.operating_system == "mac" then
 end
 
 
-
--- Debugging texture cache.
-
-for mod, texture_table in pairs(crafter.texture_cache) do
-    for _,the_texture in ipairs(texture_table) do
-        print(mod .. " | " .. the_texture)
-    end
-end
-
 print("--- LUA IS NOW DONE ---")
