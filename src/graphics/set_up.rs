@@ -47,7 +47,7 @@ pub fn set_up_glfw(glfw: &mut Glfw) -> (glfw::Window, Receiver<(f64, WindowEvent
 
     println!("GLFW window initialized properly!");
 
-    set_window_icon(&mut window,"/textures/icon.png");
+    set_window_icon(&mut window,"/cache/icon.png");
 
     // get primary monitor and size
     let mut monitor_size: (u32, u32) = (0, 0);
