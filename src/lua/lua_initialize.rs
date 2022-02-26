@@ -1,6 +1,6 @@
 use std::env;
 
-use mlua::Lua;
+use mlua::{Lua, Table};
 
 use super::lua_functions::load_lua_file;
 
