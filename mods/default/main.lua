@@ -13,7 +13,8 @@ crafter.register_block({
 
 crafter.register_block({
     name = "stone",
-    draw_type = "normal",
+    draw_type = "block_box",
+    shape = {},
     textures = {
         "debug_alpha.png",
     }
