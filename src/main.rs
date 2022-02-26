@@ -6,6 +6,7 @@ mod time;
 mod game_debug;
 mod world;
 mod blocks;
+mod lua;
 
 use glfw::*;
 
@@ -51,7 +52,7 @@ use crate::{
     controls::{
         keyboard::Keyboard, 
         mouse::Mouse
-    }, blocks::blocks::{BlockComponentSystem, DrawType},
+    }, blocks::blocks::{BlockComponentSystem, DrawType}, lua::lua_initialize::initialize_lua,
 
     
 };
@@ -122,6 +123,8 @@ fn main() {
     let debug_texture: u32 = mcs.new_texture("/textures/dirt.png");
 
     bcs.register_block("dirt", vec![String::from("test.png")], None, DrawType::Normal);
+
+    let lua = initialize_lua();
 
     // main program loop
     while !window.should_close() {
