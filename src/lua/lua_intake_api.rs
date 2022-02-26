@@ -198,6 +198,7 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
             match lua_block_box {
                 Ok(lua_table) => block_box = lua_table,
                 Err(error) => {
+                    // if this gets hit something truly unspeakable has happened
                     panic!("NO BLOCK BOX WAS DEFINED FOR {}! ERROR: {}", block_name, error);
                 },
             }
