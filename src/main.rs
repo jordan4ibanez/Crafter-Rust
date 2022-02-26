@@ -13,6 +13,7 @@ mod lua;
 use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
+use mlua::Lua;
 use perlin2d::PerlinNoise2D;
 
 use std::{
@@ -52,7 +53,12 @@ use crate::{
     controls::{
         keyboard::Keyboard, 
         mouse::Mouse
-    }, blocks::blocks::{BlockComponentSystem, DrawType}, lua::lua_initialize::initialize_lua, helper::helper_functions::get_path_string,
+    }, blocks::blocks::{BlockComponentSystem, DrawType},
+    lua::{
+        lua_initialize::initialize_lua,
+        lua_intake_api::{self, intake_api_values}
+    },
+        helper::helper_functions::get_path_string,
 
     
 };
@@ -120,11 +126,13 @@ fn main() {
     
     let mut poll = true;
     
-    let debug_texture: u32 = mcs.new_texture("/textures/dirt.png");
+    // let debug_texture: u32 = mcs.new_texture("/mods/default/textures/dirt.png");
+    // bcs.register_block("dirt", vec![String::from("test.png")], None, DrawType::Normal);
 
-    bcs.register_block("dirt", vec![String::from("test.png")], None, DrawType::Normal);
+    let lua: Lua = initialize_lua();
 
-    let lua = initialize_lua();
+    intake_api_values(&lua, &mut mcs, &mut bcs);
+
 
     // main program loop
     while !window.should_close() {
@@ -142,7 +150,7 @@ fn main() {
                         chunk_mesh_generator_queue.batch_neighbor_update(mesh_update.get_x(), mesh_update.get_z());
                     }
 
-                    let mesh: Option<u32> = chunk_mesh_creation::create_chunk_mesh(&mut mcs, &world, mesh_update.get_x(), mesh_update.get_z(), debug_texture);
+                    let mesh: Option<u32> = chunk_mesh_creation::create_chunk_mesh(&mut mcs, &world, mesh_update.get_x(), mesh_update.get_z(), 0);//debug_texture);
                     match mesh {
                         Some(unwrapped_mesh) => {
                             world.set_chunk_mesh(&mut mcs, mesh_update.get_x(), mesh_update.get_z(), unwrapped_mesh);
@@ -227,7 +235,8 @@ fn main() {
     world.clean_up(&mut mcs);
     renderer.clean_up();
 
-    mcs.delete_texture(debug_texture);
+    //mcs.delete_texture(debug_texture);
+    println!("MAKE SURE YOU CLEAN UP THE TEXTURE ATLAS AHHHH");
 
     println!("Program exited successfully!");
 
