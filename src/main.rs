@@ -150,7 +150,7 @@ fn main() {
                         chunk_mesh_generator_queue.batch_neighbor_update(mesh_update.get_x(), mesh_update.get_z());
                     }
 
-                    let mesh: Option<u32> = chunk_mesh_creation::create_chunk_mesh(&mut mcs, &world, mesh_update.get_x(), mesh_update.get_z(), 0);//debug_texture);
+                    let mesh: Option<u32> = chunk_mesh_creation::create_chunk_mesh(&mut mcs, &world, mesh_update.get_x(), mesh_update.get_z(), 1);//debug_texture);
                     match mesh {
                         Some(unwrapped_mesh) => {
                             world.set_chunk_mesh(&mut mcs, mesh_update.get_x(), mesh_update.get_z(), unwrapped_mesh);
