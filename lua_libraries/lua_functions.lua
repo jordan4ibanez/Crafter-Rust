@@ -13,20 +13,23 @@ local function cache_texture_to_load(mod, texture_table)
         crafter.texture_cache[mod] = {}
     end
 
+    -- Cache table pointer.
+    local cache = crafter.texture_cache[mod]
+
     -- Run through textures and see if they need to be cached.
     for _,current_texture in ipairs(texture_table) do
 
         local found = false
 
         -- Check against existing values.
-        for _,cached_texture in ipairs(crafter.texture_cache[mod]) do
+        for _,cached_texture in ipairs(cache) do
             if current_texture == cached_texture then
                 found = true
             end
         end
 
         if not found then
-            insert(crafter.texture_cache[mod], current_texture)
+            insert(cache, current_texture)
         end
     end
 end
