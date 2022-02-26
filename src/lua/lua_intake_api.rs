@@ -167,6 +167,7 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
 
         let draw_type: DrawType;
 
+        // block boxes will need an advanced precalculation per box
         match draw_type_option {
             Ok(draw_type_string) => {
                 match draw_type_string.as_str() {
@@ -182,7 +183,8 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
             block_name,
             block_textures,
             None,
-            draw_type
+            draw_type,
+            Vec::new()
         )
     }    
 
