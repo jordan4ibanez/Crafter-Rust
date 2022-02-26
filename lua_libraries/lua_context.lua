@@ -8,9 +8,9 @@
 
     But for now it is going to be Crafter.
 
-]]--
+    This is extremely WIP so expect it to be insanely bare bones.
 
-require("lua_libraries.lua_helpers")
+]]--
 
 --[[
     This is the base building block of the entire Crafter api.
@@ -20,11 +20,39 @@ require("lua_libraries.lua_helpers")
     Localizing functions from this table can greatly improve your performance.
 ]]--
 
+require("lua_libraries.lua_helpers")
+
 crafter = {
+    -- Holds block data to be passed into Rust.
     blocks = {},
-    -- localization cached & cached into table
-    get_operating_system = get_operating_system
+    -- Localization cached and then cached into table.
+    operating_system = get_operating_system(),
+    -- Current root directory of the program.
+    directory = io.popen"cd":read'*l'
 }
 
+-- This is debug for testing on other operating systems.
+print("lua operating system detection: " .. crafter.operating_system);
 
-print("lua operating system detection: " .. crafter.get_operating_system());
+
+-- This is a simple way to hold the file directory without creating an on-disk cache.
+current_loading_mod = nil
+
+
+-- The Windows module loader.
+if crafter.operating_system == "windows" then
+    -- Open mods folder using built in Windows function.
+    local f = io.popen("dir " .. crafter.directory .. "\\mods /b /ad")
+
+    -- Iterate each folder.
+    for mod in f:lines() do
+        current_loading_mod = mod
+        -- Run module's entry point.
+        dofile(crafter.directory .. "\\mods\\" .. mod .. "\\main.lua")
+    end
+-- The Linux module loader.
+elseif crafter.operating_system == "linux" then
+    print("Linux Lua module loader needs to be written.")
+elseif crafter.operating_system == "mac" then
+    print("I'm not even sure if this comes up as mac.")
+end
