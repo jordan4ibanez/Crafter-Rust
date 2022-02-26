@@ -1,10 +1,10 @@
-use std::path::Path;
+use std::{path::Path, fmt::Error};
 
 use image::{GenericImageView, DynamicImage};
-use mlua::{Lua, Table};
+use mlua::{Lua, Table, prelude};
 use texture_packer::{importer::ImageImporter, TexturePackerConfig, TexturePacker, exporter::ImageExporter};
 
-use crate::{blocks::blocks::BlockComponentSystem, graphics::mesh_component_system::MeshComponentSystem, helper::helper_functions::with_path};
+use crate::{blocks::blocks::{BlockComponentSystem, DrawType}, graphics::mesh_component_system::MeshComponentSystem, helper::helper_functions::with_path};
 
 
 fn get_texture_size(path_string: String) -> (u32, u32) {
@@ -45,8 +45,7 @@ fn create_texture(module_name: &str, texture_name: &str) -> DynamicImage {
 pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut BlockComponentSystem) {
 
     // this follows the same pattern as lua
-    let crafter: Table = lua.globals().raw_get("crafter").unwrap();
-    let blocks: Table = crafter.get("blocks").unwrap();
+    let crafter: Table = lua.globals().get("crafter").unwrap();
     let texture_cache: Table = crafter.get("texture_cache").unwrap();
 
 
@@ -96,10 +95,10 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
     // automatically configure the texture atlas with the supplied information
 
     println!("width: {} | height: {}, number of textures: {}", biggest_width, biggest_height, number_of_textures);
-    
+
     // configged width is the number of textures it can fit on that axis
-    let configged_width: u32 = (number_of_textures + 1) / 2;
-    let configged_height: u32 = ((number_of_textures + 1) / 2) + 1;
+    let configged_width: u32 = (number_of_textures + 2) / 2;
+    let configged_height: u32 = ((number_of_textures + 2) / 2) + 1;
 
     println!("{configged_width}");
     println!("{configged_height}");
@@ -140,9 +139,54 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
     // iterate blocks to be put into Block Component System
 
     // iterating crafter.blocks
-    for blocks in blocks.pairs::<String, Table>() {
-        let unwrapped_blocks: (String, Table) = blocks.unwrap();
+    let blocks: Table = crafter.get("blocks").unwrap();
 
-        println!("{}", unwrapped_blocks.0);
+    // intake all data from lua
+    for blocks in blocks.pairs::<String, Table>() {
+
+        let (_, lua_table) = blocks.unwrap();
+
+        // these are required
+        let block_name: String = lua_table.get("name").unwrap();
+        let block_mod: String = lua_table.get("mod").unwrap();
+
+        println!("{}, {}", block_name, block_mod);
+
+        // pull lua texture table into Rust String vector
+        let lua_block_textures: Table = lua_table.get("textures").unwrap();
+        let mut block_textures: Vec<String> = Vec::new();
+
+        for value in lua_block_textures.pairs::<String, String>(){
+            block_textures.push(value.unwrap().1);
+        }
+
+        println!("{:?}", block_textures);
+
+        // begin the optional values
+        let draw_type_option: Result<String, prelude::LuaError> = lua_table.get("draw_type");
+
+        let draw_type: DrawType;
+
+        match draw_type_option {
+            Ok(draw_type_string) => {
+                match draw_type_string.as_str() {
+                    "normal" => draw_type = DrawType::Normal,
+                    "airlike" => draw_type = DrawType::None,
+                    _ => draw_type = DrawType::Normal
+                }
+            },
+            Err(_) => todo!(),
+        }
+
+        bcs.register_block(
+            block_name,
+            block_textures,
+            None,
+            draw_type
+        )
     }
+
+
+    
+    println!("-------------- done -----------------");
 }
