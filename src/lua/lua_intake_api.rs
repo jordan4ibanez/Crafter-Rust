@@ -188,5 +188,11 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
 
 
     
+
+    // texture atlas will always be id 1
+    let value_test = mcs.new_texture_from_memory(atlas.as_rgba8().unwrap().to_owned());
+
+    println!("TEXTURE ATLAS IS VALUE: {}", value_test);
+    
     println!("-------------- done -----------------");
 }
