@@ -21,20 +21,21 @@ impl AtlasTextureMap {
     }
 }
 
-pub struct BlockShape {
-    shape: Vec<f32>
+pub struct BlockBox {
+    block_box: Vec<f32>
 }
 
-impl BlockShape {
-    // shape is a basic container for a vector of floats
-    pub fn new(shape: Vec<f32>) -> Self {
+impl BlockBox {
+    // block_box is a basic container for a vector of floats
+    pub fn new(block_box: Vec<f32>) -> Self {
         
-        if shape.len() % 6 != 0 {
-            panic!("BLOCK SHAPE IS NOT EVEN!");
+        // this is a double check in case lua misses it - perhaps someone manually inserted into table?
+        if block_box.len() % 6 != 0 {
+            panic!("BLOCK BOX IS NOT EVEN!");
         }
 
-        BlockShape {
-            shape,
+        BlockBox {
+            block_box,
         }
     }
 }
@@ -44,14 +45,15 @@ pub struct BlockComponentSystem {
     id: Vec<u32>,
     name: Vec<String>,
     texture: Vec<Vec<String>>,
-    shape: Vec<Option<BlockShape>>, // this will be replaced with block shape or vec of f32
+    block_box: Vec<Option<BlockBox>>, // this will be replaced with block shape or vec of f32
     draw_type: Vec<DrawType>,
     mapping: Vec<Vec<AtlasTextureMap>>
 }
 
 pub enum DrawType {
     None,
-    Normal
+    Normal,
+    BlockBox
 }
 
 impl BlockComponentSystem {
@@ -60,7 +62,7 @@ impl BlockComponentSystem {
             id: Vec::new(),
             name: Vec::new(),
             texture: Vec::new(),
-            shape: Vec::new(),
+            block_box: Vec::new(),
             draw_type: Vec::new(),
             mapping: Vec::new()
         };
@@ -75,7 +77,7 @@ impl BlockComponentSystem {
         &mut self,
         name: String,
         mut textures: Vec<String>,
-        shape: Option<BlockShape>,
+        block_box: Option<BlockBox>,
         draw_type: DrawType,
         mapping: Vec<AtlasTextureMap>
     ) {
@@ -91,7 +93,7 @@ impl BlockComponentSystem {
 
         self.texture.push(textures);
 
-        self.shape.push(shape);
+        self.block_box.push(block_box);
 
         self.draw_type.push(draw_type);
 
