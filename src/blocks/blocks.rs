@@ -30,7 +30,7 @@ impl BlockBox {
     pub fn new(block_box: Vec<f32>) -> Self {
         
         // this is a double check in case lua misses it - perhaps someone manually inserted into table?
-        if block_box.len() % 6 != 0 {
+        if block_box.len() < 6 || block_box.len() % 6 != 0 {
             panic!("BLOCK BOX IS NOT EVEN!");
         }
 
