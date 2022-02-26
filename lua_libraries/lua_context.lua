@@ -69,3 +69,5 @@ for mod, texture_table in pairs(crafter.texture_cache) do
         print(mod .. " | " .. the_texture)
     end
 end
+
+print("--- LUA IS NOW DONE ---")
