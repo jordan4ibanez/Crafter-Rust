@@ -24,7 +24,8 @@ glfw = "0.43.0"
 glam = "0.20.2"
 
 # openAL wrapper
-alto = "*"
+# alto = "*"
+ears = "0.8.0"
 
 # Rust stb
 image = "0.24.1"
