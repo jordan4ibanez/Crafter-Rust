@@ -25,6 +25,8 @@ this is extremely similar to RAID-0 with hard drive/ssd technology
 
 // generic functions to reduce boilerplate
 
+use crate::blocks::blocks::BlockComponentSystem;
+
 // pushes the adjusted xyz into the vertex data
 fn set_pos(pos: &mut [f32], x: f32, y: f32, z: f32) {
     let mut xyz_index: i8 = 0;
@@ -454,6 +456,10 @@ pub fn face_east(
 
 // the packed boilerplate to allow a single function call
 pub fn add_block(
+    
+    bcs: &BlockComponentSystem,
+    block_id: u32,
+
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
     

@@ -82,12 +82,9 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
 
     for i in 0..32768 {
 
-        // println!("I IS {}", i);
+        let (x,y,z) = mini_index_to_pos(i);        
 
-        let (x,y,z) = mini_index_to_pos(i);
-
-        // println!("XYZ IS {}, {}, {}", x, y, z);
-
+        // if it does not equal air
         if chunk[i] != 0 {
             
             // internal
@@ -185,18 +182,21 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
 
         let (x,y,z) = mini_index_to_pos(i);
 
-        if chunk[mini_pos_to_index(x, y, z)] != 0 {
+        let block_id: u32 = chunk[mini_pos_to_index(x, y, z)];
+
+        // if it does not equal air
+        if block_id != 0 {
 
             let light = 16.0/16.0;
             
-            let mut x_plus =           x + 1 <= 15 && chunk[mini_pos_to_index(x + 1, y, z)] == 0;
-            let mut x_minus = x >= 1  && chunk[mini_pos_to_index(x - 1, y, z)] == 0;
+            let mut x_plus = x + 1 <= 15 && chunk[mini_pos_to_index(x + 1, y, z)] == 0;
+            let mut x_minus =    x >= 1  && chunk[mini_pos_to_index(x - 1, y, z)] == 0;
 
             let y_plus = y == 127 || (y < 127 && chunk[mini_pos_to_index(x, y + 1, z)] == 0);
             let y_minus = y > 0 && y - 1 >= 1 && chunk[mini_pos_to_index(x, y - 1, z)] == 0;
 
-            let mut z_plus =           z + 1 <= 15 && chunk[mini_pos_to_index(x, y, z + 1)] == 0;
-            let mut z_minus = z >= 1  && chunk[mini_pos_to_index(x, y, z - 1)] == 0;
+            let mut z_plus = z + 1 <= 15 && chunk[mini_pos_to_index(x, y, z + 1)] == 0;
+            let mut z_minus =    z >= 1  && chunk[mini_pos_to_index(x, y, z - 1)] == 0;
 
             // x
             if x == 0 {
@@ -244,6 +244,8 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
 
             if x_plus || x_minus || y_plus || y_minus || z_plus || z_minus {
                 add_block(
+                    bcs,
+                    block_id,
                     &mut float_data,
                     &mut indices_data,
 
