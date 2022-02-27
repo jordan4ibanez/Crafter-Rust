@@ -28,7 +28,7 @@ crafter = {
     -- Localization cached and then cached into table.
     operating_system = get_operating_system(),
     -- Current root directory of the program.
-    directory = io.popen"cd":read'*l',
+    directory = get_working_directory(),
     -- Caches textures for Rust.
     texture_cache = {}
 }
@@ -49,14 +49,29 @@ if crafter.operating_system == "windows" then
 
     -- Iterate each folder.
     for mod in f:lines() do
+        -- This is a global assign.
         current_loading_mod = mod
         -- Run module's entry point.
         dofile(crafter.directory .. "\\mods\\" .. mod .. "\\main.lua")
     end
 -- The Linux module loader.
 elseif crafter.operating_system == "linux" then
-    print("Linux Lua module loader needs to be written.")
+
+    -- Open mods folder using built in Linux function.
+    local pfile = io.popen('ls -a "'.. crafter.directory .. '/mods"')
+
+    -- Iterate each file.
+    for mod in pfile:lines() do
+        -- If file contains a period, do not run it.
+        if not string.find(mod, "%.") then
+            -- This is a global assign.
+            current_loading_mod = mod
+            -- Run module's entry point.
+            dofile(crafter.directory .. "/mods/" .. mod .. "/main.lua")
+        end
+    end
 elseif crafter.operating_system == "mac" then
+    print("Test this on a mac somehow.")
     print("I'm not even sure if this comes up as mac.")
 end
 
