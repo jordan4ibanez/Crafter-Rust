@@ -76,7 +76,7 @@ impl BlockComponentSystem {
         };
 
         // built in definition for air
-        component_system.register_block("air".to_string(), vec![], None, DrawType::None, vec![]);
+        component_system.register_block("air".to_string(), DrawType::None, vec![], None, vec![]);
 
         component_system
     }
