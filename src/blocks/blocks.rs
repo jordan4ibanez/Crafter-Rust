@@ -98,7 +98,7 @@ impl BlockComponentSystem {
 
         // fill the vector with unknown texture
         while textures.len() < 6 {
-            textures.push(String::from("unkown.png"));
+            textures.push(String::from("unknown.png"));
         }
 
         self.texture.push(textures);
