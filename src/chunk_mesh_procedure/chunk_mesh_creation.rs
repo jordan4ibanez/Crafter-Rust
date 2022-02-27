@@ -244,8 +244,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
 
             if x_plus || x_minus || y_plus || y_minus || z_plus || z_minus {
                 add_block(
-                    bcs,
-                    block_id,
+                    bcs.get_mapping(block_id),
                     &mut float_data,
                     &mut indices_data,
 

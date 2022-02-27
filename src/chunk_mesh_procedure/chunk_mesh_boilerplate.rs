@@ -25,7 +25,7 @@ this is extremely similar to RAID-0 with hard drive/ssd technology
 
 // generic functions to reduce boilerplate
 
-use crate::blocks::blocks::BlockComponentSystem;
+use crate::blocks::blocks::{BlockComponentSystem, AtlasTextureMap};
 
 // pushes the adjusted xyz into the vertex data
 fn set_pos(pos: &mut [f32], x: f32, y: f32, z: f32) {
@@ -99,6 +99,9 @@ fn stripe(float_data: &mut Vec<f32>, pos: &[f32], color: &[f32], texture: &[f32]
 }
 
 pub fn face_up(
+
+    atlas_map: &AtlasTextureMap,
+
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
 
@@ -134,11 +137,13 @@ pub fn face_up(
 
     // texture coordinates
 
+    let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
+
     let texture: [f32; 8] = [
-        0., 0., // 0
-        0., 1., // 1
-        1., 1., // 2
-        1., 0., // 3
+        min_x, min_y, // 0
+        min_x, max_y, // 1
+        max_x, max_y, // 2
+        max_x, min_y, // 3
     ];
 
     stripe(float_data, &pos, &color, &texture, float_count);
@@ -457,8 +462,7 @@ pub fn face_east(
 // the packed boilerplate to allow a single function call
 pub fn add_block(
     
-    bcs: &BlockComponentSystem,
-    block_id: u32,
+    block_atlas_map: &Vec<AtlasTextureMap>,
 
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
@@ -480,11 +484,12 @@ pub fn add_block(
     light: f32
 ) {
 
-
     let side_face_light_subtraction =  0.75 / 16.0;
 
     if y_plus {
         face_up(
+            &block_atlas_map[0],
+
             float_data,
             indices_data,
 
