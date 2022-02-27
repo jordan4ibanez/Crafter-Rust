@@ -23,9 +23,9 @@ fn calculate_y_height(
     perlin: &mut PerlinNoise2D, 
     base_height: f64,
     noise_multiplier: f64,
-) -> f64 {
+) -> u32 {
 
-    base_height + (perlin.get_noise(pos_x + (chunk_pos_x * 16.0), pos_z + (chunk_pos_z * 16.0) as f64) * noise_multiplier)
+    (base_height + (perlin.get_noise(pos_x + (chunk_pos_x * 16.0), pos_z + (chunk_pos_z * 16.0) as f64) * noise_multiplier)) as u32
 
 }
 
@@ -33,6 +33,10 @@ pub fn gen_biome(bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i
 
     let dirt: u32 = bcs.get_id_of(String::from("dirt"));
     let stone: u32 = bcs.get_id_of(String::from("stone"));
+
+
+    let top_layer: u32 = dirt;
+    let bottom_layer: u32 = stone;
 
 
     // random noise is preferred over biome gen
@@ -52,17 +56,21 @@ pub fn gen_biome(bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i
             // the amount of fluctuation the blocks can have from base height
             let noise_multiplier = 50.0;
 
-            let mut y_height = calculate_y_height(0.0, 0.0, pos_x as f64, pos_z as f64, perlin, base_height, noise_multiplier);
+            let mut y_height: u32 = calculate_y_height(0.0, 0.0, pos_x as f64, pos_z as f64, perlin, base_height, noise_multiplier);
 
             for i in 0..32768 {
                 let (x,y,z) = index_to_pos(i);
 
-                if y as usize == 0 {
+                let y_u32: u32 = y as u32;
+
+                if y_u32 == 0 {
                     y_height = calculate_y_height(x, z, pos_x as f64, pos_z as f64, perlin, base_height, noise_multiplier);
                 }
                 
-                if y <= y_height {
+                if y_u32 == y_height {
                     block_data[i] = dirt;
+                } else if y_u32 < y_height {
+                    block_data[i] = stone;
                 }
             }
         }
