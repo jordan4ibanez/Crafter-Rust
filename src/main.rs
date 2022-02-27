@@ -94,7 +94,7 @@ fn main() {
     let mut keyboard: Keyboard = Keyboard::new();
     let mut mouse: Mouse = Mouse::new(&window);
 
-    const RENDER_DISTANCE: i32 = 12;
+    const RENDER_DISTANCE: i32 = 10;
 
     // construct the renderer
     let mut renderer: Renderer = Renderer::new();
