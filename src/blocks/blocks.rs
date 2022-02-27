@@ -84,9 +84,9 @@ impl BlockComponentSystem {
     pub fn register_block(
         &mut self,
         name: String,
+        draw_type: DrawType,
         mut textures: Vec<String>,
         block_box: Option<BlockBox>,
-        draw_type: DrawType,
         mapping: Vec<AtlasTextureMap>
     ) {
 
