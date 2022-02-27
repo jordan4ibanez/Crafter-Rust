@@ -4,7 +4,7 @@ mod helper;
 mod graphics;
 mod controls;
 mod time;
-mod game_debug;
+mod chunk_mesh_procedure;
 mod world;
 mod blocks;
 mod lua;
@@ -37,7 +37,7 @@ use crate::{
             Time
         }
     },
-    game_debug::{
+    chunk_mesh_procedure::{
         chunk_mesh_creation,
         chunk_mesh_generator_queue::{
             ChunkMeshGeneratorQueue,
