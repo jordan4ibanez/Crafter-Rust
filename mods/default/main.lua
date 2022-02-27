@@ -17,6 +17,6 @@ crafter.register_block({
     draw_type = "normal",
     -- block_box = {0.1, 1.2, 2.3432442, 3.222444, 4.555555, 5.95},
     textures = {
-        "debug_alpha.png",
+        "stone.png",
     }
 })
