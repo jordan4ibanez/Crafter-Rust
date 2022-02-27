@@ -108,6 +108,9 @@ impl BlockComponentSystem {
         self.block_box.push(block_box);
 
         self.mapping.push(mapping);
+    }
 
+    pub fn get_mapping(&self, id: u32) -> &Vec<AtlasTextureMap> {
+        self.mapping.get(id as usize).unwrap()
     }
 }
