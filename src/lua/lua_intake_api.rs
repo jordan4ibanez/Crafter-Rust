@@ -248,8 +248,10 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
         match draw_type {
             // nothing needs to be done
             DrawType::None => (),
-            // simple calculation
-            DrawType::Normal => (),
+            // a full block - nothing special is needed
+            DrawType::Normal => {
+
+            },
             // very complex calculation - intakes block box and does conversions
             DrawType::BlockBox => (),
         }
