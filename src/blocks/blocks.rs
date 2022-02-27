@@ -52,9 +52,9 @@ impl BlockBox {
 pub struct BlockComponentSystem {
     id: Vec<u32>,
     name: Vec<String>,
-    texture: Vec<Vec<String>>,
-    block_box: Vec<Option<BlockBox>>, // this will be replaced with block shape or vec of f32
     draw_type: Vec<DrawType>,
+    texture: Vec<Vec<String>>,
+    block_box: Vec<Option<BlockBox>>,
     mapping: Vec<Vec<AtlasTextureMap>>
 }
 
@@ -69,9 +69,9 @@ impl BlockComponentSystem {
         let mut component_system = BlockComponentSystem {
             id: Vec::new(),
             name: Vec::new(),
+            draw_type: Vec::new(),
             texture: Vec::new(),
             block_box: Vec::new(),
-            draw_type: Vec::new(),
             mapping: Vec::new()
         };
 
@@ -94,6 +94,8 @@ impl BlockComponentSystem {
 
         self.name.push(name.clone());
 
+        self.draw_type.push(draw_type);
+
         // fill the vector with unknown texture
         while textures.len() < 6 {
             textures.push(String::from("unkown.png"));
@@ -102,8 +104,6 @@ impl BlockComponentSystem {
         self.texture.push(textures);
 
         self.block_box.push(block_box);
-
-        self.draw_type.push(draw_type);
 
         self.mapping.push(mapping);
 
