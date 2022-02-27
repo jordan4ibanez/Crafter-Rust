@@ -1,10 +1,34 @@
 use std::{path::Path, fmt::Error};
 
-use image::{GenericImageView, DynamicImage};
-use mlua::{Lua, Table, prelude, Integer};
-use texture_packer::{importer::ImageImporter, TexturePackerConfig, TexturePacker, exporter::ImageExporter};
+use image::{
+    GenericImageView,
+    DynamicImage
+};
+use mlua::{
+    Lua,
+    Table,
+    prelude,
+    Integer
+};
+use texture_packer::{
+    importer::ImageImporter,
+    TexturePackerConfig,
+    TexturePacker,
+    exporter::ImageExporter
+};
 
-use crate::{blocks::blocks::{BlockComponentSystem, DrawType, BlockBox}, graphics::mesh_component_system::MeshComponentSystem, helper::helper_functions::with_path};
+use crate::{
+    blocks::blocks::{
+        BlockComponentSystem,
+        DrawType,
+        BlockBox, AtlasTextureMap
+    },
+    graphics::mesh_component_system::MeshComponentSystem,
+    helper::helper_functions::with_path,
+    lua::lua_texture_atlas_calculation::{
+        calculate_atlas_location_normal
+    }
+};
 
 
 fn get_texture_size(path_string: String) -> (u32, u32) {
@@ -214,12 +238,14 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
             block_box_option = Some(BlockBox::new(block_box));
             
 
+            /*
             for i in block_textures.iter() {
                 // println!("{}", i);
                 let test = packer.get_frame(i).unwrap();
 
                 println!("{:#?}", test.frame);
             }
+            */
         }
 
 
@@ -245,15 +271,34 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
 
         */
 
+        let mut mapping: Vec<AtlasTextureMap> = Vec::new();
+
         match draw_type {
             // nothing needs to be done
             DrawType::None => (),
             // a full block - nothing special is needed
             DrawType::Normal => {
+                println!("THIS BLOCK IS NORMAL");
+                // this will return an AtlasTextureMap per face
 
+                for i in block_textures.iter() {
+                    let current_mapping = calculate_atlas_location_normal(
+                        atlas.width(), 
+                        atlas.height(),
+                        /*
+                        the frame cannot be null or nullptr
+                        this would have caused a crash earlier on
+                        */
+                        packer.get_frame(i).unwrap()
+                    );
+
+                    mapping.push(current_mapping);
+                }
             },
             // very complex calculation - intakes block box and does conversions
-            DrawType::BlockBox => (),
+            DrawType::BlockBox => {
+                // println!("THIS BLOCK IS A BLOCK_BOX")
+            },
         }
 
 
@@ -262,7 +307,7 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
             draw_type,
             block_textures,
             block_box_option,
-            Vec::new()
+            mapping
         )
     }    
 
