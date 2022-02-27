@@ -2,6 +2,8 @@
 use perlin2d::PerlinNoise2D;
 use rand::{Rng, prelude::ThreadRng};
 
+use crate::blocks::blocks::BlockComponentSystem;
+
 // Convertes u16 1D position into (u8,u8,u8) 3D tuple position
 pub fn index_to_pos ( i: usize ) -> (f64,f64,f64) {
     let mut index :usize = i.clone();
@@ -27,7 +29,7 @@ fn calculate_y_height(
 
 }
 
-pub fn gen_biome(block_data: &mut Vec<u32>, pos_x: i32, pos_z: i32, perlin: &mut PerlinNoise2D, rand_option: Option<&mut ThreadRng>) {
+pub fn gen_biome(bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i32, pos_z: i32, perlin: &mut PerlinNoise2D, rand_option: Option<&mut ThreadRng>) {
 
 
     // random noise is preferred over biome gen

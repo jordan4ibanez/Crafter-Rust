@@ -177,7 +177,7 @@ fn main() {
             // println!(" CREATING {} {}", debug_x, debug_y);
             world.add_chunk(debug_x, debug_z);
 
-            gen_biome(world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(), debug_x, debug_z, &mut perlin, None);//Some(&mut thread_rng));
+            gen_biome(&bcs, world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(), debug_x, debug_z, &mut perlin, None);//Some(&mut thread_rng));
 
             // world.add(generated_chunk);
 
