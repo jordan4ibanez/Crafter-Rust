@@ -2,7 +2,7 @@ use crate::{
     game_debug::chunk_mesh_boilerplate::dry_run,
     world::{
         world::World
-    }, graphics::mesh_component_system::MeshComponentSystem
+    }, graphics::mesh_component_system::MeshComponentSystem, blocks::blocks::BlockComponentSystem
 };
 
 use super::chunk_mesh_boilerplate::{
@@ -42,7 +42,7 @@ pub fn mini_pos_to_index ( x: usize, y: usize, z: usize ) -> usize {
 
 
 // borrow the entire world
-pub fn create_chunk_mesh(mcs: &mut MeshComponentSystem, world: &World,pos_x: i32, pos_z: i32, texture_id: u32) -> Option<u32> {      
+pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSystem, world: &World,pos_x: i32, pos_z: i32, texture_id: u32) -> Option<u32> {      
 
     // dry run to get capacities
 
