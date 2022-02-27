@@ -1,12 +1,20 @@
--- this value is passed in from Rust
-local operating_system = operating_system
+-- This value is passed in from Rust.
+local 
+operating_system, current_working_directory
+= 
+operating_system, current_working_directory
 
 -- A simple getter for current operating system.
 function get_operating_system()
     return operating_system
 end
 
--- A simple table dump
+-- A simple getter for current working directory.
+function get_working_directory()
+   return current_working_directory
+end
+
+-- A simple table dump.
 function dump(o)
     if type(o) == 'table' then
        local s = '{ '
