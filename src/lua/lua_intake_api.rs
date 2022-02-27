@@ -234,9 +234,23 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
         }
         */
 
+        /*
+        it may seem like it's not good practice to precalculate textures per face
+
+        but when you are working with maybe thousands of different blocks
+
+        you would have to individually calculate this while generating a chunk regardless
+
+        this trades extreme code complexity during runtime for up front slight memory cost
+
+        */
+
         match draw_type {
+            // nothing needs to be done
             DrawType::None => (),
+            // simple calculation
             DrawType::Normal => (),
+            // very complex calculation - intakes block box and does conversions
             DrawType::BlockBox => (),
         }
 
