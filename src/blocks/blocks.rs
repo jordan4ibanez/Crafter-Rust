@@ -90,6 +90,7 @@ impl BlockComponentSystem {
         block_box: Option<BlockBox>,
         mapping: Vec<AtlasTextureMap>
     ) {
+        println!("{} is ID: {}", &name, self.id.len());
 
         self.id.push(self.id.len() as u32);
 
