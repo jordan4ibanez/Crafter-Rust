@@ -8,7 +8,7 @@ pub fn calculate_atlas_location_normal(
     frame: &Frame<String>
 ) -> AtlasTextureMap {
     
-    println!("{:#?}", frame);
+    // println!("{:#?}", frame);
 
     let rectangle_frame: Rect = frame.frame;
 

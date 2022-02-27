@@ -278,7 +278,7 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
             DrawType::None => (),
             // a full block - nothing special is needed
             DrawType::Normal => {
-                println!("THIS BLOCK IS NORMAL");
+                println!("---- debugging {} ------", block_name.clone());
                 // this will return an AtlasTextureMap per face
 
                 for i in block_textures.iter() {
