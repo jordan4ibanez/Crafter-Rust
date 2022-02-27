@@ -1,6 +1,6 @@
 
 use perlin2d::PerlinNoise2D;
-use rand::{ThreadRng, Rng};
+use rand::{Rng, prelude::ThreadRng};
 
 // Convertes u16 1D position into (u8,u8,u8) 3D tuple position
 pub fn index_to_pos ( i: usize ) -> (f64,f64,f64) {
