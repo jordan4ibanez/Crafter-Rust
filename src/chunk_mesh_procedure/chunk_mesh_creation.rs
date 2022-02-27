@@ -2,7 +2,7 @@ use crate::{
     chunk_mesh_procedure::chunk_mesh_boilerplate::dry_run,
     world::{
         world::World
-    }, graphics::mesh_component_system::MeshComponentSystem, blocks::blocks::BlockComponentSystem
+    }, graphics::mesh_component_system::MeshComponentSystem, blocks::block_component_system::BlockComponentSystem
 };
 
 use super::chunk_mesh_boilerplate::{

@@ -2,7 +2,7 @@
 use perlin2d::PerlinNoise2D;
 use rand::{Rng, prelude::ThreadRng};
 
-use crate::blocks::blocks::BlockComponentSystem;
+use crate::blocks::block_component_system::BlockComponentSystem;
 
 // Convertes u16 1D position into (u8,u8,u8) 3D tuple position
 pub fn index_to_pos ( i: usize ) -> (f64,f64,f64) {

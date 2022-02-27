@@ -18,7 +18,7 @@ use texture_packer::{
 };
 
 use crate::{
-    blocks::blocks::{
+    blocks::block_component_system::{
         BlockComponentSystem,
         DrawType,
         BlockBox, AtlasTextureMap

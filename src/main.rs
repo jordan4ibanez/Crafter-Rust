@@ -53,7 +53,7 @@ use crate::{
     controls::{
         keyboard::Keyboard, 
         mouse::Mouse
-    }, blocks::blocks::{BlockComponentSystem, DrawType},
+    }, blocks::block_component_system::{BlockComponentSystem, DrawType},
     lua::{
         lua_initialize::initialize_lua,
         lua_intake_api::{self, intake_api_values}

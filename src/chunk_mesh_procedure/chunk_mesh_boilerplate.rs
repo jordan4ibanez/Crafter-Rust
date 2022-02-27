@@ -25,7 +25,7 @@ this is extremely similar to RAID-0 with hard drive/ssd technology
 
 // generic functions to reduce boilerplate
 
-use crate::blocks::blocks::{BlockComponentSystem, AtlasTextureMap};
+use crate::blocks::block_component_system::{BlockComponentSystem, AtlasTextureMap};
 
 // pushes the adjusted xyz into the vertex data
 fn set_pos(pos: &mut [f32], x: f32, y: f32, z: f32) {

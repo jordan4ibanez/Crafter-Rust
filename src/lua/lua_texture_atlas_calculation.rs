@@ -1,6 +1,6 @@
 use texture_packer::{Frame, Rect};
 
-use crate::blocks::blocks::AtlasTextureMap;
+use crate::blocks::block_component_system::AtlasTextureMap;
 
 pub fn calculate_atlas_location_normal(
     atlas_width: u32,
