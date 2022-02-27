@@ -1,22 +1,36 @@
 crafter.register_block({
-    name = "dirt",
+    name = "debug_direction",
     draw_type = "normal",
     textures = {
-        "dirt.png",
-        "dirt.png",
-        "dirt.png",
-        "dirt.png",
-        "dirt.png",
-        "dirt.png",
+        "debug_direction.png",
     }
 })
+--[[
 
 crafter.register_block({
     name = "stone",
     -- draw_type = "block_box",
     draw_type = "normal",
-    -- block_box = {0.1, 1.2, 2.3432442, 3.222444, 4.555555, 5.95},
+    -- block_box = {0.334343, 0.534654536, 0.44444444      , 1.999999998     , 0.5123123213213     , 1.00000001},
     textures = {
         "stone.png",
     }
 })
+
+crafter.register_block({
+    name = "cobble",
+    draw_type = "normal",
+    textures = {
+        "cobble.png",
+    }
+})
+
+crafter.register_block({
+    name = "debuggy",
+    draw_type = "normal",
+    textures = {
+        "debug_2.png",
+    }
+})
+
+]]--
