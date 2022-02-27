@@ -41,7 +41,11 @@ impl BlockBox {
         BlockBox {
             block_box,
         }
-    }    
+    }
+
+    pub fn get(&self) -> Vec<f32> {
+        self.block_box
+    }
 }
 
 
