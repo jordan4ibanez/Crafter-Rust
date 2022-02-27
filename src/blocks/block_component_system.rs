@@ -112,7 +112,7 @@ impl BlockComponentSystem {
         self.mapping.get(id as usize).unwrap()
     }
 
-    pub fn get_id_of(&self, name: String) -> usize{
+    pub fn get_id_of(&self, name: String) -> u32 {
         self.name
             .iter()
             .enumerate()
@@ -120,6 +120,6 @@ impl BlockComponentSystem {
                 test.1.eq(&name)
             })
             .expect("TRIED TO GET ID OF NON-EXISTENT BLOCK!")
-            .0
+            .0 as u32
     }
 }
