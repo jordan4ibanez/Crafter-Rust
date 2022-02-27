@@ -2,6 +2,7 @@ use std::borrow::Borrow;
 
 
 // holds precalculated data
+#[derive(Debug)]
 pub struct AtlasTextureMap {
     min_x: f32,
     min_y: f32,
