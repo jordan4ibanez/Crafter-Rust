@@ -137,12 +137,18 @@ impl Camera {
         self.rotation.x += mouse.get_pos_vec().y * MOUSE_SENSITIVITY;
         self.rotation.y += mouse.get_pos_vec().x * MOUSE_SENSITIVITY;
 
-        // limit rotation
+        // limit rotation pitch
         if self.rotation.x > 90.0 {
             self.rotation.x = 90.0;
-        } 
-        if self.rotation.x < -90.0 {
+        } else if self.rotation.x < -90.0 {
             self.rotation.x = -90.0;
+        }
+
+        // loop camera yaw
+        if self.rotation.y > 360.0 {
+            self.rotation.y -= 360.0;
+        } else if self.rotation.y < 0.0 {
+            self.rotation.y += 360.0;
         }
 
 
@@ -156,6 +162,7 @@ impl Camera {
             update_chunk_ordering = true;
         }
         
+        println!("camera rotation: {}", self.rotation.y);
 
         update_chunk_ordering
     }
