@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-
 
 // holds precalculated data
 #[derive(Debug)]
@@ -112,5 +110,16 @@ impl BlockComponentSystem {
 
     pub fn get_mapping(&self, id: u32) -> &Vec<AtlasTextureMap> {
         self.mapping.get(id as usize).unwrap()
+    }
+
+    pub fn get_id_of(&self, name: String) -> usize{
+        self.name
+            .iter()
+            .enumerate()
+            .find(|test|{
+                test.1.eq(&name)
+            })
+            .expect("TRIED TO GET ID OF NON-EXISTENT BLOCK!")
+            .0
     }
 }
