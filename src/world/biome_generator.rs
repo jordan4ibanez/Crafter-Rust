@@ -31,12 +31,13 @@ fn calculate_y_height(
 
 pub fn gen_biome(bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i32, pos_z: i32, perlin: &mut PerlinNoise2D, rand_option: Option<&mut ThreadRng>) {
 
-    let dirt: u32 = bcs.get_id_of(String::from("dirt"));
-    let stone: u32 = bcs.get_id_of(String::from("stone"));
+    // let dirt: u32 = bcs.get_id_of(String::from("cobble"));
+    // let stone: u32 = bcs.get_id_of(String::from("stone"));
+    let debug_direction: u32 = bcs.get_id_of(String::from("debug_direction"));
 
 
-    let top_layer: u32 = dirt;
-    let bottom_layer: u32 = stone;
+    let top_layer: u32 = debug_direction;
+    let bottom_layer: u32 = 0;
 
 
     // random noise is preferred over biome gen
@@ -68,9 +69,9 @@ pub fn gen_biome(bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i
                 }
                 
                 if y_u32 == y_height {
-                    block_data[i] = dirt;
+                    block_data[i] = top_layer;
                 } else if y_u32 < y_height {
-                    block_data[i] = stone;
+                    block_data[i] = bottom_layer;
                 }
             }
         }
