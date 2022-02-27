@@ -234,6 +234,12 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
         }
         */
 
+        match draw_type {
+            DrawType::None => (),
+            DrawType::Normal => (),
+            DrawType::BlockBox => (),
+        }
+
 
         bcs.register_block(
             block_name,
