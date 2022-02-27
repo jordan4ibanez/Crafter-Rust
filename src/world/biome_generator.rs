@@ -31,6 +31,8 @@ fn calculate_y_height(
 
 pub fn gen_biome(bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i32, pos_z: i32, perlin: &mut PerlinNoise2D, rand_option: Option<&mut ThreadRng>) {
 
+    let dirt = bcs.get_id_of(String::from("dirt"));
+    let stone = bcs.get_id_of(String::from("stone"));
 
     // random noise is preferred over biome gen
     match rand_option {
