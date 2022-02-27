@@ -167,6 +167,9 @@ pub fn face_up(
 
 
 pub fn face_down(
+
+    atlas_map: &AtlasTextureMap,
+
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
 
@@ -199,11 +202,13 @@ pub fn face_down(
         ];
 
         // texture coordinates
+        let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
+        
         let texture: [f32; 8] = [
-            0., 1., // 0
-            0., 0., // 1
-            1., 0., // 2
-            1., 1., // 3
+            min_x, max_y, // 0
+            min_x, min_y, // 1
+            max_x, min_y, // 2
+            max_x, max_y, // 3
         ];
     
         stripe(float_data, &pos, &color, &texture, float_count);
@@ -225,6 +230,9 @@ pub fn face_down(
 
 
 pub fn face_south(
+
+    atlas_map: &AtlasTextureMap,
+
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
 
@@ -257,11 +265,13 @@ pub fn face_south(
     ];
 
     // texture coordinates
+    let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
+
     let texture: [f32; 8] = [
-        0., 1., // 0
-        0., 0., // 1
-        1., 0., // 2
-        1., 1., // 3   
+        min_x, max_y, // 0
+        min_x, min_y, // 1
+        max_x, min_y, // 2
+        max_x, max_y, // 3   
     ];
 
     stripe(float_data, &pos, &color, &texture, float_count);
@@ -282,6 +292,9 @@ pub fn face_south(
 }
 
 pub fn face_north(
+
+    atlas_map: &AtlasTextureMap,
+
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
 
@@ -314,12 +327,13 @@ pub fn face_north(
     ];
 
     // texture coordinates
+    let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
 
     let texture: [f32; 8] = [
-        0., 0., // 0
-        0., 1., // 1
-        1., 1., // 2
-        1., 0., // 3
+        min_x, min_y, // 0
+        min_x, max_y, // 1
+        max_x, max_y, // 2
+        max_x, min_y, // 3
     ];
 
     stripe(float_data, &pos, &color, &texture, float_count);
@@ -340,6 +354,9 @@ pub fn face_north(
 
 
 pub fn face_west(
+
+    atlas_map: &AtlasTextureMap,
+
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
 
@@ -372,12 +389,13 @@ pub fn face_west(
     ];
 
     // texture coordinates
+    let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
 
     let texture: [f32; 8] = [
-        0., 0., // 0
-        0., 1., // 1
-        1., 1., // 2
-        1., 0., // 3
+        min_x, min_y, // 0
+        min_x, max_y, // 1
+        max_x, max_y, // 2
+        max_x, min_y, // 3
     ];
 
     stripe(float_data, &pos, &color, &texture, float_count);
@@ -400,6 +418,9 @@ pub fn face_west(
 
 
 pub fn face_east(
+
+    atlas_map: &AtlasTextureMap,
+
     float_data: &mut Vec<f32>,
     indices_data: &mut Vec<u32>,
 
@@ -433,12 +454,13 @@ pub fn face_east(
     ];   
 
     // texture coordinates
+    let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
 
     let texture: [f32; 8] = [        
-        0., 1., // 0
-        0., 0., // 1
-        1., 0., // 2
-        1., 1., // 3
+        min_x, max_y, // 0
+        min_x, min_y, // 1
+        max_x, min_y, // 2
+        max_x, max_y, // 3
     ];
 
     stripe(float_data, &pos, &color, &texture, float_count);
@@ -506,6 +528,8 @@ pub fn add_block(
     
     if y_minus {
         face_down(
+            &block_atlas_map[1],
+
             float_data,
             indices_data,
 
@@ -523,6 +547,8 @@ pub fn add_block(
     
     if z_plus {
         face_south(
+            &block_atlas_map[2],
+
             float_data,
             indices_data,
 
@@ -539,6 +565,8 @@ pub fn add_block(
 
     if z_minus {
         face_north(
+            &block_atlas_map[3],
+
             float_data,
             indices_data,
 
@@ -568,6 +596,8 @@ pub fn add_block(
 
     if x_plus {
         face_west(
+            &block_atlas_map[4],
+
             float_data,
             indices_data,
 
@@ -584,6 +614,8 @@ pub fn add_block(
     
     if x_minus {
         face_east(
+            &block_atlas_map[5],
+
             float_data,
             indices_data,
 
