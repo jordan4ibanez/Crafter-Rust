@@ -223,13 +223,23 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
         }
 
 
+        // calculate texture coordinates
+
+        /*
+        match block_box_option {
+            Some(block_box) => {
+                println!("this needs to do calculations on this thing{:?}", block_box.get());
+            },
+            None => (),
+        }
+        */
 
 
         bcs.register_block(
             block_name,
+            draw_type,
             block_textures,
             block_box_option,
-            draw_type,
             Vec::new()
         )
     }    
