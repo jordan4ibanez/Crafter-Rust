@@ -57,6 +57,31 @@ local function check_block_box(block_name, block_box)
     end
 end
 
+-- This requires the entire table pointer.
+local function check_block_rotations(block_name, table_data)
+
+    -- Automate rotations generation so modder does not have to think about it.
+    if table_data.rotations == nil then
+        table_data.rotations = {0,0,0, 0,0,0}
+    -- Check defined data.
+    else
+        -- Check if 6 points.
+        assert(#table_data.rotations == 6 == true, block_name .. " ROTATIONS MUST BE EXACTLY 6 POINTS!")
+
+        -- Floor data just in case a modder goes crazy. Assume correct length
+        for i = 1,6 do
+            -- Limit the data value. (0 through 3)
+            assert(
+                table_data.rotations[i] >= 0 and
+                table_data.rotations[i] <= 3,
+                block_name .. " ROTATION INDEX " .. tostring(i) .. " OUT OF BOUNDS! ROTATIONS ARE LIMITED TO 0 THROUGH 3!"
+            )
+            table_data.rotations[i] = math.floor(table_data.rotations[i])
+        end
+    end
+
+end
+
 -- This allows module creators to register blocks easily.
 crafter.register_block = function(table_data)
     -- Cache string pointer.
@@ -69,6 +94,9 @@ crafter.register_block = function(table_data)
 
     -- Create streamlined texture cache for Rust to work with.
     cache_texture_to_load(mod, table_data.textures)
+
+    -- Automate rotations, rotations check, and rotations data limiter.
+    check_block_rotations(table_data.name, table_data)
 
     --[[
     Automatically repeats the texture.
