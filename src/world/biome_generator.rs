@@ -5,7 +5,7 @@ use rand::{Rng, prelude::ThreadRng};
 use crate::blocks::block_component_system::BlockComponentSystem;
 
 // Convertes u16 1D position into (u8,u8,u8) 3D tuple position
-pub fn index_to_pos ( i: usize ) -> (f64,f64,f64) {
+fn index_to_pos ( i: usize ) -> (f64,f64,f64) {
     let mut index :usize = i.clone();
     let x: f64 = (index / 2048) as f64;
     index = index % 2048;
