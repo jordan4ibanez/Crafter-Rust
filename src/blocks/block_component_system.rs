@@ -8,17 +8,19 @@ pub struct AtlasTextureMap {
     max_x: f32,
     max_y: f32,
 
-    rotation: u8
+    rotation: u8,
+    flip: u8
 }
 
 impl AtlasTextureMap {
-    pub fn new(min_x: f32, min_y: f32, max_x: f32, max_y: f32, rotation: u8) -> Self {
+    pub fn new(min_x: f32, min_y: f32, max_x: f32, max_y: f32, rotation: u8, flip: u8) -> Self {
         AtlasTextureMap {
             min_x,
             min_y,
             max_x,
             max_y,
             rotation,
+            flip
         }
     }
 
