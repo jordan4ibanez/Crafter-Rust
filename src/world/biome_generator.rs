@@ -33,11 +33,11 @@ pub fn gen_biome(bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i
 
     // let dirt: u32 = bcs.get_id_of(String::from("cobble"));
     let grass: u32 = bcs.get_id_of(String::from("grass"));
-    let dirt: u32 = bcs.get_id_of(String::from("dirt"));
+    let air: u32 = bcs.get_id_of(String::from("air"));
 
 
     let top_layer: u32 = grass;
-    let bottom_layer: u32 = dirt;
+    let bottom_layer: u32 = air;
 
 
     // random noise is preferred over biome gen

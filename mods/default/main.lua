@@ -1,3 +1,4 @@
+--[[
 crafter.register_block({
     name = "grass",
     draw_type = "normal",
@@ -7,7 +8,17 @@ crafter.register_block({
         "grass_side.png",
     },
 })
+]]--
 
+crafter.register_block({
+    name = "grass",
+    draw_type = "normal",
+    textures = {
+        "debug_direction.png",
+    },
+})
+
+--[[
 crafter.register_block({
     name = "dirt",
     draw_type = "normal",
@@ -15,7 +26,6 @@ crafter.register_block({
         "dirt.png",
     },
 })
---[[
 
 crafter.register_block({
     name = "stone",
