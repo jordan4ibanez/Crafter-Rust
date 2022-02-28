@@ -205,10 +205,10 @@ pub fn face_down(
         let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
         
         let texture: [f32; 8] = [
-            min_x, max_y, // 0
-            min_x, min_y, // 1
-            max_x, min_y, // 2
-            max_x, max_y, // 3
+            max_x, max_y, // 0
+            max_x, min_y, // 1
+            min_x, min_y, // 2
+            min_x, max_y, // 3
         ];
     
         stripe(float_data, &pos, &color, &texture, float_count);
