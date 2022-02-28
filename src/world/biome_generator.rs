@@ -33,7 +33,7 @@ pub fn gen_biome(bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i
 
     // let dirt: u32 = bcs.get_id_of(String::from("cobble"));
     // let stone: u32 = bcs.get_id_of(String::from("stone"));
-    let debug_direction: u32 = bcs.get_id_of(String::from("debug_direction"));
+    let debug_direction: u32 = bcs.get_id_of(String::from("grass"));
 
 
     let top_layer: u32 = debug_direction;
