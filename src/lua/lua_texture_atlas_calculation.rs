@@ -42,8 +42,4 @@ pub fn calculate_atlas_location_normal(
         rotation,
         flip
     )
-
-    // println!("{:#?}", test);
-
-    // test
 }
