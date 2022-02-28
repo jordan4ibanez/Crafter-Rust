@@ -392,10 +392,10 @@ pub fn face_west(
     let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
 
     let texture: [f32; 8] = [
-        min_x, min_y, // 0
-        min_x, max_y, // 1
-        max_x, max_y, // 2
-        max_x, min_y, // 3
+        min_x, max_y, // 0
+        max_x, max_y, // 1
+        max_x, min_y, // 2
+        min_x, min_y, // 3
     ];
 
     stripe(float_data, &pos, &color, &texture, float_count);
@@ -582,7 +582,7 @@ pub fn add_block(
         );
     }
 
-    /*
+    
     /*
     
     +z = south
@@ -613,7 +613,7 @@ pub fn add_block(
             light - side_face_light_subtraction
         );
     }
-    
+    /*
     if x_minus {
         face_east(
             &block_atlas_map[5],
