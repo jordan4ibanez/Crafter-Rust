@@ -24,8 +24,8 @@ impl AtlasTextureMap {
         }
     }
 
-    pub fn get_as_tuple(&self) -> (f32, f32, f32, f32, u8) {
-        (self.min_x, self.min_y, self.max_x, self.max_y, self.rotation)
+    pub fn get_as_tuple(&self) -> (f32, f32, f32, f32, u8, u8) {
+        (self.min_x, self.min_y, self.max_x, self.max_y, self.rotation, self.flip)
     }
 }
 
