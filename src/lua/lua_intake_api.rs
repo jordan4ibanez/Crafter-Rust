@@ -1,7 +1,6 @@
-use std::{path::Path, fmt::Error};
+use std::path::Path;
 
 use image::{
-    GenericImageView,
     DynamicImage
 };
 use mlua::{
@@ -180,7 +179,7 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
         let lua_block_textures: Table = lua_table.get("textures").unwrap();
         let mut block_textures: Vec<String> = Vec::new();
 
-        for value in lua_block_textures.pairs::<String, String>(){
+        for value in lua_block_textures.pairs::<String, String>() {
             block_textures.push(value.unwrap().1);
         }
 
@@ -188,11 +187,18 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
         let lua_block_rotations: Table = lua_table.get("rotations").unwrap();
         let mut block_rotations: Vec<u8> = Vec::new();
 
-        for value in lua_block_rotations.pairs::<Integer, Integer>(){
+        for value in lua_block_rotations.pairs::<Integer, Integer>() {
             block_rotations.push(value.unwrap().1 as u8);
         }
 
-        // println!("{:?}", block_textures);
+        // pull lua texture flip table into Rust u8 vector
+        let lua_block_flips: Table = lua_table.get("flips").unwrap();
+        let mut block_flips: Vec<u8> = Vec::new();
+
+        for value in lua_block_flips.pairs::<Integer, Integer>() {
+            block_flips.push(value.unwrap().1 as u8);
+        }
+        
 
         // begin the optional values
         let draw_type_option: Result<String, prelude::LuaError> = lua_table.get("draw_type");
@@ -298,7 +304,8 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
                         this would have caused a crash earlier on
                         */
                         packer.get_frame(i).unwrap(),
-                        block_rotations[index]
+                        block_rotations[index],
+                        block_flips[index]
                     );
 
                     println!("ROTATION IS: {}", block_rotations[index]);
