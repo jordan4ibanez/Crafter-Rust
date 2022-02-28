@@ -4,6 +4,9 @@ crafter.register_block({
     textures = {
         "debug_direction.png",
     },
+    block_box = {
+        0,0,0, 0,0,0
+    },
     rotations = {
         0,0,0,0,0,0
     }
