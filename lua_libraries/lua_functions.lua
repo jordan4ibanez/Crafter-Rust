@@ -84,12 +84,41 @@ local function check_block_rotations(mod, block_name, table_data)
             assert(
                 table_data.rotations[i] >= 0 and
                 table_data.rotations[i] <= 3,
-                block_name .. " ROTATION INDEX " .. tostring(i) .. " OUT OF BOUNDS! ROTATIONS ARE LIMITED TO 0 THROUGH 3!"
+                mod .. ":" ..  block_name .. " ROTATION INDEX " .. tostring(i) .. " OUT OF BOUNDS! ROTATIONS ARE LIMITED TO 0 THROUGH 3!"
             )
             table_data.rotations[i] = math.floor(table_data.rotations[i])
         end
+    end
+end
 
-        print(dump(table_data.rotations))
+-- This requires the entire table pointer.
+local function check_block_flips(mod, block_name, table_data)
+
+    -- Automate flips generation so modder does not have to think about it.
+    if table_data.flips == nil then
+        table_data.flips = {0,0,0, 0,0,0}
+    -- Check defined data.
+    else
+        -- Automatically fill in missing points
+        if #table_data.flips < 6 then
+            for i = #table_data.flips + 1, 6 do
+                table_data.flips[i] = 0
+            end
+        end
+
+        -- Check if 6 points.
+        assert(#table_data.flips == 6 == true, mod .. ":" ..  block_name .. " FLIPS MUST BE LESS THAN OR EQUAL TO 6 POINTS!")
+
+        -- Floor data just in case a modder goes crazy. Assume correct length.
+        for i = 1,6 do
+            -- Limit the data value. (0 through 3)
+            assert(
+                table_data.flips[i] >= 0 and
+                table_data.flips[i] <= 3,
+                mod .. ":" ..  block_name .. " FLIP INDEX " .. tostring(i) .. " OUT OF BOUNDS! FLIPS ARE LIMITED TO 0 THROUGH 3!"
+            )
+            table_data.flips[i] = math.floor(table_data.flips[i])
+        end
     end
 end
 
@@ -118,6 +147,9 @@ crafter.register_block = function(table_data)
 
     -- Automate rotations, rotations check, and rotations data limiter.
     check_block_rotations(mod, table_data.name, table_data)
+
+    -- Automate flips, flips check, and flips data limiter.
+    check_block_flips(mod, table_data.name, table_data)
 
     --[[
     Automatically repeats the texture.

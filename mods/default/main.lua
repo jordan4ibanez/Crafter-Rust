@@ -19,11 +19,7 @@ crafter.register_block({
     rotations = {
         0,0,0,0,0,0
     },
-    --[[
-    flips = {
-        0,0,0,0,0,0
-    }
-    ]]--
+    
 })
 
 --[[
