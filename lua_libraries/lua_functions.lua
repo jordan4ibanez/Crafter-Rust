@@ -95,6 +95,11 @@ crafter.register_block = function(table_data)
     -- Blocks must have a name.
     assert(table_data.name ~= nil, "A BLOCK IN MOD " .. mod .. " IS MISSING A NAME!")
 
+    -- Blocks must have at least one texture.
+    assert(table_data.textures ~= nil and #table_data.textures > 0, table_data.name .." HAS NO TEXTURE DEFINED!")
+
+    -- Blocks cannot have more than 6 textures.
+    assert(#table_data.textures <= 6, table_data.name .. " HAS TOO MANY TEXTURES DEFINED!")
 
     -- Check that the block_box has 6 points in each shape
     check_block_box(table_data.name, table_data)
