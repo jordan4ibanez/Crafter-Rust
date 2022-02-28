@@ -5,7 +5,8 @@ use crate::blocks::block_component_system::AtlasTextureMap;
 pub fn calculate_atlas_location_normal(
     atlas_width: u32,
     atlas_height: u32,
-    frame: &Frame<String>
+    frame: &Frame<String>,
+    rotation: u8
 ) -> AtlasTextureMap {
     
     // println!("{:#?}", frame);
@@ -36,7 +37,8 @@ pub fn calculate_atlas_location_normal(
         min_x, 
         min_y, 
         max_x, 
-        max_y
+        max_y,
+        rotation
     )
 
     // println!("{:#?}", test);
