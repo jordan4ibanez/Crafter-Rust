@@ -5,7 +5,7 @@ crafter.register_block({
         "debug_direction.png",
     },
     rotations = {
-        0,0,0,0,0,0
+        2,2,2,2,2,2
     }
 })
 --[[
