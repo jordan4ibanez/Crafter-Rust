@@ -50,26 +50,33 @@ local function repeat_texture(texture_table)
     end
 end
 
-local function check_block_box(block_name, table_data)
+local function check_block_box(mod, block_name, table_data)
     -- Reduce redundant data.
     if table_data.draw_type ~= "block_box" then
         table_data.block_box = nil
     elseif table_data.block_box ~= nil then
-        assert(#table_data.block_box >= 6, block_name .. " BLOCK BOX MUST BE AT LEAST 6 POINTS!")
-        assert(#table_data.block_box % 6 == 0, block_name .. " MUST HAVE 6 POINTS IN EACH BLOCK SHAPE!")
+        assert(#table_data.block_box >= 6, mod .. ":" .. block_name .. " BLOCK BOX MUST BE AT LEAST 6 POINTS!")
+        assert(#table_data.block_box % 6 == 0, mod .. ":" .. block_name .. " MUST HAVE 6 POINTS IN EACH BLOCK SHAPE!")
     end
 end
 
 -- This requires the entire table pointer.
-local function check_block_rotations(block_name, table_data)
+local function check_block_rotations(mod, block_name, table_data)
 
     -- Automate rotations generation so modder does not have to think about it.
     if table_data.rotations == nil then
         table_data.rotations = {0,0,0, 0,0,0}
     -- Check defined data.
     else
+        -- Automatically fill in missing points
+        if #table_data.rotations < 6 then
+            for i = #table_data.rotations + 1, 6 do
+                table_data.rotations[i] = 0
+            end
+        end
+
         -- Check if 6 points.
-        assert(#table_data.rotations == 6 == true, block_name .. " ROTATIONS MUST BE EXACTLY 6 POINTS!")
+        assert(#table_data.rotations == 6 == true, mod .. ":" ..  block_name .. " ROTATIONS MUST BE LESS THAN OR EQUAL TO 6 POINTS!")
 
         -- Floor data just in case a modder goes crazy. Assume correct length.
         for i = 1,6 do
@@ -81,9 +88,11 @@ local function check_block_rotations(block_name, table_data)
             )
             table_data.rotations[i] = math.floor(table_data.rotations[i])
         end
-    end
 
+        print(dump(table_data.rotations))
+    end
 end
+
 
 -- This allows module creators to register blocks easily.
 crafter.register_block = function(table_data)
@@ -96,19 +105,19 @@ crafter.register_block = function(table_data)
     assert(table_data.name ~= nil, "A BLOCK IN MOD " .. mod .. " IS MISSING A NAME!")
 
     -- Blocks must have at least one texture.
-    assert(table_data.textures ~= nil and #table_data.textures > 0, table_data.name .." HAS NO TEXTURE DEFINED!")
+    assert(table_data.textures ~= nil and #table_data.textures > 0, mod .. ":" .. table_data.name .." HAS NO TEXTURE DEFINED!")
 
     -- Blocks cannot have more than 6 textures.
-    assert(#table_data.textures <= 6, table_data.name .. " HAS TOO MANY TEXTURES DEFINED!")
+    assert(#table_data.textures <= 6, mod .. ":" .. table_data.name .. " HAS TOO MANY TEXTURES DEFINED!")
 
     -- Check that the block_box has 6 points in each shape
-    check_block_box(table_data.name, table_data)
+    check_block_box(mod, table_data.name, table_data)
 
     -- Create streamlined texture cache for Rust to work with.
     cache_texture_to_load(mod, table_data.textures)
 
     -- Automate rotations, rotations check, and rotations data limiter.
-    check_block_rotations(table_data.name, table_data)
+    check_block_rotations(mod, table_data.name, table_data)
 
     --[[
     Automatically repeats the texture.
