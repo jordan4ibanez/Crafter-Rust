@@ -25,7 +25,7 @@ this is extremely similar to RAID-0 with hard drive/ssd technology
 
 // generic functions to reduce boilerplate
 
-use crate::blocks::block_component_system::{BlockComponentSystem, AtlasTextureMap};
+use crate::blocks::block_component_system::{AtlasTextureMap};
 
 // pushes the adjusted xyz into the vertex data
 fn set_pos(pos: &mut [f32], x: f32, y: f32, z: f32) {
@@ -98,6 +98,42 @@ fn stripe(float_data: &mut Vec<f32>, pos: &[f32], color: &[f32], texture: &[f32]
     }
 }
 
+/*
+let mut texture: [f32; 8] = [
+    min_x, min_y, // 0
+    min_x, max_y, // 1
+    max_x, max_y, // 2
+    max_x, min_y, // 3
+];
+*/
+
+// a simple wrap around function
+fn overflow(value: &mut usize) -> usize {
+    if *value > 7 {
+        *value -= 8;
+    }
+    *value
+}
+
+fn calculate_face_rotation(texture_map_table: &mut [f32; 8], face_rotation: u8) {
+    // don't bother if no rotation
+    if face_rotation == 0 {
+        return;
+    }
+    // since x and y are linear in rows of 2 we must shift them by double the rotation
+    let multiplier = (face_rotation * 2) as usize;
+
+    let mut cloning_table: [f32; 8] = [0.0; 8];
+
+    for i in 0..8 {
+        cloning_table[i] = texture_map_table[overflow(&mut (i + multiplier))]
+    }
+
+    // shadow the table
+    *texture_map_table = cloning_table;
+}
+
+
 pub fn face_up(
 
     atlas_map: &AtlasTextureMap,
@@ -137,14 +173,16 @@ pub fn face_up(
 
     // texture coordinates
 
-    let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
+    let (min_x, min_y, max_x, max_y, face_rotation) = atlas_map.get_as_tuple();
 
-    let texture: [f32; 8] = [
+    let mut texture: [f32; 8] = [
         min_x, min_y, // 0
         min_x, max_y, // 1
         max_x, max_y, // 2
         max_x, min_y, // 3
     ];
+
+    calculate_face_rotation(&mut texture, face_rotation);
 
     stripe(float_data, &pos, &color, &texture, float_count);
 
@@ -202,14 +240,16 @@ pub fn face_down(
         ];
 
         // texture coordinates
-        let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
+        let (min_x, min_y, max_x, max_y, face_rotation) = atlas_map.get_as_tuple();
         
-        let texture: [f32; 8] = [
+        let mut texture: [f32; 8] = [
             max_x, max_y, // 0
             max_x, min_y, // 1
             min_x, min_y, // 2
             min_x, max_y, // 3
         ];
+
+        calculate_face_rotation(&mut texture, face_rotation);
     
         stripe(float_data, &pos, &color, &texture, float_count);
 
@@ -265,14 +305,16 @@ pub fn face_south(
     ];
 
     // texture coordinates
-    let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
+    let (min_x, min_y, max_x, max_y, face_rotation) = atlas_map.get_as_tuple();
 
-    let texture: [f32; 8] = [
+    let mut texture: [f32; 8] = [
         min_x, min_y, // 0
         min_x, max_y, // 1
         max_x, max_y, // 2
         max_x, min_y, // 3    
     ];
+
+    calculate_face_rotation(&mut texture, face_rotation);
 
     stripe(float_data, &pos, &color, &texture, float_count);
 
@@ -327,14 +369,16 @@ pub fn face_north(
     ];
 
     // texture coordinates
-    let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
+    let (min_x, min_y, max_x, max_y, face_rotation) = atlas_map.get_as_tuple();
 
-    let texture: [f32; 8] = [
+    let mut texture: [f32; 8] = [
         max_x, max_y, // 0
         max_x, min_y, // 1
         min_x, min_y, // 2
         min_x, max_y, // 3
     ];
+
+    calculate_face_rotation(&mut texture, face_rotation);
 
     stripe(float_data, &pos, &color, &texture, float_count);
 
@@ -389,14 +433,16 @@ pub fn face_west(
     ];
 
     // texture coordinates
-    let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
+    let (min_x, min_y, max_x, max_y, face_rotation) = atlas_map.get_as_tuple();
 
-    let texture: [f32; 8] = [
+    let mut texture: [f32; 8] = [
         min_x, max_y, // 0
         max_x, max_y, // 1
         max_x, min_y, // 2
         min_x, min_y, // 3
     ];
+
+    calculate_face_rotation(&mut texture, face_rotation);
 
     stripe(float_data, &pos, &color, &texture, float_count);
 
@@ -454,14 +500,16 @@ pub fn face_east(
     ];   
 
     // texture coordinates
-    let (min_x, min_y, max_x, max_y) = atlas_map.get_as_tuple();
+    let (min_x, min_y, max_x, max_y, face_rotation) = atlas_map.get_as_tuple();
 
-    let texture: [f32; 8] = [
+    let mut texture: [f32; 8] = [
         min_x, max_y, // 0
         max_x, max_y, // 1
         max_x, min_y, // 2
         min_x, min_y, // 3
     ];
+
+    calculate_face_rotation(&mut texture, face_rotation);
 
     stripe(float_data, &pos, &color, &texture, float_count);
 
