@@ -6,7 +6,8 @@ pub fn calculate_atlas_location_normal(
     atlas_width: u32,
     atlas_height: u32,
     frame: &Frame<String>,
-    rotation: u8
+    rotation: u8,
+    flip: u8
 ) -> AtlasTextureMap {
     
     // println!("{:#?}", frame);
@@ -38,7 +39,8 @@ pub fn calculate_atlas_location_normal(
         min_y, 
         max_x, 
         max_y,
-        rotation
+        rotation,
+        flip
     )
 
     // println!("{:#?}", test);
