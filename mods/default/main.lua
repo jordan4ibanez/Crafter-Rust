@@ -3,6 +3,9 @@ crafter.register_block({
     draw_type = "normal",
     textures = {
         "debug_direction.png",
+    },
+    rotations = {
+        0,0,0,0,0,0
     }
 })
 --[[
