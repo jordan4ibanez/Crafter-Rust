@@ -1,0 +1,9 @@
+{
+    "Lua.diagnostics.globals": [
+        "operating_system",
+        "current_working_directory",
+        "get_operating_system",
+        "get_working_directory",
+        "dump"
+    ]
+}
