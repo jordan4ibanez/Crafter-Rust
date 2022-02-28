@@ -184,6 +184,14 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
             block_textures.push(value.unwrap().1);
         }
 
+        // pull lua texture rotation table into Rust u8 vector
+        let lua_block_rotations: Table = lua_table.get("rotations").unwrap();
+        let mut block_rotations: Vec<u8> = Vec::new();
+
+        for value in lua_block_rotations.pairs::<Integer, Integer>(){
+            block_rotations.push(value.unwrap().1 as u8);
+        }
+
         // println!("{:?}", block_textures);
 
         // begin the optional values
@@ -280,7 +288,7 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
             DrawType::Normal => {
                 // println!("---- debugging {} ------", block_name.clone());
                 // this will return an AtlasTextureMap per face
-
+                let mut index = 0;
                 for i in block_textures.iter() {
                     let current_mapping = calculate_atlas_location_normal(
                         atlas.width(), 
@@ -289,10 +297,15 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
                         the frame cannot be null or nullptr
                         this would have caused a crash earlier on
                         */
-                        packer.get_frame(i).unwrap()
+                        packer.get_frame(i).unwrap(),
+                        block_rotations[index]
                     );
 
+                    println!("ROTATION IS: {}", block_rotations[index]);
+
                     mapping.push(current_mapping);
+
+                    index += 1;
                 }
             },
             // very complex calculation - intakes block box and does conversions
