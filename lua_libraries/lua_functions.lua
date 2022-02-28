@@ -111,11 +111,11 @@ local function check_block_flips(mod, block_name, table_data)
 
         -- Floor data just in case a modder goes crazy. Assume correct length.
         for i = 1,6 do
-            -- Limit the data value. (0 through 3)
+            -- Limit the data value. (0 through 2)
             assert(
                 table_data.flips[i] >= 0 and
-                table_data.flips[i] <= 3,
-                mod .. ":" ..  block_name .. " FLIP INDEX " .. tostring(i) .. " OUT OF BOUNDS! FLIPS ARE LIMITED TO 0 THROUGH 3!"
+                table_data.flips[i] <= 2,
+                mod .. ":" ..  block_name .. " FLIP INDEX " .. tostring(i) .. " OUT OF BOUNDS! FLIPS ARE LIMITED TO 0 THROUGH 2!"
             )
             table_data.flips[i] = math.floor(table_data.flips[i])
         end
