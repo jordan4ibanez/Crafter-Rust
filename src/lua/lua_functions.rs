@@ -11,7 +11,7 @@ pub fn load_lua_file(path: &str) -> String {
 
     let text_str: &str = from_utf8(&buffer).unwrap();
 
-    let test_string = text_str.clone().to_string().to_owned();
+    let test_string: String = text_str.clone().to_string().to_owned();
 
     test_string
 }
