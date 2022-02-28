@@ -162,7 +162,7 @@ impl Camera {
             update_chunk_ordering = true;
         }
         
-        // println!("camera rotation: {}", self.rotation.y);
+        println!("camera rotation: {}", self.rotation.y);
 
         update_chunk_ordering
     }
