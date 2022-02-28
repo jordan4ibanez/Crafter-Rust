@@ -98,15 +98,6 @@ fn stripe(float_data: &mut Vec<f32>, pos: &[f32], color: &[f32], texture: &[f32]
     }
 }
 
-/*
-let mut texture: [f32; 8] = [
-    min_x, min_y, // 0
-    min_x, max_y, // 1
-    max_x, max_y, // 2
-    max_x, min_y, // 3
-];
-*/
-
 // a simple wrap around function
 fn overflow(value: &mut usize) -> usize {
     if *value > 7 {
@@ -131,6 +122,60 @@ fn calculate_face_rotation(texture_map_table: &mut [f32; 8], face_rotation: u8) 
 
     // shadow the table
     *texture_map_table = cloning_table;
+}
+
+/*
+let mut texture: [f32; 8] = [
+    min_x, min_y, // 0
+    min_x, max_y, // 1
+    max_x, max_y, // 2
+    max_x, min_y, // 3
+];
+*/
+
+// micro function for this specific case to check if floats are equal
+fn float_eq(value_1: f32, value_2: f32) -> bool {
+    let check_1 = (value_1 * 1_000_000.0).floor() as i32;
+    let check_2 = (value_2 * 1_000_000.0).floor() as i32;
+
+    check_1 == check_2
+}
+
+// this is hardcoded because there is only 1 way to flip
+fn flip_axis(texture_map_table: &mut [f32; 8], flip: u8, min_x: f32, min_y: f32, max_x: f32, max_y: f32) {
+    // don't bother if no flip
+    if flip == 0 {
+        return;
+    }
+    // flip X
+    else if flip == 1 {        
+        for i in 0..4 {
+            let index = i * 2;
+            // if min_x
+            if float_eq(texture_map_table[index], min_x) {
+                texture_map_table[index] = max_x;
+            }
+            // if max_x
+            else {
+                texture_map_table[index] = min_x;
+            }
+        }
+    }
+    // flip y
+    else if flip == 2 {
+        for i in 0..4 {
+            let index = (i * 2) + 1;
+            // if min_y
+            if float_eq(texture_map_table[index], min_y) {
+                texture_map_table[index] = max_y;
+            }
+            // if max_y
+            else {
+                texture_map_table[index] = min_y;
+            }
+        }
+    }
+
 }
 
 
@@ -173,7 +218,7 @@ pub fn face_up(
 
     // texture coordinates
 
-    let (min_x, min_y, max_x, max_y, face_rotation) = atlas_map.get_as_tuple();
+    let (min_x, min_y, max_x, max_y, face_rotation, flip) = atlas_map.get_as_tuple();
 
     let mut texture: [f32; 8] = [
         min_x, min_y, // 0
@@ -181,6 +226,9 @@ pub fn face_up(
         max_x, max_y, // 2
         max_x, min_y, // 3
     ];
+
+    // flip then rotate
+    flip_axis(&mut texture, flip, min_x, min_y, max_x, max_y);
 
     calculate_face_rotation(&mut texture, face_rotation);
 
@@ -240,7 +288,7 @@ pub fn face_down(
         ];
 
         // texture coordinates
-        let (min_x, min_y, max_x, max_y, face_rotation) = atlas_map.get_as_tuple();
+        let (min_x, min_y, max_x, max_y, face_rotation, flip) = atlas_map.get_as_tuple();
         
         let mut texture: [f32; 8] = [
             max_x, max_y, // 0
@@ -248,6 +296,9 @@ pub fn face_down(
             min_x, min_y, // 2
             min_x, max_y, // 3
         ];
+
+        // flip then rotate
+        flip_axis(&mut texture, flip, min_x, min_y, max_x, max_y);
 
         calculate_face_rotation(&mut texture, face_rotation);
     
@@ -305,7 +356,7 @@ pub fn face_south(
     ];
 
     // texture coordinates
-    let (min_x, min_y, max_x, max_y, face_rotation) = atlas_map.get_as_tuple();
+    let (min_x, min_y, max_x, max_y, face_rotation, flip) = atlas_map.get_as_tuple();
 
     let mut texture: [f32; 8] = [
         min_x, min_y, // 0
@@ -313,6 +364,9 @@ pub fn face_south(
         max_x, max_y, // 2
         max_x, min_y, // 3    
     ];
+
+    // flip then rotate
+    flip_axis(&mut texture, flip, min_x, min_y, max_x, max_y);
 
     calculate_face_rotation(&mut texture, face_rotation);
 
@@ -369,7 +423,7 @@ pub fn face_north(
     ];
 
     // texture coordinates
-    let (min_x, min_y, max_x, max_y, face_rotation) = atlas_map.get_as_tuple();
+    let (min_x, min_y, max_x, max_y, face_rotation, flip) = atlas_map.get_as_tuple();
 
     let mut texture: [f32; 8] = [
         max_x, max_y, // 0
@@ -377,6 +431,9 @@ pub fn face_north(
         min_x, min_y, // 2
         min_x, max_y, // 3
     ];
+
+    // flip then rotate
+    flip_axis(&mut texture, flip, min_x, min_y, max_x, max_y);
 
     calculate_face_rotation(&mut texture, face_rotation);
 
@@ -433,7 +490,7 @@ pub fn face_west(
     ];
 
     // texture coordinates
-    let (min_x, min_y, max_x, max_y, face_rotation) = atlas_map.get_as_tuple();
+    let (min_x, min_y, max_x, max_y, face_rotation, flip) = atlas_map.get_as_tuple();
 
     let mut texture: [f32; 8] = [
         min_x, max_y, // 0
@@ -441,6 +498,9 @@ pub fn face_west(
         max_x, min_y, // 2
         min_x, min_y, // 3
     ];
+
+    // flip then rotate
+    flip_axis(&mut texture, flip, min_x, min_y, max_x, max_y);
 
     calculate_face_rotation(&mut texture, face_rotation);
 
@@ -500,7 +560,7 @@ pub fn face_east(
     ];   
 
     // texture coordinates
-    let (min_x, min_y, max_x, max_y, face_rotation) = atlas_map.get_as_tuple();
+    let (min_x, min_y, max_x, max_y, face_rotation, flip) = atlas_map.get_as_tuple();
 
     let mut texture: [f32; 8] = [
         min_x, max_y, // 0
@@ -508,6 +568,9 @@ pub fn face_east(
         max_x, min_y, // 2
         min_x, min_y, // 3
     ];
+
+    // flip then rotate
+    flip_axis(&mut texture, flip, min_x, min_y, max_x, max_y);
 
     calculate_face_rotation(&mut texture, face_rotation);
 
