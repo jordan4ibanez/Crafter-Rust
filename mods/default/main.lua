@@ -5,13 +5,15 @@ crafter.register_block({
         "grass.png",
         "dirt.png",
         "grass_side.png",
-        "grass_side.png",
-        "grass_side.png",
-        "grass_side.png"
     },
-    rotations = {
-        0,0,0,0,0,0
-    }
+})
+
+crafter.register_block({
+    name = "dirt",
+    draw_type = "normal",
+    textures = {
+        "dirt.png",
+    },
 })
 --[[
 
