@@ -16,6 +16,12 @@ crafter.register_block({
     textures = {
         "debug_direction.png",
     },
+    rotations = {
+        0,0,0,0,0,0
+    },
+    flips = {
+        0,0,0,0,0,0
+    }
 })
 
 --[[
