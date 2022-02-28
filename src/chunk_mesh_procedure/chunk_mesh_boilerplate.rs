@@ -632,12 +632,12 @@ pub fn add_block(
 
     
     /*
-    
-    +z = south
-    -z = north
 
     +y = up
     -y = down
+    
+    +z = south
+    -z = north
 
     +x = west
     -x = east
