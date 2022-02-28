@@ -308,7 +308,7 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
                         block_flips[index]
                     );
 
-                    println!("ROTATION IS: {}", block_rotations[index]);
+                    println!("FLIPS IS: {}", block_flips[index]);
 
                     mapping.push(current_mapping);
 
