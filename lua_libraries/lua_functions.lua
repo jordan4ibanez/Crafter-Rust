@@ -71,7 +71,7 @@ local function check_block_rotations(block_name, table_data)
         -- Check if 6 points.
         assert(#table_data.rotations == 6 == true, block_name .. " ROTATIONS MUST BE EXACTLY 6 POINTS!")
 
-        -- Floor data just in case a modder goes crazy. Assume correct length
+        -- Floor data just in case a modder goes crazy. Assume correct length.
         for i = 1,6 do
             -- Limit the data value. (0 through 3)
             assert(
@@ -87,9 +87,13 @@ end
 
 -- This allows module creators to register blocks easily.
 crafter.register_block = function(table_data)
+
     -- Cache string pointer.
     local mod = current_loading_mod
     table_data.mod = mod
+
+    -- Blocks must have a name.
+    assert(table_data.name ~= nil, "A BLOCK IN MOD " .. mod .. " IS MISSING A NAME!")
 
 
     -- Check that the block_box has 6 points in each shape
