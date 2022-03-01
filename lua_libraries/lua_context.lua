@@ -42,7 +42,9 @@ print("lua operating system detection: " .. crafter.operating_system);
 dofile("lua_libraries/lua_functions.lua")
 
 -- This is a simple way to hold the file directory without creating an on-disk cache.
-current_loading_mod = nil
+current_loading_mod = "engine"
+
+register_air()
 
 -- The Windows module loader.
 if crafter.operating_system == "windows" then

@@ -26,4 +26,12 @@ function dump(o)
     else
        return tostring(o)
     end
- end
+end
+
+-- Pre-define air.
+function register_air()
+   crafter.register_block({
+       name = "air",
+       draw_type = "airlike"
+   })
+end
