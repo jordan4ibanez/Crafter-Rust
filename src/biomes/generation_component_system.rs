@@ -38,6 +38,8 @@ pub struct GenerationComponentSystem {
 
     id: Vec<u32>,
 
+    game_mod: Vec<String>,
+
     name: Vec<String>,
 
     top_layer: Vec<u32>,
@@ -72,6 +74,7 @@ impl GenerationComponentSystem {
     pub fn new() -> Self {
         Self {
             id: Vec::new(),
+            game_mod: Vec::new(),
             name: Vec::new(),
             top_layer: Vec::new(),
             top_layer_depth: Vec::new(),
@@ -91,6 +94,8 @@ impl GenerationComponentSystem {
         &mut self,
 
         name: String,
+
+        game_mod: String,
 
         top_layer: u32,
         top_layer_depth: LayerDepth,
@@ -114,6 +119,8 @@ impl GenerationComponentSystem {
 
     ){
         self.id.push(self.id.len() as u32 + 1);
+
+        self.game_mod.push(game_mod);
 
         self.name.push(name);
 
