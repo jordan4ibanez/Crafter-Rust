@@ -53,10 +53,10 @@ use crate::{
     controls::{
         keyboard::Keyboard, 
         mouse::Mouse
-    }, blocks::block_component_system::{BlockComponentSystem, DrawType},
+    }, blocks::block_component_system::{BlockComponentSystem},
     lua::{
         lua_initialize::initialize_lua,
-        lua_intake_api::{self, intake_api_values}
+        lua_intake_api::intake_api_values
     },
         helper::helper_functions::get_path_string,
 
@@ -83,7 +83,7 @@ fn main() {
     noise.set_noise_type(NoiseType::Simplex);
     noise.set_seed(123213123);
     noise.set_interp(Interp::Linear);
-    noise.set_frequency(0.01);
+    noise.set_frequency(0.005);
     
 
     // uncomment this when testing drawtype performance
@@ -100,7 +100,7 @@ fn main() {
     let mut keyboard: Keyboard = Keyboard::new();
     let mut mouse: Mouse = Mouse::new(&window);
 
-    const RENDER_DISTANCE: i32 = 10;
+    const RENDER_DISTANCE: i32 = 20;
 
     // construct the renderer
     let mut renderer: Renderer = Renderer::new();

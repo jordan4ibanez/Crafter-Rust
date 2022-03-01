@@ -32,8 +32,9 @@ fn calculate_y_height(
              * noise_multiplier as f32
         ) as f64
     ) as u32
-
 }
+
+
 
 pub fn gen_biome(bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i32, pos_z: i32, perlin: &mut FastNoise, rand_option: Option<&mut ThreadRng>) {
 
@@ -58,7 +59,7 @@ pub fn gen_biome(bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i
     let base_height = 70.0;
 
     // the amount of fluctuation the blocks can have from base height
-    let noise_multiplier = 10.0;
+    let noise_multiplier = 50.0;
 
     let mut y_height: u32 = calculate_y_height(
         0.0, 
