@@ -12,7 +12,7 @@ edition = "2021"
 rand = "*"
 
 # perlin noise
-perlin2d = "0.2.6"
+bracket-noise = "0.8.2"
 
 # openGL bindings
 gl = "0.14.0"
