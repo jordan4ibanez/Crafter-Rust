@@ -33,7 +33,7 @@ impl NoiseParams {
 }
 
 
-
+// the gcs holds all biome data exclusively
 pub struct GenerationComponentSystem {
 
     id: Vec<u32>,
