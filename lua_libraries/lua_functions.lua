@@ -25,6 +25,57 @@ local function check_layers(mod, table_data)
     assert(table_data.stone_layer ~= nil and type(table_data.stone_layer) == "string", "BIOME " .. mod .. ":" .. table_data.name .. " NEEDS STONE LAYER DEFINED!")
 end
 
+local function automate_and_check_biome_parameters(mod, table_data)
+    
+    -- Default to 30 if forgotten.
+    if table_data.terrain_noise_multiplier == nil then
+        table_data.terrain_noise_multiplier = 30
+    end
+
+    -- Can only be number.
+    assert(type(table_data.terrain_noise_multiplier) == "number", "BIOME " .. mod .. ":" .. table_data.name .. " NEEDS A NUMBER AS terrain_noise_multiplier!")
+
+    -- Default to 0.005 if forgotten.
+    if table_data.terrain_frequency == nil then
+        table_data.terrain_frequency = 0.005
+    end
+
+    assert(type(table_data.terrain_frequency) == "number", "BIOME " .. mod .. ":" .. table_data.name .. " NEEDS A NUMBER AS terrain_frequency!")
+    
+    -- Default to true.
+    if table_data.caves == nil then
+        table_data.caves = true
+    end
+
+    assert(type(table_data.caves) == "boolean", "BIOME " .. mod .. ":" .. table_data.name .. " NEEDS A BOOLEAN AS caves!")
+
+
+    -- Check cave parameters.
+    
+    -- Default to 0.05 min, 0.30 max
+    if table_data.cave_heat == nil then
+        table_data.cave_heat = {0.05, 0.30}
+    end
+
+    assert(type(table_data.cave_heat) == "table", "BIOME " .. mod .. ":" .. table_data.name .. " NEEDS A TABLE AS cave_heat!")
+
+    -- Check type
+    for i = 1,2 do
+        assert(type(table_data.cave_heat[i]) == "number", "BIOME " .. mod .. ":" .. table_data.name .. " HAS INVALID DATA IN INDEX " .. i .. " OF cave_heat!")
+    end
+
+    -- Automate weather.
+
+    if table_data.rain == nil then
+        table_data.rain = false
+    end
+
+    if table_data.snow == nil then
+        table_data.snow = false
+    end
+
+end
+
 crafter.register_biome = function(table_data)
     -- Cache string pointer.
     local mod = current_loading_mod
@@ -35,6 +86,9 @@ crafter.register_biome = function(table_data)
 
     -- Check all layers.
     check_layers(mod, table_data)
+
+    -- Check and automate biome parameters.
+    automate_and_check_biome_parameters(mod, table_data)
 
     crafter.biomes[table_data.name] = table_data
 end
