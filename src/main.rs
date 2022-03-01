@@ -137,7 +137,7 @@ fn main() {
 
     let lua: Lua = initialize_lua();
 
-    intake_api_values(&lua, &mut mcs, &mut bcs);
+    intake_api_values(&lua, &mut gcs, &mut mcs, &mut bcs);
 
 
     // main program loop
