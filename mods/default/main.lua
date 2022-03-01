@@ -32,10 +32,10 @@ crafter.register_biome({
     name = "grass_lands",
 
     top_layer = "grass",
-    top_layer_depth = {1,1},
+    top_layer_depth = {1,1}, -- Min, Max
 
     bottom_layer = "dirt",
-    bottom_layer_depth = {3,5},
+    bottom_layer_depth = {3,5}, -- Min, Max
 
     stone_layer = "stone",
 
