@@ -13,6 +13,14 @@ impl LayerDepth {
     pub fn get(&self) -> (u8, u8) {
         (self.min, self.max)
     }
+
+    pub fn get_min(&self) -> u8 {
+        self.min
+    }
+
+    pub fn get_max(&self) -> u8 {
+        self.max
+    }
 }
 
 pub struct NoiseParams {
@@ -29,6 +37,14 @@ impl NoiseParams {
     }
     pub fn get(&self) -> (f32, f32) {
         (self.min, self.max)
+    }
+
+    pub fn get_min(&self) -> f32 {
+        self.min
+    }
+
+    pub fn get_max(&self) -> f32 {
+        self.max
     }
 }
 
@@ -146,6 +162,52 @@ impl GenerationComponentSystem {
         self.rain.push(rain);
 
         self.snow.push(snow);
+    }
+
+
+    /*
+    id: Vec<u32>,
+    name: Vec<String>,
+    top_layer: Vec<u32>,
+    top_layer_depth: Vec<LayerDepth>,
+    bottom_layer: Vec<u32>,
+    bottom_layer_depth: Vec<LayerDepth>,
+    stone_layer: Vec<u32>,
+    terrain_noise_multiplier: Vec<u8>,
+    terrain_frequency: Vec<f32>,
+    caves: Vec<bool>,
+    cave_heat: Vec<NoiseParams>,
+    rain: Vec<bool>,
+    snow: Vec<bool>
+             */
+
+    // this is debug
+    // in production this will search by heatmap of 2D
+    // this is also a mess
+    pub fn get(&self, id: usize) -> (&String, u32, &LayerDepth, u32, &LayerDepth, u32, u8, f32, bool, &NoiseParams, bool, bool) {
+        (
+            &self.name[id],
+
+            self.top_layer[id],
+            &self.top_layer_depth[id],
+
+            self.bottom_layer[id],
+            &self.bottom_layer_depth[id],
+
+            self.stone_layer[id],
+
+            self.terrain_noise_multiplier[id],
+
+            self.terrain_frequency[id],
+
+            self.caves[id],
+
+            &self.cave_heat[id],
+
+            self.rain[id],
+
+            self.snow[id],
+        )
     }
     
 }
