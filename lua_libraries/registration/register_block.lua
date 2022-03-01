@@ -133,30 +133,32 @@ crafter.register_block = function(table_data)
     -- Blocks must have a name.
     assert(table_data.name ~= nil, "A BLOCK IN MOD " .. mod .. " IS MISSING A NAME!")
 
-    -- Blocks must have at least one texture.
-    assert(table_data.textures ~= nil and #table_data.textures > 0, mod .. ":" .. table_data.name .." HAS NO TEXTURE DEFINED!")
+    -- Blocks must have at least one texture. But not air.
+    if table_data.name ~= "air" then
+        assert(table_data.textures ~= nil and #table_data.textures > 0, mod .. ":" .. table_data.name .." HAS NO TEXTURE DEFINED!")
 
-    -- Blocks cannot have more than 6 textures.
-    assert(#table_data.textures <= 6, mod .. ":" .. table_data.name .. " HAS TOO MANY TEXTURES DEFINED!")
+        -- Blocks cannot have more than 6 textures.
+        assert(#table_data.textures <= 6, mod .. ":" .. table_data.name .. " HAS TOO MANY TEXTURES DEFINED!")
 
-    -- Check that the block_box has 6 points in each shape
-    check_block_box(mod, table_data.name, table_data)
+        -- Check that the block_box has 6 points in each shape
+        check_block_box(mod, table_data.name, table_data)
 
-    -- Create streamlined texture cache for Rust to work with.
-    cache_texture_to_load(mod, table_data.textures)
+        -- Create streamlined texture cache for Rust to work with.
+        cache_texture_to_load(mod, table_data.textures)
 
-    -- Automate rotations, rotations check, and rotations data limiter.
-    check_block_rotations(mod, table_data.name, table_data)
+        -- Automate rotations, rotations check, and rotations data limiter.
+        check_block_rotations(mod, table_data.name, table_data)
 
-    -- Automate flips, flips check, and flips data limiter.
-    check_block_flips(mod, table_data.name, table_data)
+        -- Automate flips, flips check, and flips data limiter.
+        check_block_flips(mod, table_data.name, table_data)
 
-    --[[
-    Automatically repeats the texture.
+        --[[
+        Automatically repeats the texture.
 
-    This is useful when defining simple blocks like dirt or stone.
-    ]]--
-    repeat_texture(table_data.textures)
+        This is useful when defining simple blocks like dirt or stone.
+        ]]--
+        repeat_texture(table_data.textures)
+    end
 
     crafter.blocks[table_data.name] = table_data
 end
