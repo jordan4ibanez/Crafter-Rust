@@ -16,6 +16,7 @@ use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
 use mlua::Lua;
+use rand::prelude::ThreadRng;
 
 use std::{
     sync::mpsc::Receiver
@@ -84,8 +85,7 @@ fn main() {
     noise.set_frequency(0.005);
     
 
-    // uncomment this when testing drawtype performance
-    // let mut thread_rng: ThreadRng = rand::thread_rng();
+    let mut thread_rng: ThreadRng = rand::thread_rng();
 
     // fps counter object
     let mut time_object: Time = Time::new(&glfw);
@@ -183,7 +183,7 @@ fn main() {
             // println!(" CREATING {} {}", debug_x, debug_y);
             world.add_chunk(debug_x, debug_z);
 
-            gen_biome(&bcs, world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(), debug_x, debug_z, &mut noise, None);//Some(&mut thread_rng));
+            gen_biome(&gcs, &bcs, world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(), debug_x, debug_z, &mut noise, &mut thread_rng);
 
             // world.add(generated_chunk);
 
