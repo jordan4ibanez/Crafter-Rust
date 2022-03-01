@@ -8,6 +8,7 @@ mod chunk_mesh_procedure;
 mod world;
 mod blocks;
 mod lua;
+mod biomes;
 
 
 use bracket_noise::prelude::{FastNoise, NoiseType, Interp};
@@ -45,8 +46,7 @@ use crate::{
     world::{
         world::{
             *,
-        },
-        biome_generator::gen_biome
+        },        
     }, 
     controls::{
         keyboard::Keyboard, 
@@ -56,7 +56,7 @@ use crate::{
         lua_initialize::initialize_lua,
         lua_intake_api::intake_api_values
     },
-        helper::helper_functions::get_path_string,
+        helper::helper_functions::get_path_string, biomes::biome_generator::gen_biome,
 
     
 };
