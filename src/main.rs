@@ -10,11 +10,11 @@ mod blocks;
 mod lua;
 
 
+use bracket_noise::prelude::{FastNoise, NoiseType, Interp};
 use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
 use mlua::Lua;
-use perlin2d::PerlinNoise2D;
 
 use std::{
     sync::mpsc::Receiver
@@ -78,7 +78,13 @@ fn main() {
     // testing of 3D camera
     window.set_cursor_mode(glfw::CursorMode::Disabled);
 
-    let mut perlin: PerlinNoise2D = PerlinNoise2D::new(1, 0.5, 1.0, 1.0, 1.0, (10.0, 10.0), 0.5, 1213);
+    // noise structure
+    let mut noise: FastNoise = FastNoise::new();
+    noise.set_noise_type(NoiseType::Simplex);
+    noise.set_seed(123213123);
+    noise.set_interp(Interp::Linear);
+    noise.set_frequency(0.01);
+    
 
     // uncomment this when testing drawtype performance
     // let mut thread_rng: ThreadRng = rand::thread_rng();
@@ -177,7 +183,7 @@ fn main() {
             // println!(" CREATING {} {}", debug_x, debug_y);
             world.add_chunk(debug_x, debug_z);
 
-            gen_biome(&bcs, world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(), debug_x, debug_z, &mut perlin, None);//Some(&mut thread_rng));
+            gen_biome(&bcs, world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(), debug_x, debug_z, &mut noise, None);//Some(&mut thread_rng));
 
             // world.add(generated_chunk);
 
