@@ -118,7 +118,10 @@ impl GenerationComponentSystem {
         snow: bool
 
     ){
-        self.id.push(self.id.len() as u32 + 1);
+
+        println!("BIOME: {} IS ID: {}",name,self.id.len() as u32);
+
+        self.id.push(self.id.len() as u32);
 
         self.game_mod.push(game_mod);
 
