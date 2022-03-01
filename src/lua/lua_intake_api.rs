@@ -321,6 +321,7 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
 
 
         bcs.register_block(
+            block_mod,
             block_name,
             draw_type,
             block_textures,

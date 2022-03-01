@@ -54,6 +54,7 @@ impl BlockBox {
 
 pub struct BlockComponentSystem {
     id: Vec<u32>,
+    game_mod: Vec<String>,
     name: Vec<String>,
     draw_type: Vec<DrawType>,
     texture: Vec<Vec<String>>,
@@ -71,6 +72,7 @@ impl BlockComponentSystem {
     pub fn new() -> Self {
         let mut component_system = BlockComponentSystem {
             id: Vec::new(),
+            game_mod: Vec::new(),
             name: Vec::new(),
             draw_type: Vec::new(),
             texture: Vec::new(),
@@ -79,13 +81,14 @@ impl BlockComponentSystem {
         };
 
         // built in definition for air
-        component_system.register_block(String::from("air"), DrawType::None, vec![], None, vec![]);
+        component_system.register_block(String::from("engine"), String::from("air"), DrawType::None, vec![], None, vec![]);
 
         component_system
     }
     
     pub fn register_block(
         &mut self,
+        game_mod: String,
         name: String,
         draw_type: DrawType,
         mut textures: Vec<String>,
@@ -95,6 +98,8 @@ impl BlockComponentSystem {
         println!("{} is ID: {}", &name, self.id.len());
 
         self.id.push(self.id.len() as u32);
+
+        self.game_mod.push(game_mod);
 
         self.name.push(name.clone());
 
