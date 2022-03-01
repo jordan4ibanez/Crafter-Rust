@@ -51,10 +51,10 @@ crafter.register_biome({
     },
 
     -- How high or low the terrain can fluctuate.
-    terrain_noise_multiplier = 30;
+    terrain_noise_multiplier = 50;
 
     -- How often the terrain fluctuates.
-    terrain_frequency = 0.005,
+    terrain_frequency = 0.01,
 
     -- Defines if there is cave generation.
     caves = true,
