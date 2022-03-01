@@ -4,6 +4,8 @@ use rand::{Rng, prelude::ThreadRng};
 
 use crate::blocks::block_component_system::BlockComponentSystem;
 
+use super::generation_component_system::GenerationComponentSystem;
+
 // Convertes u16 1D position into (u8,u8,u8) 3D tuple position
 fn index_to_pos ( i: usize ) -> (f64,f64,f64) {
     let mut index :usize = i.clone();
@@ -34,24 +36,42 @@ fn calculate_y_height(
     ) as u32
 }
 
+fn calculate_depth_simplex(
+    pos_x: f64,
+    pos_z: f64,
+    chunk_pos_x: f64,
+    chunk_pos_z: f64,
+    noise: &mut FastNoise, 
+    min: u8,
+    max: u8
+) -> u32{
+
+    ((noise.get_noise(
+        (pos_x + (chunk_pos_x * 16.0)) as f32,
+        (pos_z + (chunk_pos_z * 16.0)) as f32
+    ).abs() * (max - min) as f32) + min as f32).floor() as u32
+}
 
 
-pub fn gen_biome(bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i32, pos_z: i32, perlin: &mut FastNoise, rand_option: Option<&mut ThreadRng>) {
 
-    // let dirt: u32 = bcs.get_id_of(String::from("cobble"));
-    let grass: u32 = bcs.get_id_of(String::from("grass"));
-    let air: u32 = bcs.get_id_of(String::from("air"));
-    let dirt: u32 = bcs.get_id_of(String::from("dirt"));
+pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i32, pos_z: i32, noise: &mut FastNoise, random: &mut ThreadRng) {
 
-    let top_layer_thickness = 1;
-    let bottom_layer_thickness = (3,4);
+    // this is debug
+    let (
+        name,
+        top_layer,
+        top_layer_depth,
+        bottom_layer,
+        bottom_layer_depth,
+        stone_layer,
+        terrain_noise_multiplier,
+        terrain_frequency,
+        caves,
+        cave_heat,
+        rain,
+        snow) = gcs.get(0);
 
-    // let stone_layer: u32 = bcs.get_id_of(String::from("stone"));
-    let noise_cave_gen_mapping: (f32,f32) = (0.45, 0.55);
-
-
-    let top_layer: u32 = grass;
-    let bottom_layer: u32 = dirt;
+    noise.set_frequency(terrain_frequency);
 
 
 
@@ -59,16 +79,37 @@ pub fn gen_biome(bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i
     let base_height = 70.0;
 
     // the amount of fluctuation the blocks can have from base height
-    let noise_multiplier = 50.0;
+    //let noise_multiplier = 50.0;
 
     let mut y_height: u32 = calculate_y_height(
         0.0, 
         0.0, 
         pos_x as f64, 
-        pos_z as f64, perlin
+        pos_z as f64, noise
         ,
         base_height,
-        noise_multiplier
+        terrain_noise_multiplier as f64
+    );
+
+    let mut top_layer_depth_random: u32 = calculate_depth_simplex(
+        0.0, 
+        0.0, 
+        pos_x as f64, 
+        pos_z as f64,
+        noise, 
+        top_layer_depth.get_min(),
+        top_layer_depth.get_max() + 1
+    );
+    
+
+    let mut bottom_layer_depth_random: u32 = calculate_depth_simplex(
+        0.0, 
+        0.0, 
+        pos_x as f64, 
+        pos_z as f64,
+        noise, 
+        bottom_layer_depth.get_min(),
+        bottom_layer_depth.get_max() + 1
     );
 
     for i in 0..32768 {
@@ -77,13 +118,41 @@ pub fn gen_biome(bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i
         let y_u32: u32 = y as u32;
 
         if y_u32 == 0 {
-            y_height = calculate_y_height(x, z, pos_x as f64, pos_z as f64, perlin, base_height, noise_multiplier);
+            y_height = calculate_y_height(x, z, pos_x as f64, pos_z as f64, noise, base_height, terrain_noise_multiplier as f64);
+
+            top_layer_depth_random = calculate_depth_simplex(
+                x, 
+                z, 
+                pos_x as f64, 
+                pos_z as f64,
+                noise, 
+                top_layer_depth.get_min(),
+                top_layer_depth.get_max() + 1
+            );
+
+            bottom_layer_depth_random = calculate_depth_simplex(
+                x, 
+                z,
+                pos_x as f64, 
+                pos_z as f64,
+                noise, 
+                bottom_layer_depth.get_min(),
+                bottom_layer_depth.get_max() + 1
+            );
+
         }
         
-        if y_u32 == y_height {
+        // top layer
+        if y_u32 <= y_height && y_u32 >= y_height - top_layer_depth_random {
             block_data[i] = top_layer;
-        } else if y_u32 < y_height {
+        }
+        // bottom layer
+        else if y_u32 < y_height - top_layer_depth_random &&  y_u32 >= y_height - top_layer_depth_random - bottom_layer_depth_random {
             block_data[i] = bottom_layer;
+        }
+        // stone layer
+        else if y_u32 < y_height - top_layer_depth_random - bottom_layer_depth_random {
+            block_data[i] = stone_layer;
         }
     }
 }
