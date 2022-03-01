@@ -171,6 +171,11 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
 
         // these are required
         let block_name: String = lua_table.get("name").unwrap();
+
+        if block_name.eq("air") {
+            continue;
+        }
+
         let block_mod: String = lua_table.get("mod").unwrap();
 
         // println!("{}, {}", block_name, block_mod);
