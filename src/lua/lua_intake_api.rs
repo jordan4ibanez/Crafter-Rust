@@ -26,7 +26,7 @@ use crate::{
     helper::helper_functions::with_path,
     lua::lua_texture_atlas_calculation::{
         calculate_atlas_location_normal
-    }
+    }, biomes::generation_component_system::{LayerDepth, NoiseParams, GenerationComponentSystem}
 };
 
 
@@ -65,7 +65,7 @@ fn create_texture(module_name: &str, texture_name: &str) -> DynamicImage {
 }
 
 
-pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut BlockComponentSystem) {
+pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &mut MeshComponentSystem, bcs: &mut BlockComponentSystem) {
 
     // this follows the same pattern as lua
     let crafter: Table = lua.globals().get("crafter").unwrap();
@@ -123,8 +123,8 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
     let configged_width: u32 = (number_of_textures + 2) / 2;
     let configged_height: u32 = ((number_of_textures + 2) / 2) + 1;
 
-    println!("{configged_width}");
-    println!("{configged_height}");
+    // println!("{configged_width}");
+    // println!("{configged_height}");
 
     let config = TexturePackerConfig {
         max_width: biggest_width * configged_width,
@@ -327,12 +327,83 @@ pub fn intake_api_values(lua: &Lua, mcs: &mut MeshComponentSystem, bcs: &mut Blo
             block_box_option,
             mapping
         )
-    }    
+    } 
 
     // texture atlas will always be id 1
     let value_test = mcs.new_texture_from_memory(atlas.as_rgba8().unwrap().to_owned());
 
-    println!("TEXTURE ATLAS IS VALUE: {}", value_test);
-    
+    // println!("TEXTURE ATLAS IS VALUE: {}", value_test);
+
+
+    // begin iterating biome data
+
+    // iterating crafter.biomes
+    let biomes: Table = crafter.get("biomes").unwrap();
+
+    for biome_option in biomes.pairs::<String, Table>() {
+
+        let (biome_name, biome_table) = biome_option.unwrap();
+
+        let game_mod: String = biome_table.get("mod").unwrap();
+
+        let top_layer: String = biome_table.get("top_layer").unwrap();
+
+        let top_layer_depth_table: Table = biome_table.get("top_layer_depth").unwrap();
+
+        let top_layer_depth: LayerDepth = LayerDepth::new(
+            top_layer_depth_table.get::<u8, u8>(1).unwrap(),
+            top_layer_depth_table.get::<u8, u8>(2).unwrap()
+        );
+
+
+        let bottom_layer: String = biome_table.get("bottom_layer").unwrap();
+
+        let bottom_layer_depth_table: Table = biome_table.get("bottom_layer_depth").unwrap();
+
+        let bottom_layer_depth: LayerDepth = LayerDepth::new(
+            bottom_layer_depth_table.get::<u8, u8>(1).unwrap(),
+            bottom_layer_depth_table.get::<u8, u8>(2).unwrap()
+        );
+
+
+        let stone_layer: String = biome_table.get("stone_layer").unwrap();
+
+
+        let terrain_noise_multiplier: u8 = biome_table.get("terrain_noise_multiplier").unwrap();
+
+        let terrain_frequency: f32 = biome_table.get("terrain_frequency").unwrap();
+
+        let caves: bool = biome_table.get("caves").unwrap();
+
+        let cave_heat_table: Table = biome_table.get("cave_heat").unwrap();
+
+        let cave_heat: NoiseParams = NoiseParams::new(
+            cave_heat_table.get::<u8, f32>(1).unwrap(),
+            cave_heat_table.get::<u8, f32>(2).unwrap()
+        );
+
+        let rain: bool = biome_table.get("rain").unwrap();
+
+        let snow: bool = biome_table.get("snow").unwrap();
+
+
+        gcs.register_biome(
+            biome_name,
+            game_mod,
+            bcs.get_id_of(top_layer),
+            top_layer_depth,
+            bcs.get_id_of(bottom_layer),
+            bottom_layer_depth,
+            bcs.get_id_of(stone_layer),
+            terrain_noise_multiplier,
+            terrain_frequency,
+            caves,
+            cave_heat,
+            rain,
+            snow
+        );
+    }
+
+
     println!("-------------- done -----------------");
 }
