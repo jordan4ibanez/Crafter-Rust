@@ -25,6 +25,8 @@ require("lua_libraries.lua_helpers")
 crafter = {
     -- Holds block data to be passed into Rust.
     blocks = {},
+    -- Holds biome data to be passed into Rust.
+    biomes = {},
     -- Localization cached and then cached into table.
     operating_system = get_operating_system(),
     -- Current root directory of the program.

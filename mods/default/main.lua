@@ -27,8 +27,37 @@ crafter.register_block({
     },
 })
 
---[[
-crafter.register_biome({
 
+crafter.register_biome({
+    name = "grass_lands",
+
+    -- How high or low the terrain can fluctuate.
+    terrain_noise_multiplier = 30;
+
+    -- How often the terrain fluctuates.
+    terrain_frequency = 0.005,
+
+    top_layer = "grass",
+    top_layer_depth = {1,1},
+
+    bottom_layer = "dirt",
+    bottom_layer_depth = {3,5},
+
+    stone_layer = "stone",
+
+    ores = {
+        coal = {
+            depth = {2, 100},
+            frequency = 50,
+        },
+        iron = {
+            depth = {2,100},
+            frequency = 40,
+        }
+    },
+
+    caves = true,
+    cave_heat = {0.05, 0.30},
+
+    rain = true,
 })
-]]--
