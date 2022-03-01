@@ -56,7 +56,7 @@ use crate::{
         lua_initialize::initialize_lua,
         lua_intake_api::intake_api_values
     },
-        helper::helper_functions::get_path_string, biomes::biome_generator::gen_biome,
+        helper::helper_functions::get_path_string, biomes::{biome_generator::gen_biome, generation_component_system::GenerationComponentSystem},
 
     
 };
@@ -116,6 +116,8 @@ fn main() {
     let mut mcs: MeshComponentSystem = MeshComponentSystem::init();
 
     let mut bcs: BlockComponentSystem = BlockComponentSystem::new();
+
+    let mut gcs: GenerationComponentSystem = GenerationComponentSystem::new();
 
     let mut window_variables: WindowVariables = WindowVariables::new();
 
