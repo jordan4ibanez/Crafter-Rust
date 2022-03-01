@@ -6,6 +6,7 @@
         "get_working_directory",
         "dump",
         "crafter",
-        "current_loading_mod"
+        "current_loading_mod",
+        "double_check_biome_blocks"
     ]
 }
