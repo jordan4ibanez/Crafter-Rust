@@ -1,5 +1,4 @@
 
-// holds precalculated data
 #[derive(Debug)]
 pub struct AtlasTextureMap {
     min_x: f32,
