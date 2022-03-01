@@ -36,7 +36,7 @@ impl NoiseParams {
 
 pub struct GenerationComponentSystem {
 
-    id: Vec<String>,
+    id: Vec<u32>,
 
     name: Vec<String>,
 
@@ -85,6 +85,57 @@ impl GenerationComponentSystem {
             rain: Vec::new(),
             snow: Vec::new(),
         }
+    }
+
+    pub fn register_biome(
+        &mut self,
+
+        name: String,
+
+        top_layer: u32,
+        top_layer_depth: LayerDepth,
+
+        bottom_layer: u32,
+        bottom_layer_depth: LayerDepth,
+
+        stone_layer: u32,
+
+        terrain_noise_multiplier: u8,
+
+        terrain_frequency: f32,
+
+        caves: bool,
+
+        cave_heat: NoiseParams,
+
+        rain: bool,
+
+        snow: bool
+
+    ){
+        self.id.push(self.id.len() as u32 + 1);
+
+        self.name.push(name);
+
+        self.top_layer.push(top_layer);
+        self.top_layer_depth.push(top_layer_depth);
+
+        self.bottom_layer.push(bottom_layer);
+        self.bottom_layer_depth.push(bottom_layer_depth);
+
+        self.stone_layer.push(stone_layer);
+
+        self.terrain_noise_multiplier.push(terrain_noise_multiplier);
+
+        self.terrain_frequency.push(terrain_frequency);
+
+        self.caves.push(caves);
+
+        self.cave_heat.push(cave_heat);
+
+        self.rain.push(rain);
+
+        self.snow.push(snow);
     }
     
 }
