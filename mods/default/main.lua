@@ -18,17 +18,9 @@ crafter.register_block({
         "dirt.png",
         "grass_side.png"
     },
-    rotations = {
-        0,0,0,0,0,0
-    },
-
-    flips = {
-        0,0,
-    },
-    
 })
 
---[[
+
 crafter.register_block({
     name = "dirt",
     draw_type = "normal",
@@ -36,7 +28,7 @@ crafter.register_block({
         "dirt.png",
     },
 })
-
+--[[
 crafter.register_block({
     name = "stone",
     -- draw_type = "block_box",
