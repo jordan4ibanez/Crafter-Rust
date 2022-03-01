@@ -77,5 +77,11 @@ elseif crafter.operating_system == "mac" then
     print("I'm not even sure if this comes up as mac.")
 end
 
+-- Check biomes to make sure they contain only valid blocks.
+
+for name,biome in pairs(crafter.biomes) do
+    double_check_biome_blocks(biome.mod, name, biome, crafter.blocks)
+end
+
 
 print("--- LUA IS NOW DONE ---")

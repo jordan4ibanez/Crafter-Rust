@@ -92,3 +92,22 @@ crafter.register_biome = function(table_data)
 
     crafter.biomes[table_data.name] = table_data
 end
+
+-- Make sure that all biomes contain valid blocks.
+function double_check_biome_blocks(mod, name, biome, blocks)
+
+    local layers = {["TOP"] = biome.top_layer, ["BOTTOM"] = biome.bottom_layer, ["STONE"] = biome.stone_layer}
+    
+    for layer_name,defined_name in pairs(layers) do
+
+        local found = false;
+        for block_name,_ in pairs(blocks) do
+            -- Positive check lock.
+            if defined_name == block_name then
+                found = true
+            end
+        end
+
+        assert(found == true, "BIOME " .. mod .. ":" .. name .. " CONTAINS AN UNDEFINED BLOCK: " .. defined_name .. " IN " .. layer_name .. " LAYER!")
+    end
+end
