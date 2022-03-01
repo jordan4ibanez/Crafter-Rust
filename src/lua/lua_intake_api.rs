@@ -172,6 +172,7 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
         // these are required
         let block_name: String = lua_table.get("name").unwrap();
 
+        // completely ignore air
         if block_name.eq("air") {
             continue;
         }
