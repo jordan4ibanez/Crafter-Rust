@@ -21,7 +21,7 @@ impl Camera {
 
     pub fn new() -> Self {
         Self {
-            position: Vec3::new(0.0, 80.0,0.0),
+            position: Vec3::new(0.0, 100.0,0.0),
             // old_position: Vec3::new(0.0, 129.0,0.0),
             pos_floored: IVec2::new(0, 0),
             old_pos_floored: IVec2::new(0, 0),

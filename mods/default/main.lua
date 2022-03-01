@@ -14,14 +14,16 @@ crafter.register_block({
     name = "grass",
     draw_type = "normal",
     textures = {
-        "debug_direction.png",
+        "grass.png",
+        "dirt.png",
+        "grass_side.png"
     },
     rotations = {
         0,0,0,0,0,0
     },
 
     flips = {
-        0,0,0,0,0,0
+        0,0,
     },
     
 })
