@@ -32,11 +32,9 @@ use crate::{
         window_controls::WindowVariables
     },
 
-    time::{
-        time_object::{
+    time::time_object::{
             Time
-        }
-    },
+        },
     chunk_mesh_procedure::{
         chunk_mesh_creation,
         chunk_mesh_generator_queue::{
