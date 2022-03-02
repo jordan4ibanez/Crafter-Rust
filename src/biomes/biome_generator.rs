@@ -1,5 +1,5 @@
 
-use bracket_noise::prelude::{FastNoise, NoiseType};
+use bracket_noise::prelude::{FastNoise, NoiseType, Interp};
 use rand::{Rng, prelude::ThreadRng};
 
 use crate::blocks::block_component_system::BlockComponentSystem;
@@ -76,7 +76,8 @@ pub fn gen_biome(
     block_data: &mut Vec<u32>,
     pos_x: i32,
     pos_z: i32,
-    noise: &mut FastNoise
+    simplex_noise: &mut FastNoise,
+    cellular_noise: &mut FastNoise
 ) {
 
     // this is debug
@@ -95,9 +96,7 @@ pub fn gen_biome(
         snow
     ) = gcs.get(0);
 
-    noise.set_frequency(terrain_frequency);
-
-    noise.set_noise_type(NoiseType::Simplex);
+    simplex_noise.set_frequency(terrain_frequency);
 
     // the base height - if noise is always 0 the blocks will always generate to 0
     let base_height = 70.0;
@@ -110,7 +109,7 @@ pub fn gen_biome(
         0.0, 
         pos_x as f64, 
         pos_z as f64,
-        noise,
+        simplex_noise,
         base_height,
         terrain_noise_multiplier as f64
     );
@@ -120,7 +119,7 @@ pub fn gen_biome(
         0.0, 
         pos_x as f64, 
         pos_z as f64,
-        noise, 
+        simplex_noise, 
         top_layer_depth.get_min(),
         top_layer_depth.get_max() + 1
     );
@@ -131,10 +130,10 @@ pub fn gen_biome(
         0.0, 
         pos_x as f64, 
         pos_z as f64,
-        noise, 
+        simplex_noise, 
         bottom_layer_depth.get_min(),
         bottom_layer_depth.get_max() + 1
-    );
+    );    
 
     // generate unmodified terrain
     for i in 0..32768 {
@@ -143,14 +142,14 @@ pub fn gen_biome(
         let y_u32: u32 = y as u32;
 
         if y_u32 == 0 {
-            y_height = calculate_y_height(x, z, pos_x as f64, pos_z as f64, noise, base_height, terrain_noise_multiplier as f64);
+            y_height = calculate_y_height(x, z, pos_x as f64, pos_z as f64, simplex_noise, base_height, terrain_noise_multiplier as f64);
 
             top_layer_depth_random = calculate_depth(
                 x, 
                 z, 
                 pos_x as f64, 
                 pos_z as f64,
-                noise, 
+                simplex_noise, 
                 top_layer_depth.get_min(),
                 top_layer_depth.get_max() + 1
             );
@@ -160,7 +159,7 @@ pub fn gen_biome(
                 z,
                 pos_x as f64, 
                 pos_z as f64,
-                noise, 
+                simplex_noise, 
                 bottom_layer_depth.get_min(),
                 bottom_layer_depth.get_max() + 1
             );
@@ -183,26 +182,28 @@ pub fn gen_biome(
         }
     }
 
+    
     // generate caves if defined in biome
     if caves {
 
 
         let (cave_heat_min, cave_heat_max, cave_frequency) = cave_heat.get();
 
-        noise.set_noise_type(NoiseType::CubicFractal);
-
-        noise.set_frequency(cave_frequency);        
+        cellular_noise.set_frequency(cave_frequency);
 
         for i in 0..32768 {
             let (x,y,z) = index_to_pos(i);
+            
+            // noise blend
+            let mut cave_gen_noise: f32 = carve_cave(x, y, z, pos_x as f64, pos_z as f64, cellular_noise);
+            cave_gen_noise += carve_cave(x, y, z, pos_x as f64, pos_z as f64, simplex_noise);
+            cave_gen_noise /= 2.0;
 
-            // noise.set_noise_type(NoiseType::Simplex);
-            let cave_gen_noise: f32 = carve_cave(x, y, z, pos_x as f64, pos_z as f64, noise);
 
             // out of bounds of cave noise parameters
             if cave_gen_noise >= cave_heat_min && cave_gen_noise <= cave_heat_max {
                 block_data[i] = 0;
             }   
         }
-    }
+    }    
 }
