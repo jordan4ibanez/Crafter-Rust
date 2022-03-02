@@ -23,6 +23,9 @@ local function check_layers(mod, table_data)
 
     -- Stone layer.
     assert(table_data.stone_layer ~= nil and type(table_data.stone_layer) == "string", "BIOME " .. mod .. ":" .. table_data.name .. " NEEDS STONE LAYER DEFINED!")
+
+    -- Bedrock layer.
+    assert(table_data.bedrock_layer ~= nil and type(table_data.bedrock_layer) == "string", "BIOME " .. mod .. ":" .. table_data.name .. " NEEDS BEDROCK LAYER DEFINED!")
 end
 
 local function automate_and_check_biome_parameters(mod, table_data)
@@ -100,7 +103,7 @@ end
 -- Make sure that all biomes contain valid blocks.
 function double_check_biome_blocks(mod, name, biome, blocks)
 
-    local layers = {["TOP"] = biome.top_layer, ["BOTTOM"] = biome.bottom_layer, ["STONE"] = biome.stone_layer}
+    local layers = {["TOP"] = biome.top_layer, ["BOTTOM"] = biome.bottom_layer, ["STONE"] = biome.stone_layer, ["BEDROCK"] = biome.bedrock_layer}
     
     for layer_name,defined_name in pairs(layers) do
 
