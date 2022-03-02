@@ -25,18 +25,20 @@ impl LayerDepth {
 
 pub struct NoiseParams {
     min: f32,
-    max: f32
+    max: f32,
+    frequency: f32
 }
 
 impl NoiseParams {
-    pub fn new(min: f32, max: f32) -> Self {
+    pub fn new(min: f32, max: f32, frequency: f32) -> Self {
         Self {
             min,
             max,
+            frequency
         }
     }
-    pub fn get(&self) -> (f32, f32) {
-        (self.min, self.max)
+    pub fn get(&self) -> (f32, f32, f32) {
+        (self.min, self.max, self.frequency)
     }
 
     pub fn get_min(&self) -> f32 {
@@ -45,6 +47,10 @@ impl NoiseParams {
 
     pub fn get_max(&self) -> f32 {
         self.max
+    }
+
+    pub fn get_frequency(&self) -> f32 {
+        self.frequency
     }
 }
 
