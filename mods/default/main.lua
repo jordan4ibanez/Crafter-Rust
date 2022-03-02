@@ -27,6 +27,14 @@ crafter.register_block({
     },
 })
 
+crafter.register_block({
+    name = "bedrock",
+    draw_type = "normal",
+    textures = {
+        "bedrock.png",
+    },
+})
+
 
 crafter.register_biome({
     name = "grass_lands",
@@ -39,13 +47,17 @@ crafter.register_biome({
 
     stone_layer = "stone",
 
+    bedrock_layer = "bedrock",
+
     ores = {
         coal = {
             depth = {2, 100},
+            heat = {0.5, 0.5},
             frequency = 50,
         },
         iron = {
             depth = {2,100},
+            heat = {0.3, 0.4},
             frequency = 40,
         }
     },
