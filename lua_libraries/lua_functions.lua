@@ -92,7 +92,7 @@ crafter.register_biome = function(table_data)
 
     -- Check cave generation frequency parameters.
     assert(table_data.cave_frequency ~= nil, mod .. ":" .. table_data.name .. " IS MISSING cave_frequency!")
-    assert(type(table_data.cave_frequency) == "number", mod .. ":" .. table_data.name " HAS INCORRECT DATA FOR cave_frequency! NEEDS A NUMBER!")
+    assert(type(table_data.cave_frequency) == "number", mod .. ":" .. table_data.name .. " HAS INCORRECT DATA FOR cave_frequency! NEEDS A NUMBER!")
 
     crafter.biomes[table_data.name] = table_data
 end
