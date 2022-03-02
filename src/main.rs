@@ -85,13 +85,13 @@ fn main() {
     simplex_noise.set_seed(SEED);
     simplex_noise.set_interp(Interp::Linear);
 
-    let mut cellular_noise: FastNoise = FastNoise::new();
-    cellular_noise.set_noise_type(NoiseType::Cellular);
-    cellular_noise.set_seed(SEED);
-    cellular_noise.set_interp(Interp::Linear);
+    let mut fractal_noise: FastNoise = FastNoise::new();
+    fractal_noise.set_noise_type(NoiseType::SimplexFractal);
+    fractal_noise.set_seed(SEED);
+    fractal_noise.set_interp(Interp::Linear);
     
 
-    let mut thread_rng: ThreadRng = rand::thread_rng();
+    // let mut thread_rng: ThreadRng = rand::thread_rng();
 
     // fps counter object
     let mut time_object: Time = Time::new(&glfw);
@@ -189,7 +189,15 @@ fn main() {
             // println!(" CREATING {} {}", debug_x, debug_y);
             world.add_chunk(debug_x, debug_z);
 
-            gen_biome(&gcs, &bcs, world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(), debug_x, debug_z, &mut simplex_noise, &mut cellular_noise);
+            gen_biome(
+                &gcs,
+                &bcs,
+                world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(),
+                debug_x,
+                debug_z,
+                &mut simplex_noise,
+                &mut fractal_noise
+            );
 
             // world.add(generated_chunk);
 
