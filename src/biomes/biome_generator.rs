@@ -77,7 +77,7 @@ pub fn gen_biome(
     pos_x: i32,
     pos_z: i32,
     simplex_noise: &mut FastNoise,
-    cellular_noise: &mut FastNoise
+    fractal_noise: &mut FastNoise
 ) {
 
     // this is debug
@@ -138,9 +138,9 @@ pub fn gen_biome(
 
     let (cave_min_heat, cave_max_heat, cave_frequency) = cave_heat.get();
 
-    cellular_noise.set_frequency(cave_frequency);
-    cellular_noise.set_fractal_octaves(3);
-    cellular_noise.set_fractal_type(FractalType::Billow);
+    fractal_noise.set_frequency(cave_frequency);
+    fractal_noise.set_fractal_octaves(3);
+    fractal_noise.set_fractal_type(FractalType::Billow);
 
 
     // generate unmodified terrain
@@ -181,7 +181,7 @@ pub fn gen_biome(
             let mut cave_noise_calculation: f32 = 0.0;
 
             if caves {
-                cave_noise_calculation = calculate_noise(x, y, z, pos_x as f64, pos_z as f64, cellular_noise);
+                cave_noise_calculation = calculate_noise(x, y, z, pos_x as f64, pos_z as f64, fractal_noise);
             }
 
             if caves && (cave_noise_calculation <= cave_min_heat || cave_noise_calculation >= cave_max_heat) {
