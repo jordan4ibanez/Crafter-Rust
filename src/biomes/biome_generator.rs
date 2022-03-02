@@ -90,7 +90,7 @@ pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, bl
     noise.set_frequency(terrain_frequency);
 
 
-    let (cave_heat_min, cave_heat_max) = cave_heat.get();
+    let (cave_heat_min, cave_heat_max, cave_frequency) = cave_heat.get();
 
     // the base height - if noise is always 0 the blocks will always generate to 0
     let base_height = 70.0;
