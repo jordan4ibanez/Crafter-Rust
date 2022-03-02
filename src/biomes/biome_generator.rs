@@ -52,6 +52,22 @@ fn calculate_depth_simplex(
     ).abs() * (max - min) as f32) + min as f32).floor() as u32
 }
 
+fn carve_cave_simplex(
+    pos_x: f64,
+    pos_y: f64,
+    pos_z: f64,
+    chunk_pos_x: f64,
+    chunk_pos_z: f64,
+    noise: &mut FastNoise, 
+) -> f32{
+
+    noise.get_noise3d(
+        (pos_x + (chunk_pos_x * 16.0)) as f32,
+        pos_y as f32,
+        (pos_z + (chunk_pos_z * 16.0)) as f32
+    )
+}
+
 
 
 pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i32, pos_z: i32, noise: &mut FastNoise, random: &mut ThreadRng) {
@@ -74,6 +90,7 @@ pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, bl
     noise.set_frequency(terrain_frequency);
 
 
+    let (cave_heat_min, cave_heat_max) = cave_heat.get();
 
     // the base height - if noise is always 0 the blocks will always generate to 0
     let base_height = 70.0;
@@ -139,20 +156,31 @@ pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, bl
                 bottom_layer_depth.get_min(),
                 bottom_layer_depth.get_max() + 1
             );
+        }
 
-        }
-        
-        // top layer
-        if y_u32 <= y_height && y_u32 >= y_height - top_layer_depth_random {
-            block_data[i] = top_layer;
-        }
-        // bottom layer
-        else if y_u32 < y_height - top_layer_depth_random &&  y_u32 >= y_height - top_layer_depth_random - bottom_layer_depth_random {
-            block_data[i] = bottom_layer;
-        }
-        // stone layer
-        else if y_u32 < y_height - top_layer_depth_random - bottom_layer_depth_random {
-            block_data[i] = stone_layer;
+        // only calculate when inside possible parameter
+        if y_u32 <= y_height {
+
+            let cave_gen_noise: f32 = carve_cave_simplex(x, y, z, pos_x as f64, pos_z as f64, noise);
+
+            // out of bounds of cave noise parameters
+            if cave_gen_noise < cave_heat_min || cave_gen_noise > cave_heat_max {
+                // top layer
+                if y_u32 >= y_height - top_layer_depth_random {
+                    block_data[i] = top_layer;
+                }
+                // bottom layer
+                else if y_u32 < y_height - top_layer_depth_random &&  y_u32 >= y_height - top_layer_depth_random - bottom_layer_depth_random {
+                    block_data[i] = bottom_layer;
+                }
+                // stone layer
+                else if y_u32 < y_height - top_layer_depth_random - bottom_layer_depth_random {
+                    block_data[i] = stone_layer;
+                }
+            // carve cave
+            } else {
+                block_data[i] = 0;
+            }
         }
     }
 }
