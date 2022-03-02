@@ -1,5 +1,5 @@
 
-use bracket_noise::prelude::FastNoise;
+use bracket_noise::prelude::{FastNoise, NoiseType};
 use rand::{Rng, prelude::ThreadRng};
 
 use crate::blocks::block_component_system::BlockComponentSystem;
@@ -36,7 +36,7 @@ fn calculate_y_height(
     ) as u32
 }
 
-fn calculate_depth_simplex(
+fn calculate_depth(
     pos_x: f64,
     pos_z: f64,
     chunk_pos_x: f64,
@@ -52,7 +52,7 @@ fn calculate_depth_simplex(
     ).abs() * (max - min) as f32) + min as f32).floor() as u32
 }
 
-fn carve_cave_simplex(
+fn carve_cave(
     pos_x: f64,
     pos_y: f64,
     pos_z: f64,
@@ -60,7 +60,6 @@ fn carve_cave_simplex(
     chunk_pos_z: f64,
     noise: &mut FastNoise, 
 ) -> f32{
-
     noise.get_noise3d(
         (pos_x + (chunk_pos_x * 16.0)) as f32,
         pos_y as f32,
@@ -70,7 +69,15 @@ fn carve_cave_simplex(
 
 
 
-pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, block_data: &mut Vec<u32>, pos_x: i32, pos_z: i32, noise: &mut FastNoise, random: &mut ThreadRng) {
+
+pub fn gen_biome(
+    gcs: &GenerationComponentSystem,
+    bcs: &BlockComponentSystem,
+    block_data: &mut Vec<u32>,
+    pos_x: i32,
+    pos_z: i32,
+    noise: &mut FastNoise
+) {
 
     // this is debug
     let (
@@ -85,10 +92,12 @@ pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, bl
         caves,
         cave_heat,
         rain,
-        snow) = gcs.get(0);
+        snow
+    ) = gcs.get(0);
 
     noise.set_frequency(terrain_frequency);
 
+    noise.set_noise_type(NoiseType::Simplex);
 
     // the base height - if noise is always 0 the blocks will always generate to 0
     let base_height = 70.0;
@@ -100,13 +109,13 @@ pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, bl
         0.0, 
         0.0, 
         pos_x as f64, 
-        pos_z as f64, noise
-        ,
+        pos_z as f64,
+        noise,
         base_height,
         terrain_noise_multiplier as f64
     );
 
-    let mut top_layer_depth_random: u32 = calculate_depth_simplex(
+    let mut top_layer_depth_random: u32 = calculate_depth(
         0.0, 
         0.0, 
         pos_x as f64, 
@@ -117,7 +126,7 @@ pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, bl
     );
     
 
-    let mut bottom_layer_depth_random: u32 = calculate_depth_simplex(
+    let mut bottom_layer_depth_random: u32 = calculate_depth(
         0.0, 
         0.0, 
         pos_x as f64, 
@@ -127,6 +136,7 @@ pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, bl
         bottom_layer_depth.get_max() + 1
     );
 
+    // generate unmodified terrain
     for i in 0..32768 {
         let (x,y,z) = index_to_pos(i);
 
@@ -135,7 +145,7 @@ pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, bl
         if y_u32 == 0 {
             y_height = calculate_y_height(x, z, pos_x as f64, pos_z as f64, noise, base_height, terrain_noise_multiplier as f64);
 
-            top_layer_depth_random = calculate_depth_simplex(
+            top_layer_depth_random = calculate_depth(
                 x, 
                 z, 
                 pos_x as f64, 
@@ -145,7 +155,7 @@ pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, bl
                 top_layer_depth.get_max() + 1
             );
 
-            bottom_layer_depth_random = calculate_depth_simplex(
+            bottom_layer_depth_random = calculate_depth(
                 x, 
                 z,
                 pos_x as f64, 
@@ -173,19 +183,26 @@ pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, bl
         }
     }
 
+    // generate caves if defined in biome
+    if caves {
 
-    let (cave_heat_min, cave_heat_max, cave_frequency) = cave_heat.get();
 
-    noise.set_frequency(cave_frequency);
-    /*/
-    let cave_gen_noise: f32 = carve_cave_simplex(x, y, z, pos_x as f64, pos_z as f64, noise);
+        let (cave_heat_min, cave_heat_max, cave_frequency) = cave_heat.get();
+
+        noise.set_noise_type(NoiseType::CubicFractal);
+
+        noise.set_frequency(cave_frequency);        
+
+        for i in 0..32768 {
+            let (x,y,z) = index_to_pos(i);
+
+            // noise.set_noise_type(NoiseType::Simplex);
+            let cave_gen_noise: f32 = carve_cave(x, y, z, pos_x as f64, pos_z as f64, noise);
 
             // out of bounds of cave noise parameters
-            if cave_gen_noise < cave_heat_min || cave_gen_noise > cave_heat_max {
-
-                            // carve cave
-            } else {
+            if cave_gen_noise >= cave_heat_min && cave_gen_noise <= cave_heat_max {
                 block_data[i] = 0;
-            }
-    */
+            }   
+        }
+    }
 }
