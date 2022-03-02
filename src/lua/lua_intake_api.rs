@@ -386,7 +386,8 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
 
         let cave_heat: NoiseParams = NoiseParams::new(
             cave_heat_table.get::<u8, f32>(1).unwrap(),
-            cave_heat_table.get::<u8, f32>(2).unwrap()
+            cave_heat_table.get::<u8, f32>(2).unwrap(),
+            biome_table.get("cave_frequency").unwrap()
         );
 
         let rain: bool = biome_table.get("rain").unwrap();
