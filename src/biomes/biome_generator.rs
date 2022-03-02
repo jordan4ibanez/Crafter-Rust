@@ -90,8 +90,6 @@ pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, bl
     noise.set_frequency(terrain_frequency);
 
 
-    let (cave_heat_min, cave_heat_max, cave_frequency) = cave_heat.get();
-
     // the base height - if noise is always 0 the blocks will always generate to 0
     let base_height = 70.0;
 
@@ -159,28 +157,35 @@ pub fn gen_biome(gcs: &GenerationComponentSystem, bcs: &BlockComponentSystem, bl
         }
 
         // only calculate when inside possible parameter
-        if y_u32 <= y_height {
-
-            let cave_gen_noise: f32 = carve_cave_simplex(x, y, z, pos_x as f64, pos_z as f64, noise);
-
-            // out of bounds of cave noise parameters
-            if cave_gen_noise < cave_heat_min || cave_gen_noise > cave_heat_max {
-                // top layer
-                if y_u32 >= y_height - top_layer_depth_random {
-                    block_data[i] = top_layer;
-                }
-                // bottom layer
-                else if y_u32 < y_height - top_layer_depth_random &&  y_u32 >= y_height - top_layer_depth_random - bottom_layer_depth_random {
-                    block_data[i] = bottom_layer;
-                }
-                // stone layer
-                else if y_u32 < y_height - top_layer_depth_random - bottom_layer_depth_random {
-                    block_data[i] = stone_layer;
-                }
-            // carve cave
-            } else {
-                block_data[i] = 0;
+        if y_u32 <= y_height {        
+            // top layer
+            if y_u32 >= y_height - top_layer_depth_random {
+                block_data[i] = top_layer;
+            }
+            // bottom layer
+            else if y_u32 < y_height - top_layer_depth_random &&  y_u32 >= y_height - top_layer_depth_random - bottom_layer_depth_random {
+                block_data[i] = bottom_layer;
+            }
+            // stone layer
+            else if y_u32 < y_height - top_layer_depth_random - bottom_layer_depth_random {
+                block_data[i] = stone_layer;
             }
         }
     }
+
+
+    let (cave_heat_min, cave_heat_max, cave_frequency) = cave_heat.get();
+
+    noise.set_frequency(cave_frequency);
+    /*/
+    let cave_gen_noise: f32 = carve_cave_simplex(x, y, z, pos_x as f64, pos_z as f64, noise);
+
+            // out of bounds of cave noise parameters
+            if cave_gen_noise < cave_heat_min || cave_gen_noise > cave_heat_max {
+
+                            // carve cave
+            } else {
+                block_data[i] = 0;
+            }
+    */
 }
