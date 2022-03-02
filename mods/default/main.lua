@@ -62,6 +62,9 @@ crafter.register_biome({
     -- Minimum and maximum noise for cave to be carved.
     cave_heat = {0.05, 0.30},
 
+    -- How often cave carving fluctuates.
+    cave_frequency = 0.005,
+
     -- Defines if there is rain.
     rain = true,
 })
