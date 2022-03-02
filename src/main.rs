@@ -80,10 +80,15 @@ fn main() {
     const SEED: u64 = 123213123;
 
     // noise structure
-    let mut noise: FastNoise = FastNoise::new();
-    noise.set_noise_type(NoiseType::Simplex);
-    noise.set_seed(SEED);
-    noise.set_interp(Interp::Linear);
+    let mut simplex_noise: FastNoise = FastNoise::new();
+    simplex_noise.set_noise_type(NoiseType::Simplex);
+    simplex_noise.set_seed(SEED);
+    simplex_noise.set_interp(Interp::Linear);
+
+    let mut cellular_noise: FastNoise = FastNoise::new();
+    cellular_noise.set_noise_type(NoiseType::Cellular);
+    cellular_noise.set_seed(SEED);
+    cellular_noise.set_interp(Interp::Linear);
     
 
     let mut thread_rng: ThreadRng = rand::thread_rng();
@@ -184,7 +189,7 @@ fn main() {
             // println!(" CREATING {} {}", debug_x, debug_y);
             world.add_chunk(debug_x, debug_z);
 
-            gen_biome(&gcs, &bcs, world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(), debug_x, debug_z, &mut noise);
+            gen_biome(&gcs, &bcs, world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(), debug_x, debug_z, &mut simplex_noise, &mut cellular_noise);
 
             // world.add(generated_chunk);
 
