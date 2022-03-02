@@ -242,8 +242,7 @@ fn main() {
     world.clean_up(&mut mcs);
     renderer.clean_up();
 
-    //mcs.delete_texture(debug_texture);
-    println!("MAKE SURE YOU CLEAN UP THE TEXTURE ATLAS AHHHH");
+    mcs.final_clean_up();
 
     println!("Program exited successfully!");
 

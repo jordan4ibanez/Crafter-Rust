@@ -347,7 +347,6 @@ impl MeshComponentSystem {
     pub fn delete_mesh(&mut self, id: u32, delete_texture: bool){
         let index: usize = id as usize;
         unsafe {
-
             // de-allocate the memory in the GPU            
             gl::DeleteVertexArrays(1, &self.vao_id[index]);
             gl::DeleteBuffers(1, &self.vbo_id[index]);
@@ -357,7 +356,6 @@ impl MeshComponentSystem {
             if delete_texture {
                 self.delete_texture(self.mesh_texture[index]);
             }
-
         }
 
         self.vao_id[index] = 0;
@@ -365,5 +363,29 @@ impl MeshComponentSystem {
         self.ebo_id[index] = 0;
         self.vertex_count[index] = 0;
         self.mesh_texture[index] = 0;
+    }
+
+    pub fn final_clean_up(&mut self) {
+
+        // clean all meshes
+        let mut clean_up_mesh_vec: Vec<u32> = Vec::new();
+
+        for index in self.vao_id.iter() {
+            clean_up_mesh_vec.push(*index);
+        }
+        for index in clean_up_mesh_vec.iter() {
+            self.delete_mesh(*index, false);
+        }
+
+        // clean all textures
+        let mut clean_up_texture_vec: Vec<u32> = Vec::new();
+
+        for index in self.texture_id.iter() {
+            clean_up_texture_vec.push(*index);
+        }
+        for index in clean_up_texture_vec.iter() {
+            self.delete_texture(*index);
+        }
+
     }
 }
