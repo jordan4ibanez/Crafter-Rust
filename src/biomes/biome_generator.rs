@@ -1,5 +1,5 @@
 
-use bracket_noise::prelude::{FastNoise, NoiseType, Interp};
+use bracket_noise::prelude::{FastNoise, NoiseType, Interp, FractalType};
 use rand::{Rng, prelude::ThreadRng};
 
 use crate::blocks::block_component_system::BlockComponentSystem;
@@ -52,7 +52,7 @@ fn calculate_depth(
     ).abs() * (max - min) as f32) + min as f32).floor() as u32
 }
 
-fn carve_cave(
+fn calculate_noise(
     pos_x: f64,
     pos_y: f64,
     pos_z: f64,
@@ -104,6 +104,7 @@ pub fn gen_biome(
     // the amount of fluctuation the blocks can have from base height
     //let noise_multiplier = 50.0;
 
+    
     let mut y_height: u32 = calculate_y_height(
         0.0, 
         0.0, 
@@ -133,12 +134,21 @@ pub fn gen_biome(
         simplex_noise, 
         bottom_layer_depth.get_min(),
         bottom_layer_depth.get_max() + 1
-    );    
+    );
+
+    let (cave_min_heat, cave_max_heat, cave_frequency) = cave_heat.get();
+
+    cellular_noise.set_frequency(cave_frequency);
+    cellular_noise.set_fractal_octaves(3);
+    cellular_noise.set_fractal_type(FractalType::Billow);
+
 
     // generate unmodified terrain
     for i in 0..32768 {
+        
         let (x,y,z) = index_to_pos(i);
 
+        
         let y_u32: u32 = y as u32;
 
         if y_u32 == 0 {
@@ -166,44 +176,30 @@ pub fn gen_biome(
         }
 
         // only calculate when inside possible parameter
-        if y_u32 <= y_height {        
-            // top layer
-            if y_u32 >= y_height - top_layer_depth_random {
-                block_data[i] = top_layer;
+        if y_u32 <= y_height {
+
+            let mut cave_noise_calculation: f32 = 0.0;
+
+            if caves {
+                cave_noise_calculation = calculate_noise(x, y, z, pos_x as f64, pos_z as f64, cellular_noise);
             }
-            // bottom layer
-            else if y_u32 < y_height - top_layer_depth_random &&  y_u32 >= y_height - top_layer_depth_random - bottom_layer_depth_random {
-                block_data[i] = bottom_layer;
-            }
-            // stone layer
-            else if y_u32 < y_height - top_layer_depth_random - bottom_layer_depth_random {
-                block_data[i] = stone_layer;
+
+            if caves && (cave_noise_calculation <= cave_min_heat || cave_noise_calculation >= cave_max_heat) {
+                block_data[i] = 0;
+            } else {
+                // top layer
+                if y_u32 >= y_height - top_layer_depth_random {
+                    block_data[i] = top_layer;
+                }
+                // bottom layer
+                else if y_u32 < y_height - top_layer_depth_random &&  y_u32 >= y_height - top_layer_depth_random - bottom_layer_depth_random {
+                    block_data[i] = bottom_layer;
+                }
+                // stone layer
+                else if y_u32 < y_height - top_layer_depth_random - bottom_layer_depth_random {
+                    block_data[i] = stone_layer;
+                }
             }
         }
     }
-
-    
-    // generate caves if defined in biome
-    if caves {
-
-
-        let (cave_heat_min, cave_heat_max, cave_frequency) = cave_heat.get();
-
-        cellular_noise.set_frequency(cave_frequency);
-
-        for i in 0..32768 {
-            let (x,y,z) = index_to_pos(i);
-            
-            // noise blend
-            let mut cave_gen_noise: f32 = carve_cave(x, y, z, pos_x as f64, pos_z as f64, cellular_noise);
-            cave_gen_noise += carve_cave(x, y, z, pos_x as f64, pos_z as f64, simplex_noise);
-            cave_gen_noise /= 2.0;
-
-
-            // out of bounds of cave noise parameters
-            if cave_gen_noise >= cave_heat_min && cave_gen_noise <= cave_heat_max {
-                block_data[i] = 0;
-            }   
-        }
-    }    
 }
