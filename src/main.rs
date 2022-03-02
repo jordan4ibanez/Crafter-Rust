@@ -77,12 +77,13 @@ fn main() {
     // testing of 3D camera
     window.set_cursor_mode(glfw::CursorMode::Disabled);
 
+    const SEED: u64 = 123213123;
+
     // noise structure
     let mut noise: FastNoise = FastNoise::new();
     noise.set_noise_type(NoiseType::Simplex);
-    noise.set_seed(123213123);
+    noise.set_seed(SEED);
     noise.set_interp(Interp::Linear);
-    noise.set_frequency(0.005);
     
 
     let mut thread_rng: ThreadRng = rand::thread_rng();
@@ -183,7 +184,7 @@ fn main() {
             // println!(" CREATING {} {}", debug_x, debug_y);
             world.add_chunk(debug_x, debug_z);
 
-            gen_biome(&gcs, &bcs, world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(), debug_x, debug_z, &mut noise, &mut thread_rng);
+            gen_biome(&gcs, &bcs, world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(), debug_x, debug_z, &mut noise);
 
             // world.add(generated_chunk);
 
