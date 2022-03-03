@@ -8,6 +8,7 @@
         "crafter",
         "current_loading_mod",
         "double_check_biome_blocks",
-        "register_air"
+        "register_air",
+        "double_check_biome_ores"
     ]
 }
