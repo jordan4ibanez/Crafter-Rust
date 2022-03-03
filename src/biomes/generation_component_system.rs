@@ -52,6 +52,36 @@ impl NoiseParams {
     pub fn get_frequency(&self) -> f32 {
         self.frequency
     }
+
+    pub fn in_range(&self, noise_calculation: f32) -> bool {
+        noise_calculation >= self.min && noise_calculation <= self.max
+    }
+}
+
+pub struct BiomeOres {
+    // held as block ID
+    ores: Vec<u32>,
+    depth: Vec<LayerDepth>,
+    heat: Vec<NoiseParams>,
+    frequency: Vec<f32>,
+}
+
+impl BiomeOres {
+    pub fn new() -> Self {
+        Self {
+            ores: Vec::new(),
+            depth: Vec::new(),
+            heat: Vec::new(),
+            frequency: Vec::new(),
+        }
+    }
+
+    pub fn register_ore(&mut self, id: u32, depth: LayerDepth, heat: NoiseParams, frequency: f32) {
+        self.ores.push(id);
+        self.depth.push(depth);
+        self.heat.push(heat);
+        self.frequency.push(frequency);
+    }
 }
 
 
@@ -71,6 +101,8 @@ pub struct GenerationComponentSystem {
     bottom_layer_depth: Vec<LayerDepth>,
 
     stone_layer: Vec<u32>,
+
+    biome_ores: Vec<BiomeOres>,
 
     // how high or low the terrain can fluctuate
     terrain_noise_multiplier: Vec<u8>,
@@ -103,6 +135,7 @@ impl GenerationComponentSystem {
             bottom_layer: Vec::new(),
             bottom_layer_depth: Vec::new(),
             stone_layer: Vec::new(),
+            biome_ores: Vec::new(),
             terrain_noise_multiplier: Vec::new(),
             terrain_frequency: Vec::new(),
             caves: Vec::new(),
@@ -126,6 +159,8 @@ impl GenerationComponentSystem {
         bottom_layer_depth: LayerDepth,
 
         stone_layer: u32,
+
+        biome_ores: BiomeOres,
 
         terrain_noise_multiplier: u8,
 
@@ -156,6 +191,8 @@ impl GenerationComponentSystem {
         self.bottom_layer_depth.push(bottom_layer_depth);
 
         self.stone_layer.push(stone_layer);
+
+        self.biome_ores.push(biome_ores);
 
         self.terrain_noise_multiplier.push(terrain_noise_multiplier);
 
