@@ -82,6 +82,10 @@ end
 
 local function check_biome_ores(mod, table_data)
 
+    if table_data.ores == nil then
+        return
+    end
+
     -- Table data pointer.
     local ores = table_data.ores
 
