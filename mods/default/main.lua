@@ -58,23 +58,23 @@ crafter.register_biome({
     top_layer = "grass",
     top_layer_depth = {1,1}, -- Min, Max
 
-    bottom_layer = "dirt",
+    bottom_layer = "air",
     bottom_layer_depth = {3,5}, -- Min, Max
 
-    stone_layer = "stone",
+    stone_layer = "air",
 
     bedrock_layer = "bedrock",
 
     ores = {
         coal_ore = {
             depth = {2, 100},
-            heat = {0.5, 0.5},
-            frequency = 50,
+            heat = {0.62, 0.66},
+            frequency = 0.045,
         },
         iron_ore = {
             depth = {2,100},
-            heat = {0.3, 0.4},
-            frequency = 40,
+            heat = {0.66, 0.71},
+            frequency = 0.04,
         }
     },
 
