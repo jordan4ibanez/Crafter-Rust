@@ -143,6 +143,8 @@ pub struct GenerationComponentSystem {
 
     stone_layer: Vec<u32>,
 
+    bedrock_layer: Vec<u32>,
+
     biome_ores: Vec<Option<BiomeOres>>,
 
     // how high or low the terrain can fluctuate
@@ -176,6 +178,7 @@ impl GenerationComponentSystem {
             bottom_layer: Vec::new(),
             bottom_layer_depth: Vec::new(),
             stone_layer: Vec::new(),
+            bedrock_layer: Vec::new(),
             biome_ores: Vec::new(),
             terrain_noise_multiplier: Vec::new(),
             terrain_frequency: Vec::new(),
@@ -200,6 +203,8 @@ impl GenerationComponentSystem {
         bottom_layer_depth: LayerDepth,
 
         stone_layer: u32,
+
+        bedrock_layer: u32,
 
         biome_ores: Option<BiomeOres>,
 
@@ -232,6 +237,8 @@ impl GenerationComponentSystem {
         self.bottom_layer_depth.push(bottom_layer_depth);
 
         self.stone_layer.push(stone_layer);
+
+        self.bedrock_layer.push(bedrock_layer);
 
         self.biome_ores.push(biome_ores);
 
@@ -268,7 +275,7 @@ impl GenerationComponentSystem {
     // this is debug
     // in production this will search by heatmap of 2D
     // this is also a mess
-    pub fn get(&self, id: usize) -> (&String, u32, &LayerDepth, u32, &LayerDepth, u32, &Option<BiomeOres>, u8, f32, bool, &NoiseParams, bool, bool) {
+    pub fn get(&self, id: usize) -> (&String, u32, &LayerDepth, u32, &LayerDepth, u32, u32, &Option<BiomeOres>, u8, f32, bool, &NoiseParams, bool, bool) {
         (
             &self.name[id],
 
@@ -279,6 +286,8 @@ impl GenerationComponentSystem {
             &self.bottom_layer_depth[id],
 
             self.stone_layer[id],
+
+            self.bedrock_layer[id],
 
             &self.biome_ores[id],
 
