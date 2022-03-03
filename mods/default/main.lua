@@ -68,13 +68,13 @@ crafter.register_biome({
     ores = {
         coal_ore = {
             depth = {2, 100},
-            heat = {0.62, 0.66},
-            frequency = 0.045,
+            heat = {0.61, 0.66},
+            frequency = 0.038,
         },
         iron_ore = {
             depth = {2,100},
             heat = {0.66, 0.71},
-            frequency = 0.04,
+            frequency = 0.039,
         }
     },
 
