@@ -71,7 +71,6 @@ fn calculate_noise(
 
 pub fn gen_biome(
     gcs: &GenerationComponentSystem,
-    bcs: &BlockComponentSystem,
     block_data: &mut Vec<u32>,
     pos_x: i32,
     pos_z: i32,

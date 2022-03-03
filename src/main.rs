@@ -191,7 +191,6 @@ fn main() {
 
             gen_biome(
                 &gcs,
-                &bcs,
                 world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(),
                 debug_x,
                 debug_z,
