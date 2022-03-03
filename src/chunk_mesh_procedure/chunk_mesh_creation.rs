@@ -21,14 +21,14 @@ this_texture
 
 
 // Convertes u16 1D position into (i8,i8,i8) 3D tuple position
-fn mini_index_to_pos(i: usize) -> (usize,usize,usize) {
+fn index_to_pos(i: usize) -> (usize,usize,usize) {
     (i / 2048,
     (i % 2048) % 128,
     (i % 2048) / 128)
 }
 
 // Converts x,y,z (i8) 3D position into u16 1D position.
-pub fn mini_pos_to_index ( x: usize, y: usize, z: usize ) -> usize {
+pub fn pos_to_index ( x: usize, y: usize, z: usize ) -> usize {
     (x * 2048) + (z * 128) + y
 }
 
@@ -78,30 +78,30 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
 
     for i in 0..32768 {
 
-        let (x,y,z) = mini_index_to_pos(i);        
+        let (x,y,z) = index_to_pos(i);        
 
         // if it does not equal air
         if chunk[i] != 0 {
             
             // internal
-            if x + 1 <= 15 && chunk[mini_pos_to_index(x + 1, y, z)] == 0 {
+            if x + 1 <= 15 && chunk[pos_to_index(x + 1, y, z)] == 0 {
                 dry_run(&mut float_count, &mut indices_count)
             }
-            if x >= 1 && chunk[mini_pos_to_index(x - 1, y, z)] == 0 {
-                dry_run(&mut float_count, &mut indices_count)
-            }
-
-            if y == 127 || (y < 127 && chunk[mini_pos_to_index(x, y + 1, z)] == 0) {
-                dry_run(&mut float_count, &mut indices_count)
-            }
-            if y > 0 && y - 1 >= 1 && chunk[mini_pos_to_index(x, y - 1, z)] == 0 {
+            if x >= 1 && chunk[pos_to_index(x - 1, y, z)] == 0 {
                 dry_run(&mut float_count, &mut indices_count)
             }
 
-            if z + 1 <= 15 && chunk[mini_pos_to_index(x, y, z + 1)] == 0 {
+            if y == 127 || (y < 127 && chunk[pos_to_index(x, y + 1, z)] == 0) {
                 dry_run(&mut float_count, &mut indices_count)
             }
-            if z >= 1 && chunk[mini_pos_to_index(x, y, z - 1)] == 0 {
+            if y > 0 && y - 1 >= 1 && chunk[pos_to_index(x, y - 1, z)] == 0 {
+                dry_run(&mut float_count, &mut indices_count)
+            }
+
+            if z + 1 <= 15 && chunk[pos_to_index(x, y, z + 1)] == 0 {
+                dry_run(&mut float_count, &mut indices_count)
+            }
+            if z >= 1 && chunk[pos_to_index(x, y, z - 1)] == 0 {
                 dry_run(&mut float_count, &mut indices_count)
             }
 
@@ -111,7 +111,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
             if x == 0 {
                 match neighbor_minus_x_option {
                     Some(neighbor_minus_x) => {
-                        if neighbor_minus_x[mini_pos_to_index(15, y, z)] == 0 {
+                        if neighbor_minus_x[pos_to_index(15, y, z)] == 0 {
                             dry_run(&mut float_count, &mut indices_count);
                         }
                     },
@@ -121,7 +121,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
             if x == 15 {
                 match neighbor_plus_x_option {
                     Some(neighbor_plus_x) => {
-                        if neighbor_plus_x[mini_pos_to_index(0, y, z)] == 0 {
+                        if neighbor_plus_x[pos_to_index(0, y, z)] == 0 {
                             dry_run(&mut float_count, &mut indices_count);
                         }
                     },
@@ -133,7 +133,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
             if z == 0 {
                 match neighbor_minus_z_option {
                     Some(neighbor_minus_z) => {
-                        if neighbor_minus_z[mini_pos_to_index(x, y, 15)] == 0 {
+                        if neighbor_minus_z[pos_to_index(x, y, 15)] == 0 {
                             dry_run(&mut float_count, &mut indices_count);
                         }
                     },
@@ -143,7 +143,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
             if z == 15 {
                 match neighbor_plus_z_option {
                     Some(neighbor_plus_z) => {
-                        if neighbor_plus_z[mini_pos_to_index(x, y, 0)] == 0 {
+                        if neighbor_plus_z[pos_to_index(x, y, 0)] == 0 {
                             dry_run(&mut float_count, &mut indices_count);
                         }
                     },
@@ -176,29 +176,29 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
 
     for i in 0..32768 {
 
-        let (x,y,z) = mini_index_to_pos(i);
+        let (x,y,z) = index_to_pos(i);
 
-        let block_id: u32 = chunk[mini_pos_to_index(x, y, z)];
+        let block_id: u32 = chunk[pos_to_index(x, y, z)];
 
         // if it does not equal air
         if block_id != 0 {
 
             let light = 16.0/16.0;
             
-            let mut x_plus = x + 1 <= 15 && chunk[mini_pos_to_index(x + 1, y, z)] == 0;
-            let mut x_minus =    x >= 1  && chunk[mini_pos_to_index(x - 1, y, z)] == 0;
+            let mut x_plus = x + 1 <= 15 && chunk[pos_to_index(x + 1, y, z)] == 0;
+            let mut x_minus =    x >= 1  && chunk[pos_to_index(x - 1, y, z)] == 0;
 
-            let y_plus = y == 127 || (y < 127 && chunk[mini_pos_to_index(x, y + 1, z)] == 0);
-            let y_minus = y > 0 && y - 1 >= 1 && chunk[mini_pos_to_index(x, y - 1, z)] == 0;
+            let y_plus = y == 127 || (y < 127 && chunk[pos_to_index(x, y + 1, z)] == 0);
+            let y_minus = y > 0 && y - 1 >= 1 && chunk[pos_to_index(x, y - 1, z)] == 0;
 
-            let mut z_plus = z + 1 <= 15 && chunk[mini_pos_to_index(x, y, z + 1)] == 0;
-            let mut z_minus =    z >= 1  && chunk[mini_pos_to_index(x, y, z - 1)] == 0;
+            let mut z_plus = z + 1 <= 15 && chunk[pos_to_index(x, y, z + 1)] == 0;
+            let mut z_minus =    z >= 1  && chunk[pos_to_index(x, y, z - 1)] == 0;
 
             // x
             if x == 0 {
                 match neighbor_minus_x_option {
                     Some(neighbor_minus_x) => {
-                        if neighbor_minus_x[mini_pos_to_index(15, y, z)] == 0 {
+                        if neighbor_minus_x[pos_to_index(15, y, z)] == 0 {
                             x_minus = true;
                         }
                     },
@@ -208,7 +208,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
             if x == 15 {
                 match neighbor_plus_x_option {
                     Some(neighbor_plus_x) => {                        
-                        if neighbor_plus_x[mini_pos_to_index(0, y, z)] == 0 {
+                        if neighbor_plus_x[pos_to_index(0, y, z)] == 0 {
                             x_plus = true;
                         }
                     },
@@ -220,7 +220,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
             if z == 0 {
                 match neighbor_minus_z_option {
                     Some(neighbor_minus_z) => {
-                        if neighbor_minus_z[mini_pos_to_index(x, y, 15)] == 0 {
+                        if neighbor_minus_z[pos_to_index(x, y, 15)] == 0 {
                             z_minus = true;
                         }
                     },
@@ -230,7 +230,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
             if z == 15 {
                 match neighbor_plus_z_option {
                     Some(neighbor_plus_z) => {
-                        if neighbor_plus_z[mini_pos_to_index(x, y, 0)] == 0 {
+                        if neighbor_plus_z[pos_to_index(x, y, 0)] == 0 {
                             z_plus = true;
                         }
                     },
