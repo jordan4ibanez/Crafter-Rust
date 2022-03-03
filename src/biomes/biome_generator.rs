@@ -100,7 +100,7 @@ pub fn gen_biome(
     simplex_noise.set_frequency(terrain_frequency);
 
     // the base height - if noise is always 0 the blocks will always generate to 0
-    let base_height = 70.0;
+    let base_height = 90.0;
 
     // the amount of fluctuation the blocks can have from base height
     //let noise_multiplier = 50.0;
