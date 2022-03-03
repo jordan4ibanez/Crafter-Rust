@@ -375,6 +375,8 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
 
         let stone_layer: String = biome_table.get("stone_layer").unwrap();
 
+        let bedrock_layer: String = biome_table.get("bedrock_layer").unwrap();
+
 
         let terrain_noise_multiplier: u8 = biome_table.get("terrain_noise_multiplier").unwrap();
 
@@ -445,6 +447,7 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
             bcs.get_id_of(bottom_layer),
             bottom_layer_depth,
             bcs.get_id_of(stone_layer),
+            bcs.get_id_of(bedrock_layer),
             biome_ores_option,
             terrain_noise_multiplier,
             terrain_frequency,
