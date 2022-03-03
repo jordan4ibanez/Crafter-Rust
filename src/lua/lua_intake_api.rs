@@ -403,6 +403,7 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
             bcs.get_id_of(bottom_layer),
             bottom_layer_depth,
             bcs.get_id_of(stone_layer),
+            None, // change this
             terrain_noise_multiplier,
             terrain_frequency,
             caves,
