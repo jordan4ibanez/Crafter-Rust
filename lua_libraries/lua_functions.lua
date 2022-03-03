@@ -79,6 +79,44 @@ local function automate_and_check_biome_parameters(mod, table_data)
 
 end
 
+
+local function check_biome_ores(mod, table_data)
+
+    -- Table data pointer.
+    local ores = table_data.ores
+
+    for name, data in pairs(ores) do
+        
+        -- Make sure depth exists and is correct.
+        assert(data.depth ~= nil, mod .. ":" .. table_data.name .. " IS MISSING depth FOR ORE " .. name .. "!")
+        assert(type(data.depth) == "table", mod .. ":" .. table_data.name .. " HAS INCORRECT DATA FOR depth FOR ORE " .. name .. "!")
+        assert(#data.depth == 2, mod .. ":" .. table_data.name .. " SHOULD HAVE TABLE LENGTH 2 IN depth FOR ORE " .. name .. "!")
+
+        for i = 1,2 do
+            assert(type(data.depth[i]) == "number", mod .. ":" .. table_data.name .. " HAS INVALID DATA IN depth IN INDEX " .. i .. "!")
+        end
+
+
+        -- Make sure heat exists and is correct.
+        assert(data.heat ~= nil, mod .. ":" .. table_data.name .. " IS MISSING heat FOR ORE " .. name .. "!")
+        assert(type(data.heat) == "table", mod .. ":" .. table_data.name .. " HAS INCORRECT DATA FOR heat FOR ORE " .. name .. "!")
+        assert(#data.heat == 2, mod .. ":" .. table_data.name .. " SHOULD HAVE TABLE LENGTH 2 IN heat FOR ORE " .. name .. "!")
+
+        for i = 1,2 do
+            assert(type(data.heat[i]) == "number", mod .. ":" .. table_data.name .. " HAS INVALID DATA IN heat IN INDEX " .. i .. "!")
+        end
+
+        -- Make sure frequency exists and is correct.
+        assert(data.frequency ~= nil, mod .. ":" .. table_data.name .. " IS MISSING frequency FOR ORE " .. name .. "!")
+        assert(type(data.frequency) == "number", mod .. ":" .. table_data.name .. " HAS INCORRECT DATA FOR frequency FOR ORE " .. name .. "!")
+
+    end
+
+end
+
+
+
+
 crafter.register_biome = function(table_data)
     -- Cache string pointer.
     local mod = current_loading_mod
@@ -97,8 +135,21 @@ crafter.register_biome = function(table_data)
     assert(table_data.cave_frequency ~= nil, mod .. ":" .. table_data.name .. " IS MISSING cave_frequency!")
     assert(type(table_data.cave_frequency) == "number", mod .. ":" .. table_data.name .. " HAS INCORRECT DATA FOR cave_frequency! NEEDS A NUMBER!")
 
+    -- Check biome ore definition is correct.
+    check_biome_ores(mod, table_data)
+
     crafter.biomes[table_data.name] = table_data
 end
+
+
+
+
+
+
+
+
+
+
 
 -- Make sure that all biomes contain valid blocks.
 function double_check_biome_blocks(mod, name, biome, blocks)
@@ -129,7 +180,7 @@ function double_check_biome_ores(mod, name, ores, blocks)
     assert(type(ores) == "table", mod .. ":" .. name .. " HAS THE INCORRECT TYPE OF DATA AS ores! REQUIRED: table, PROVIDED: " .. type(ores) .. "!")
 
     for ore_block,_ in pairs(ores) do
-        
+
         local found = false;
         for block_name,_ in pairs(blocks) do
             -- Positive check lock.
