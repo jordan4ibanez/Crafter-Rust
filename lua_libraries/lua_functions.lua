@@ -104,7 +104,7 @@ end
 function double_check_biome_blocks(mod, name, biome, blocks)
 
     local layers = {["TOP"] = biome.top_layer, ["BOTTOM"] = biome.bottom_layer, ["STONE"] = biome.stone_layer, ["BEDROCK"] = biome.bedrock_layer}
-    
+
     for layer_name,defined_name in pairs(layers) do
 
         local found = false;
@@ -116,5 +116,28 @@ function double_check_biome_blocks(mod, name, biome, blocks)
         end
 
         assert(found == true, "BIOME " .. mod .. ":" .. name .. " CONTAINS AN UNDEFINED BLOCK: " .. defined_name .. " IN " .. layer_name .. " LAYER!")
+    end
+end
+
+-- Make sure that all biomes contain valid ores.
+function double_check_biome_ores(mod, name, ores, blocks)
+    -- No ore defined. Do nothing.
+    if ores == nil then
+        return
+    end
+
+    assert(type(ores) == "table", mod .. ":" .. name .. " HAS THE INCORRECT TYPE OF DATA AS ores! REQUIRED: table, PROVIDED: " .. type(ores) .. "!")
+
+    for ore_block,_ in pairs(ores) do
+        
+        local found = false;
+        for block_name,_ in pairs(blocks) do
+            -- Positive check lock.
+            if ore_block == block_name then
+                found = true
+            end
+        end
+
+        assert(found == true, "BIOME " .. mod .. ":" .. name .. " CONTAINS AN UNDEFINED ORE: " .. ore_block .. "!")
     end
 end

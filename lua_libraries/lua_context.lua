@@ -80,10 +80,10 @@ elseif crafter.operating_system == "mac" then
 end
 
 -- Check biomes to make sure they contain only valid blocks.
-
 for name,biome in pairs(crafter.biomes) do
     double_check_biome_blocks(biome.mod, name, biome, crafter.blocks)
-end
 
+    double_check_biome_ores(biome.mod, name, biome.ores, crafter.blocks)
+end
 
 print("--- LUA IS NOW DONE ---")
