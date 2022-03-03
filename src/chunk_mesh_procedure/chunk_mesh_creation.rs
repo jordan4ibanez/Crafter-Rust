@@ -22,13 +22,9 @@ this_texture
 
 // Convertes u16 1D position into (i8,i8,i8) 3D tuple position
 fn mini_index_to_pos(i: usize) -> (usize,usize,usize) {
-    let mut index :usize = i.clone();
-    let x: usize = index / 2048;
-    index = index % 2048;
-    let z: usize = index / 128;
-    index = index % 128;
-    let y: usize = index;
-    (x, y, z)
+    (i / 2048,
+    (i % 2048) % 128,
+    (i % 2048) / 128)
 }
 
 // Converts x,y,z (i8) 3D position into u16 1D position.
