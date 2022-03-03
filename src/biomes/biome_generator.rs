@@ -1,6 +1,5 @@
 
-use bracket_noise::prelude::{FastNoise, NoiseType, Interp, FractalType};
-use rand::{Rng, prelude::ThreadRng};
+use bracket_noise::prelude::{FastNoise, FractalType};
 
 use crate::blocks::block_component_system::BlockComponentSystem;
 
@@ -82,7 +81,7 @@ pub fn gen_biome(
 
     // this is debug
     let (
-        name,
+        _,
         top_layer,
         top_layer_depth,
         bottom_layer,
@@ -203,4 +202,41 @@ pub fn gen_biome(
             }
         }
     }
+
+    // generate ores
+    match biome_ores_option {
+        Some(biome_ores) => {
+
+            for ore_id in 0..biome_ores.get_size() {
+
+                let (block_id, depth, heat, frequency) = biome_ores.get_ore(ore_id);
+
+                fractal_noise.set_frequency(*frequency);
+                fractal_noise.set_fractal_octaves(2);
+                fractal_noise.set_fractal_type(FractalType::Billow);
+
+                let (min_depth, max_depth) = depth.get();
+
+                let (heat_min, heat_max) = heat.get();
+
+                for i in 0..32768 {
+                    
+                    let (x,y,z) = index_to_pos(i);
+
+                    let y_u32: u32 = y as u32;
+
+                    // set to 0 for debugging
+                    if block_data[i] == stone_layer &&
+                        y_u32 >= min_depth as u32 && y_u32 <= max_depth as u32 {
+                            let noise_calculation: f32 = calculate_noise(x, y, z, pos_x as f64, pos_z as f64, fractal_noise);
+
+                            if noise_calculation >= heat_min && noise_calculation <= heat_max {
+                                block_data[i] = *block_id;
+                            }
+                        }
+                    }
+                }
+            }
+        None => (),
+    };    
 }
