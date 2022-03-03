@@ -73,7 +73,7 @@ crafter.register_biome({
 
     -- Minimum and maximum noise for cave to be carved.
     -- Caves will be carved OUTSIDE of the min and max.
-    cave_heat = {-0.7, 0.7},
+    cave_heat = {-0.8, 0.8},
 
     -- How often cave carving fluctuates.
     cave_frequency = 0.005,
