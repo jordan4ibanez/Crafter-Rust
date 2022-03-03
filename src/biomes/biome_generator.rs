@@ -7,13 +7,9 @@ use super::generation_component_system::GenerationComponentSystem;
 
 // Convertes u16 1D position into (u8,u8,u8) 3D tuple position
 fn index_to_pos ( i: usize ) -> (f64,f64,f64) {
-    let mut index :usize = i.clone();
-    let x: f64 = (index / 2048) as f64;
-    index = index % 2048;
-    let z: f64 = (index / 128) as f64;
-    index = index % 128;
-    let y: f64 = index as f64;
-    (x, y, z)
+    ((i / 2048) as f64,
+    ((i % 2048) % 128) as f64,
+    ((i % 2048) / 128) as f64)
 }
 
 fn calculate_y_height(
