@@ -90,6 +90,7 @@ impl HeatParams {
 
 pub struct BiomeOres {
     // held as block ID
+    size: usize,
     ores: Vec<u32>,
     depth: Vec<LayerDepth>,
     heat: Vec<HeatParams>,
@@ -99,6 +100,7 @@ pub struct BiomeOres {
 impl BiomeOres {
     pub fn new() -> Self {
         Self {
+            size: 0,
             ores: Vec::new(),
             depth: Vec::new(),
             heat: Vec::new(),
@@ -107,10 +109,19 @@ impl BiomeOres {
     }
 
     pub fn register_ore(&mut self, id: u32, depth: LayerDepth, heat: HeatParams, frequency: f32) {
+        self.size += 1;
         self.ores.push(id);
         self.depth.push(depth);
         self.heat.push(heat);
         self.frequency.push(frequency);
+    }
+
+    pub fn get_size(&self) -> usize {
+        self.size
+    }
+
+    pub fn get_ore(&self, index: usize) -> (&u32, &LayerDepth, &HeatParams, &f32) {
+        (&self.ores[index], &self.depth[index], &self.heat[index], &self.frequency[index])
     }
 }
 
