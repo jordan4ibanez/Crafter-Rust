@@ -88,6 +88,7 @@ pub fn gen_biome(
         bottom_layer,
         bottom_layer_depth,
         stone_layer,
+        biome_ores_option,
         terrain_noise_multiplier,
         terrain_frequency,
         caves,
