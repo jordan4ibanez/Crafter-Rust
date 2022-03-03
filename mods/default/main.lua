@@ -50,12 +50,12 @@ crafter.register_biome({
     bedrock_layer = "bedrock",
 
     ores = {
-        coal = {
+        coal_ore = {
             depth = {2, 100},
             heat = {0.5, 0.5},
             frequency = 50,
         },
-        iron = {
+        iron_ore = {
             depth = {2,100},
             heat = {0.3, 0.4},
             frequency = 40,
