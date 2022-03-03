@@ -29,6 +29,14 @@ crafter.register_block({
 })
 
 crafter.register_block({
+    name = "sand",
+    draw_type = "normal",
+    textures = {
+        "sand.png"
+    }
+})
+
+crafter.register_block({
     name = "coal_ore",
     draw_type = "normal",
     textures = {
@@ -56,10 +64,10 @@ crafter.register_block({
 crafter.register_biome({
     name = "grass_lands",
 
-    top_layer = "grass",
+    top_layer = "sand",
     top_layer_depth = {1,1}, -- Min, Max
 
-    bottom_layer = "dirt",
+    bottom_layer = "sand",
     bottom_layer_depth = {3,5}, -- Min, Max
 
     stone_layer = "stone",
