@@ -7,7 +7,7 @@ use mlua::{
     Lua,
     Table,
     prelude,
-    Integer
+    Integer, Error
 };
 use texture_packer::{
     importer::ImageImporter,
@@ -26,7 +26,7 @@ use crate::{
     helper::helper_functions::with_path,
     lua::lua_texture_atlas_calculation::{
         calculate_atlas_location_normal
-    }, biomes::generation_component_system::{LayerDepth, NoiseParams, GenerationComponentSystem}
+    }, biomes::generation_component_system::{LayerDepth, NoiseParams, GenerationComponentSystem, BiomeOres, HeatParams}
 };
 
 
@@ -339,7 +339,7 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
     // texture atlas will always be id 1
     let value_test = mcs.new_texture_from_memory(atlas.as_rgba8().unwrap().to_owned());
 
-    // println!("TEXTURE ATLAS IS VALUE: {}", value_test);
+    println!("TEXTURE ATLAS IS VALUE: {}", value_test);
 
 
     // begin iterating biome data
@@ -394,6 +394,48 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
 
         let snow: bool = biome_table.get("snow").unwrap();
 
+        // process biome ores
+
+        let lua_biome_ores_option: Result<Table, Error> = biome_table.get("ores");
+
+        let biome_ores_option: Option<BiomeOres>;
+
+        // lua checked everything so we can freely work with it
+        match lua_biome_ores_option {
+            Ok(biome_lua_table) => {
+                let mut finished_biome_ore_definition = BiomeOres::new();
+
+                for defined_ore_result in biome_lua_table.pairs::<String, Table>() {
+                    let (ore_name, ore_lua_table) = defined_ore_result.unwrap();
+
+                    let depth_table: Table = ore_lua_table.get("depth").unwrap();
+
+                    let depth: LayerDepth = LayerDepth::new(
+                        depth_table.get(1).unwrap(),
+                        depth_table.get(2).unwrap()
+                    );
+
+                    let heat_table: Table = ore_lua_table.get("heat").unwrap();
+
+                    let heat: HeatParams = HeatParams::new(
+                        heat_table.get(1).unwrap(),
+                        heat_table.get(2).unwrap(),
+                    );
+
+                    let frequency: f32 = ore_lua_table.get("frequency").unwrap();
+
+                    finished_biome_ore_definition.register_ore(
+                        bcs.get_id_of(ore_name),
+                        depth,
+                        heat,
+                        frequency
+                    );
+                }
+                biome_ores_option = Some(finished_biome_ore_definition);
+            },
+            Err(_) => biome_ores_option = None,
+        }
+
 
         gcs.register_biome(
             biome_name,
@@ -403,7 +445,7 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
             bcs.get_id_of(bottom_layer),
             bottom_layer_depth,
             bcs.get_id_of(stone_layer),
-            None, // change this
+            biome_ores_option,
             terrain_noise_multiplier,
             terrain_frequency,
             caves,
