@@ -58,11 +58,41 @@ impl NoiseParams {
     }
 }
 
+
+pub struct HeatParams {
+    min: f32,
+    max: f32,
+}
+
+impl HeatParams {
+    pub fn new(min: f32, max: f32) -> Self {
+        Self {
+            min,
+            max,
+        }
+    }
+    pub fn get(&self) -> (f32, f32) {
+        (self.min, self.max)
+    }
+
+    pub fn get_min(&self) -> f32 {
+        self.min
+    }
+
+    pub fn get_max(&self) -> f32 {
+        self.max
+    }
+
+    pub fn in_range(&self, noise_calculation: f32) -> bool {
+        noise_calculation >= self.min && noise_calculation <= self.max
+    }
+}
+
 pub struct BiomeOres {
     // held as block ID
     ores: Vec<u32>,
     depth: Vec<LayerDepth>,
-    heat: Vec<NoiseParams>,
+    heat: Vec<HeatParams>,
     frequency: Vec<f32>,
 }
 
@@ -76,7 +106,7 @@ impl BiomeOres {
         }
     }
 
-    pub fn register_ore(&mut self, id: u32, depth: LayerDepth, heat: NoiseParams, frequency: f32) {
+    pub fn register_ore(&mut self, id: u32, depth: LayerDepth, heat: HeatParams, frequency: f32) {
         self.ores.push(id);
         self.depth.push(depth);
         self.heat.push(heat);
