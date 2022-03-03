@@ -10,6 +10,7 @@ crafter.register_block({
 })
 
 
+
 crafter.register_block({
     name = "dirt",
     draw_type = "normal",
@@ -58,10 +59,10 @@ crafter.register_biome({
     top_layer = "grass",
     top_layer_depth = {1,1}, -- Min, Max
 
-    bottom_layer = "air",
+    bottom_layer = "dirt",
     bottom_layer_depth = {3,5}, -- Min, Max
 
-    stone_layer = "air",
+    stone_layer = "stone",
 
     bedrock_layer = "bedrock",
 
