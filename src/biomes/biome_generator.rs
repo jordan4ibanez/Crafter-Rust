@@ -17,7 +17,7 @@ fn calculate_y_height(
     pos_z: f64,
     chunk_pos_x: f64,
     chunk_pos_z: f64,
-    noise: &mut FastNoise, 
+    noise: &FastNoise, 
     base_height: f64,
     noise_multiplier: f64,
 ) -> u32 {
@@ -36,7 +36,7 @@ fn calculate_depth(
     pos_z: f64,
     chunk_pos_x: f64,
     chunk_pos_z: f64,
-    noise: &mut FastNoise, 
+    noise: &FastNoise, 
     min: u8,
     max: u8
 ) -> u32{
@@ -53,7 +53,7 @@ fn calculate_noise(
     pos_z: f64,
     chunk_pos_x: f64,
     chunk_pos_z: f64,
-    noise: &mut FastNoise, 
+    noise: &FastNoise, 
 ) -> f32{
     noise.get_noise3d(
         (pos_x + (chunk_pos_x * 16.0)) as f32,
@@ -251,7 +251,7 @@ pub fn gen_biome(
                     // set to 0 for debugging
                     if block_data[i] == stone_layer &&
                         y_u32 >= min_depth as u32 && y_u32 <= max_depth as u32 {
-                            let noise_calculation: f32 = calculate_noise(x, y, z, pos_x as f64, pos_z as f64, fractal_noise);
+                            let noise_calculation: f32 = calculate_noise(x, y, z, pos_x as f64, pos_z as f64, &fractal_noise);
 
                             if noise_calculation >= heat_min && noise_calculation <= heat_max {
                                 block_data[i] = *block_id;
