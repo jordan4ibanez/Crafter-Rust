@@ -87,6 +87,7 @@ pub fn gen_biome(
         bottom_layer,
         bottom_layer_depth,
         stone_layer,
+        bedrock_layer,
         biome_ores_option,
         terrain_noise_multiplier,
         terrain_frequency,
@@ -178,26 +179,52 @@ pub fn gen_biome(
         // only calculate when inside possible parameter
         if y_u32 <= y_height {
 
-            let mut cave_noise_calculation: f32 = 0.0;
+            let mut bedrock = false;
 
-            if caves {
-                cave_noise_calculation = calculate_noise(x, y, z, pos_x as f64, pos_z as f64, fractal_noise);
+            if y_u32 <= 2 {
+                if y_u32 == 0 {
+                    bedrock = true;
+                } else {
+
+                    simplex_noise.set_frequency(1.0);
+
+                    let bedrock_noise_calculation: f32 = calculate_noise(x, y, z, pos_x as f64, pos_z as f64, simplex_noise);
+                    
+                    if bedrock_noise_calculation > 0.0 {
+                        bedrock = true;
+                    }
+
+                    simplex_noise.set_frequency(terrain_frequency);
+                }
             }
 
-            if caves && (cave_noise_calculation <= cave_min_heat || cave_noise_calculation >= cave_max_heat) {
-                block_data[i] = 0;
+            if bedrock {
+
+                block_data[i] = bedrock_layer;
+
             } else {
-                // top layer
-                if y_u32 >= y_height - top_layer_depth_random {
-                    block_data[i] = top_layer;
+
+                let mut cave_noise_calculation: f32 = 0.0;
+
+                if caves {
+                    cave_noise_calculation = calculate_noise(x, y, z, pos_x as f64, pos_z as f64, fractal_noise);
                 }
-                // bottom layer
-                else if y_u32 < y_height - top_layer_depth_random &&  y_u32 >= y_height - top_layer_depth_random - bottom_layer_depth_random {
-                    block_data[i] = bottom_layer;
-                }
-                // stone layer
-                else if y_u32 < y_height - top_layer_depth_random - bottom_layer_depth_random {
-                    block_data[i] = stone_layer;
+
+                if caves && (cave_noise_calculation <= cave_min_heat || cave_noise_calculation >= cave_max_heat) {
+                    block_data[i] = 0;
+                } else {
+                    // top layer
+                    if y_u32 >= y_height - top_layer_depth_random {
+                        block_data[i] = top_layer;
+                    }
+                    // bottom layer
+                    else if y_u32 < y_height - top_layer_depth_random &&  y_u32 >= y_height - top_layer_depth_random - bottom_layer_depth_random {
+                        block_data[i] = bottom_layer;
+                    }
+                    // stone layer
+                    else if y_u32 < y_height - top_layer_depth_random - bottom_layer_depth_random {
+                        block_data[i] = stone_layer;
+                    }
                 }
             }
         }
