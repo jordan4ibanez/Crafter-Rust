@@ -28,6 +28,22 @@ crafter.register_block({
 })
 
 crafter.register_block({
+    name = "coal_ore",
+    draw_type = "normal",
+    textures = {
+        "coal_ore.png",
+    },
+})
+
+crafter.register_block({
+    name = "iron_ore",
+    draw_type = "normal",
+    textures = {
+        "iron_ore.png",
+    },
+})
+
+crafter.register_block({
     name = "bedrock",
     draw_type = "normal",
     textures = {
