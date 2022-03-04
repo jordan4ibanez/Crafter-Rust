@@ -37,8 +37,20 @@ impl Camera {
         self.position.clone_from(new_position);
     }
 
-    pub fn get_pos(&self) -> Vec3 {
-        self.position
+    pub fn get_pos(&self) -> &Vec3 {
+        &self.position
+    }
+    
+    pub fn get_pos_x(&self) -> f32 {
+        self.position.x
+    }
+
+    pub fn get_pos_y(&self) -> f32 {
+        self.position.y
+    }
+
+    pub fn get_pos_z(&self) -> f32 {
+        self.position.z
     }
 
     pub fn set_rot(&mut self, new_rotation: &Vec3) {
