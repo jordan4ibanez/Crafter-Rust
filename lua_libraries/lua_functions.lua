@@ -30,6 +30,16 @@ end
 
 local function automate_and_check_biome_parameters(mod, table_data)
     
+    -- Force biome heat.
+    assert(table_data.biome_heat ~= nil, mod .. ":" .. table_data.name .. " NEEDS A biome_heat DEFINITION!")
+    assert(type(table_data.biome_heat) == "table", mod .. ":" .. table_data.name .. " NEEDS A 2 ELEMENT TABLE AS biome_heat!")
+    assert(#table_data.biome_heat == 2, mod .. ":" .. table_data.name .. " NEEDS 2 ELEMENTS AS biome_heat!")
+
+    for i = 1,2 do
+        assert(type(table_data.biome_heat[i]) == "number", mod .. ":" .. table_data.name .. " HAS INVALID DATA IN biome_heat IN ELEMENT " .. i .. "!")
+    end
+
+
     -- Default to 30 if forgotten.
     if table_data.terrain_noise_multiplier == nil then
         table_data.terrain_noise_multiplier = 30
