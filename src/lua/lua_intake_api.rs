@@ -438,9 +438,19 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
             Err(_) => biome_ores_option = None,
         }
 
+        // getting biome heat parameters
+        let lua_biome_heat_params: Table = biome_table.get("biome_heat").unwrap();
+
+        let biome_heat_params: HeatParams = HeatParams::new(
+            lua_biome_heat_params.get(1).unwrap(),
+            lua_biome_heat_params.get(2).unwrap()
+        );
+
+
 
         gcs.register_biome(
             biome_name,
+            biome_heat_params,
             game_mod,
             bcs.get_id_of(top_layer),
             top_layer_depth,
