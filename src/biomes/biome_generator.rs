@@ -77,6 +77,7 @@ pub fn gen_biome(
     // this is debug
     let (
         _,
+        biome_heat_params,
         top_layer,
         top_layer_depth,
         bottom_layer,

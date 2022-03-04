@@ -131,6 +131,8 @@ pub struct GenerationComponentSystem {
 
     id: Vec<u32>,
 
+    heat_params: Vec<HeatParams>,
+
     game_mod: Vec<String>,
 
     name: Vec<String>,
@@ -171,6 +173,7 @@ impl GenerationComponentSystem {
     pub fn new() -> Self {
         Self {
             id: Vec::new(),
+            heat_params: Vec::new(),
             game_mod: Vec::new(),
             name: Vec::new(),
             top_layer: Vec::new(),
@@ -193,6 +196,8 @@ impl GenerationComponentSystem {
         &mut self,
 
         name: String,
+
+        heat_params: HeatParams,
 
         game_mod: String,
 
@@ -225,6 +230,8 @@ impl GenerationComponentSystem {
         println!("BIOME: {} IS ID: {}",name,self.id.len() as u32);
 
         self.id.push(self.id.len() as u32);
+
+        self.heat_params.push(heat_params);
 
         self.game_mod.push(game_mod);
 
@@ -275,9 +282,11 @@ impl GenerationComponentSystem {
     // this is debug
     // in production this will search by heatmap of 2D
     // this is also a mess
-    pub fn get(&self, id: usize) -> (&String, u32, &LayerDepth, u32, &LayerDepth, u32, u32, &Option<BiomeOres>, u8, f32, bool, &NoiseParams, bool, bool) {
+    pub fn get(&self, id: usize) -> (&String, &HeatParams, u32, &LayerDepth, u32, &LayerDepth, u32, u32, &Option<BiomeOres>, u8, f32, bool, &NoiseParams, bool, bool) {
         (
             &self.name[id],
+
+            &self.heat_params[id],
 
             self.top_layer[id],
             &self.top_layer_depth[id],
