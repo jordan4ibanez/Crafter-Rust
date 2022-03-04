@@ -63,6 +63,8 @@ crafter.register_block({
 crafter.register_biome({
     name = "grass_lands",
 
+    biome_heat = {0.0, 1.0},
+
     top_layer = "grass",
     top_layer_depth = {1,1}, -- Min, Max
 
@@ -108,6 +110,8 @@ crafter.register_biome({
 
 crafter.register_biome({
     name = "dessert",
+
+    biome_heat = {-1.0, 0.0},
 
     top_layer = "sand",
     top_layer_depth = {1,1}, -- Min, Max
