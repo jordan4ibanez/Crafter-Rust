@@ -8,11 +8,14 @@ edition = "2021"
 
 [dependencies]
 
+# multi threading
+rayon = "*"
+
 # random noise
 rand = "*"
 
-# perlin noise
-bracket-noise = "0.8.2"
+# seed noise
+opensimplex_noise_rs = "0.3.0"
 
 # openGL bindings
 gl = "0.14.0"
