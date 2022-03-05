@@ -66,10 +66,10 @@ crafter.register_biome({
     biome_noise_params = {
         heat_min = 0.0,
         heat_max = 1.0,
-        -- Multiplies the output of the noise value.
+        -- Multiplies the output of the noise value. 2.0 means -2.0 to 2.0 for your heat values.
         scale = 1.0,
         -- How often the terrain fluctuates.
-        frequency = 0.009,
+        frequency = 0.05,
     },
 
     -- How high or low the terrain can fluctuate.
@@ -79,10 +79,10 @@ crafter.register_biome({
     top_layer = "grass",
     top_layer_depth = {1,1}, -- Min, Max
 
-    bottom_layer = "dirt",
+    bottom_layer = "air",
     bottom_layer_depth = {3,5}, -- Min, Max
 
-    stone_layer = "stone",
+    stone_layer = "air",
 
     bedrock_layer = "bedrock",
 
@@ -101,17 +101,17 @@ crafter.register_biome({
 
 
     -- Defines if there is cave generation.
-    caves = true,
+    caves = false,
 
     -- Cave parameters.
     cave_noise_params = {
         -- Caves will be carved within the min and max.
-        heat_min = -1.5,
-        heat_max = -0.7,
-        -- Multiplies the output noise value.
-        scale = 2.0,
+        heat_min = -5,
+        heat_max = -3,
+        -- Multiplies the output noise value. 2.0 means -2.0 to 2.0 for your heat values.
+        scale = 5.0,
         -- How often cave carving fluctuates.
-        frequency = 0.06,
+        frequency = 0.056,
     },
 
     -- Defines if there is rain.
