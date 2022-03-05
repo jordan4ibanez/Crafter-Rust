@@ -72,6 +72,7 @@ pub struct BiomeOres {
     depth: Vec<LayerDepth>,
     heat: Vec<NoiseParams>,
     frequency: Vec<f32>,
+    scale: Vec<f32>
 }
 
 impl BiomeOres {
@@ -82,23 +83,25 @@ impl BiomeOres {
             depth: Vec::new(),
             heat: Vec::new(),
             frequency: Vec::new(),
+            scale: Vec::new()
         }
     }
 
-    pub fn register_ore(&mut self, id: u32, depth: LayerDepth, heat: NoiseParams, frequency: f32) {
+    pub fn register_ore(&mut self, id: u32, depth: LayerDepth, heat: NoiseParams, frequency: f32, scale: f32) {
         self.size += 1;
         self.ores.push(id);
         self.depth.push(depth);
         self.heat.push(heat);
         self.frequency.push(frequency);
+        self.scale.push(scale);
     }
 
     pub fn get_size(&self) -> usize {
         self.size
     }
 
-    pub fn get_ore(&self, index: usize) -> (&u32, &LayerDepth, &NoiseParams, &f32) {
-        (&self.ores[index], &self.depth[index], &self.heat[index], &self.frequency[index])
+    pub fn get_ore(&self, index: usize) -> (u32, &LayerDepth, &NoiseParams, f32, f32) {
+        (self.ores[index], &self.depth[index], &self.heat[index], self.frequency[index], self.scale[index])
     }
 }
 
