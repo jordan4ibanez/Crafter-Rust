@@ -53,6 +53,22 @@ crafter.register_block({
 })
 
 crafter.register_block({
+    name = "gold_ore",
+    draw_type = "normal",
+    textures = {
+        "gold_ore.png",
+    },
+})
+
+crafter.register_block({
+    name = "diamond_ore",
+    draw_type = "normal",
+    textures = {
+        "diamond_ore.png",
+    },
+})
+
+crafter.register_block({
     name = "bedrock",
     draw_type = "normal",
     textures = {
