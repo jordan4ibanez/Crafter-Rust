@@ -90,7 +90,7 @@ pub fn gen_biome(
         let y_u32: u32 = y as u32;
 
         let terrain_2d_noise = gen_2d(&noise, x, z, biome_frequency as f64, biome_scale as f64);
-        let terrain_3d_noise = gen_3d(&noise, x, y, z, biome_frequency as f64, biome_scale as f64);
+        //let terrain_3d_noise = gen_3d(&noise, x, y, z, biome_frequency as f64, biome_scale as f64);
 
         let cave_3d_noise = gen_3d(&noise, x, y, z, cave_frequency as f64, cave_scale as f64);
                 
@@ -126,8 +126,6 @@ pub fn gen_biome(
                     if bedrock_3d_noise > 0.0 {
                         bedrock = true;
                     }
-
-                    //simplex_noise.set_frequency(terrain_frequency);
                 }
             }
 
