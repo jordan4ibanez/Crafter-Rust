@@ -14,6 +14,7 @@ use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
 use mlua::Lua;
+use opensimplex_noise_rs::OpenSimplexNoise;
 
 use std::{
     sync::mpsc::Receiver
@@ -87,6 +88,9 @@ fn main() {
 
     let mut keyboard: Keyboard = Keyboard::new();
     let mut mouse: Mouse = Mouse::new(&window);
+
+    // noise structure
+    let noise = OpenSimplexNoise::new(Some(SEED as i64));
 
     const RENDER_DISTANCE: i32 = 20;
 
@@ -177,7 +181,8 @@ fn main() {
                 &gcs,
                 world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(),
                 debug_x,
-                debug_z
+                debug_z,
+                &noise
             );
 
             // world.add(generated_chunk);
