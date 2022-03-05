@@ -63,7 +63,18 @@ crafter.register_block({
 crafter.register_biome({
     name = "grass_lands",
 
-    biome_heat = {0.0, 1.0},
+    biome_noise_params = {
+        heat_min = 0.0,
+        heat_max = 1.0,
+        -- Multiplies the output of the noise value.
+        scale = 1.0,
+        -- How often the terrain fluctuates.
+        frequency = 0.009,
+    },
+
+    -- How high or low the terrain can fluctuate.
+    terrain_height_flux = 20;
+
 
     top_layer = "grass",
     top_layer_depth = {1,1}, -- Min, Max
@@ -88,26 +99,26 @@ crafter.register_biome({
         }
     },
 
-    -- How high or low the terrain can fluctuate.
-    terrain_noise_multiplier = 20;
-
-    -- How often the terrain fluctuates.
-    terrain_frequency = 0.009,
 
     -- Defines if there is cave generation.
     caves = true,
 
-    -- Minimum and maximum noise for cave to be carved.
-    -- Caves will be carved OUTSIDE of the min and max.
-    cave_heat = {-0.8, 0.8},
-
-    -- How often cave carving fluctuates.
-    cave_frequency = 0.005,
+    -- Cave parameters.
+    cave_noise_params = {
+        -- Caves will be carved within the min and max.
+        heat_min = -1.5,
+        heat_max = -0.7,
+        -- Multiplies the output noise value.
+        scale = 2.0,
+        -- How often cave carving fluctuates.
+        cave_frequency = 0.06,
+    },
 
     -- Defines if there is rain.
     rain = true,
 })
 
+--[[
 crafter.register_biome({
     name = "dessert",
 
@@ -155,3 +166,4 @@ crafter.register_biome({
     -- Defines if there is rain.
     rain = true,
 })
+]]--
