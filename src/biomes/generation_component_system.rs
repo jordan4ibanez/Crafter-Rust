@@ -1,3 +1,5 @@
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator, IndexedParallelIterator};
+
 pub struct LayerDepth {
     min: u8,
     max: u8
@@ -268,5 +270,21 @@ impl GenerationComponentSystem {
             self.snow[id],
         )
     }
-    
+
+    pub fn get_within_noise(&self, noise: f32) -> (&String, &NoiseParams, u8, u32, &LayerDepth, u32, &LayerDepth, u32, u32, &Option<BiomeOres>, bool, &NoiseParams, bool, bool) {
+
+        let value: usize;
+
+        let gotten_biome=  self.biome_noise_params.par_iter().enumerate().find_first(|value|{
+            value.1.in_range(noise)
+        });
+
+        match gotten_biome {
+            Some(biome) => value = biome.0,
+            // whatever is first
+            None => value = 0,
+        }
+
+        self.get(value)
+    }
 }
