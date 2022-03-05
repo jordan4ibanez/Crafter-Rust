@@ -427,11 +427,14 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
 
                     let frequency: f32 = ore_lua_table.get("frequency").unwrap();
 
+                    let scale: f32 = ore_lua_table.get("scale").unwrap();
+
                     finished_biome_ore_definition.register_ore(
                         bcs.get_id_of(ore_name),
                         depth,
                         heat,
-                        frequency
+                        frequency,
+                        scale
                     );
                 }
                 biome_ores_option = Some(finished_biome_ore_definition);
