@@ -2,8 +2,6 @@
 use opensimplex_noise_rs::OpenSimplexNoise;
 use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator, IndexedParallelIterator};
 
-use crate::SEED;
-
 use super::generation_component_system::GenerationComponentSystem;
 
 // Convertes u16 1D position into (u8,u8,u8) 3D tuple position
@@ -41,25 +39,11 @@ pub fn gen_biome(
     block_data: &mut Vec<u32>,
     pos_x: i32,
     pos_z: i32,
+    noise: &OpenSimplexNoise
 ) {
 
     // this is debug
-    let (
-        _,
-        biome_noise_params,
-        terrain_height_flux,
-        top_layer,
-        top_layer_depth,
-        bottom_layer,
-        bottom_layer_depth,
-        stone_layer,
-        bedrock_layer,
-        biome_ores_option,
-        caves,
-        cave_noise_params,
-        rain,
-        snow
-    ) = gcs.get(0);
+    
     
     // let simplex_noise: &mut FastNoise = &mut *simplex_noise;
 
@@ -71,21 +55,36 @@ pub fn gen_biome(
     // the amount of fluctuation the blocks can have from base height
     //let noise_multiplier = 50.0;
 
-
-    let (biome_heat_min, biome_heat_max, biome_scale, biome_frequency) = biome_noise_params.get();
-
-    let (cave_heat_min, cave_heat_max, cave_scale, cave_frequency) = cave_noise_params.get();
-
-    // noise structure
-    let noise = OpenSimplexNoise::new(Some(SEED as i64));
-
     // generate unmodified terrain
     block_data.par_iter_mut().enumerate().for_each(| (index, value) | {
 
         let (mut x, y, mut z) = index_to_pos(index);
 
         x += pos_x as f64 * 16.0;
-        z += pos_z as f64 * 16.0;        
+        z += pos_z as f64 * 16.0;
+
+        let biome_noise = gen_2d(&noise, x, z, 0.001, 1.0);
+
+        let (
+            _,
+            biome_noise_params,
+            terrain_height_flux,
+            top_layer,
+            top_layer_depth,
+            bottom_layer,
+            bottom_layer_depth,
+            stone_layer,
+            bedrock_layer,
+            biome_ores_option,
+            caves,
+            cave_noise_params,
+            rain,
+            snow
+        ) = gcs.get_within_noise(biome_noise as f32);
+
+        let (biome_heat_min, biome_heat_max, biome_scale, biome_frequency) = biome_noise_params.get();
+
+        let (cave_heat_min, cave_heat_max, cave_scale, cave_frequency) = cave_noise_params.get();
 
         let y_u32: u32 = y as u32;
 
@@ -153,27 +152,17 @@ pub fn gen_biome(
                 }
             }
         }
-    });
 
+        // generate ores
+        match biome_ores_option {
+            Some(biome_ores) => {
+                for ore_id in 0..biome_ores.get_size() {
 
-    // generate ores
-    match biome_ores_option {
-        Some(biome_ores) => {
+                    let (block_id, depth, heat, frequency, scale) = biome_ores.get_ore(ore_id);
 
-            for ore_id in 0..biome_ores.get_size() {
+                    let (min_depth, max_depth) = depth.get();
 
-                let (block_id, depth, heat, frequency, scale) = biome_ores.get_ore(ore_id);
-
-                let (min_depth, max_depth) = depth.get();
-
-                let (heat_min, heat_max, _, _) = heat.get();
-
-                block_data.par_iter_mut().enumerate().for_each(| (index, value) | {
-                    
-                    let (mut x,y,mut z) = index_to_pos(index);
-
-                    x += pos_x as f64 * 16.0;
-                    z += pos_z as f64 * 16.0; 
+                    let (heat_min, heat_max, _, _) = heat.get();
 
                     let y_u32: u32 = y as u32;
 
@@ -186,9 +175,9 @@ pub fn gen_biome(
                                 *value = block_id;
                             }
                     }
-                })
+                }
             }
-        },
-        None => (),
-    };
+            None => (),
+        }
+    });
 }
