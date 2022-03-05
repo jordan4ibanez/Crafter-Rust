@@ -380,11 +380,9 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
 
         let terrain_height_flux: u8 = biome_table.get("terrain_height_flux").unwrap();
 
-        let terrain_frequency: f32 = biome_table.get("terrain_frequency").unwrap();
-
         let caves: bool = biome_table.get("caves").unwrap();
 
-        let cave_heat_table: Table = biome_table.get("cave_heat").unwrap();
+        let cave_heat_table: Table = biome_table.get("cave_noise_params").unwrap();
 
         let cave_noise_params: NoiseParams = NoiseParams::new(
             cave_heat_table.get("heat_min").unwrap(),
