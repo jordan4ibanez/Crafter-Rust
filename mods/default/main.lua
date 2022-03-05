@@ -95,10 +95,10 @@ crafter.register_biome({
     top_layer = "grass",
     top_layer_depth = {1,1}, -- Min, Max
 
-    bottom_layer = "air",
+    bottom_layer = "stone",
     bottom_layer_depth = {3,5}, -- Min, Max
 
-    stone_layer = "air",
+    stone_layer = "stone",
 
     bedrock_layer = "bedrock",
 
@@ -148,11 +148,21 @@ crafter.register_biome({
     rain = true,
 })
 
---[[
 crafter.register_biome({
-    name = "dessert",
+    name = "desert",
 
-    biome_heat = {-1.0, 0.0},
+    biome_noise_params = {
+        heat_min = -1.0,
+        heat_max = 0.0,
+        -- Multiplies the output of the noise value. 2.0 means -2.0 to 2.0 for your heat values.
+        scale = 1.0,
+        -- How often the terrain fluctuates.
+        frequency = 0.02554,
+    },
+
+    -- How high or low the terrain can fluctuate.
+    terrain_height_flux = 10;
+
 
     top_layer = "sand",
     top_layer_depth = {1,1}, -- Min, Max
@@ -166,34 +176,46 @@ crafter.register_biome({
 
     ores = {
         coal_ore = {
-            depth = {2, 100},
-            heat = {0.61, 0.66},
-            frequency = 0.038,
+            depth = {0, 100},
+            heat = {1.61, 1.66},
+            scale = 2.0,
+            frequency = 0.11,
         },
         iron_ore = {
-            depth = {2,100},
-            heat = {0.66, 0.71},
-            frequency = 0.039,
+            depth = {0,100},
+            heat = {1.68, 1.78},
+            scale = 2.0,
+            frequency = 0.12,
+        },
+        gold_ore = {
+            depth = {0,32},
+            heat = {1.66, 1.77},
+            scale = 2.0,
+            frequency = 0.18,
+        },
+        diamond_ore = {
+            depth = {0,16},
+            heat = {1.7, 1.93},
+            scale = 2.0,
+            frequency = 0.16,
         }
     },
 
-    -- How high or low the terrain can fluctuate.
-    terrain_noise_multiplier = 10;
-
-    -- How often the terrain fluctuates.
-    terrain_frequency = 0.01,
 
     -- Defines if there is cave generation.
-    caves = true,
+    caves = false,
 
-    -- Minimum and maximum noise for cave to be carved.
-    -- Caves will be carved OUTSIDE of the min and max.
-    cave_heat = {-0.8, 0.8},
-
-    -- How often cave carving fluctuates.
-    cave_frequency = 0.005,
+    -- Cave parameters.
+    cave_noise_params = {
+        -- Caves will be carved within the min and max.
+        heat_min = -5,
+        heat_max = -3,
+        -- Multiplies the output noise value. 2.0 means -2.0 to 2.0 for your heat values.
+        scale = 5.0,
+        -- How often cave carving fluctuates.
+        frequency = 0.056,
+    },
 
     -- Defines if there is rain.
     rain = true,
 })
-]]--
