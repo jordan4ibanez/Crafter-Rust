@@ -26,19 +26,21 @@ impl LayerDepth {
 pub struct NoiseParams {
     min: f32,
     max: f32,
-    frequency: f32
+    scale: f32,
+    frequency: f32,
 }
 
 impl NoiseParams {
-    pub fn new(min: f32, max: f32, frequency: f32) -> Self {
+    pub fn new(min: f32, max: f32, scale: f32, frequency: f32) -> Self {
         Self {
             min,
             max,
+            scale,
             frequency
         }
     }
-    pub fn get(&self) -> (f32, f32, f32) {
-        (self.min, self.max, self.frequency)
+    pub fn get(&self) -> (f32, f32, f32, f32) {
+        (self.min, self.max, self.scale, self.frequency)
     }
 
     pub fn get_min(&self) -> f32 {
@@ -47,6 +49,10 @@ impl NoiseParams {
 
     pub fn get_max(&self) -> f32 {
         self.max
+    }
+
+    pub fn get_scale(&self) -> f32 {
+        self.scale
     }
 
     pub fn get_frequency(&self) -> f32 {
@@ -59,41 +65,12 @@ impl NoiseParams {
 }
 
 
-pub struct HeatParams {
-    min: f32,
-    max: f32,
-}
-
-impl HeatParams {
-    pub fn new(min: f32, max: f32) -> Self {
-        Self {
-            min,
-            max,
-        }
-    }
-    pub fn get(&self) -> (f32, f32) {
-        (self.min, self.max)
-    }
-
-    pub fn get_min(&self) -> f32 {
-        self.min
-    }
-
-    pub fn get_max(&self) -> f32 {
-        self.max
-    }
-
-    pub fn in_range(&self, noise_calculation: f32) -> bool {
-        noise_calculation >= self.min && noise_calculation <= self.max
-    }
-}
-
 pub struct BiomeOres {
     // held as block ID
     size: usize,
     ores: Vec<u32>,
     depth: Vec<LayerDepth>,
-    heat: Vec<HeatParams>,
+    heat: Vec<NoiseParams>,
     frequency: Vec<f32>,
 }
 
@@ -108,7 +85,7 @@ impl BiomeOres {
         }
     }
 
-    pub fn register_ore(&mut self, id: u32, depth: LayerDepth, heat: HeatParams, frequency: f32) {
+    pub fn register_ore(&mut self, id: u32, depth: LayerDepth, heat: NoiseParams, frequency: f32) {
         self.size += 1;
         self.ores.push(id);
         self.depth.push(depth);
@@ -120,7 +97,7 @@ impl BiomeOres {
         self.size
     }
 
-    pub fn get_ore(&self, index: usize) -> (&u32, &LayerDepth, &HeatParams, &f32) {
+    pub fn get_ore(&self, index: usize) -> (&u32, &LayerDepth, &NoiseParams, &f32) {
         (&self.ores[index], &self.depth[index], &self.heat[index], &self.frequency[index])
     }
 }
@@ -131,7 +108,7 @@ pub struct GenerationComponentSystem {
 
     id: Vec<u32>,
 
-    heat_params: Vec<HeatParams>,
+    biome_noise_params: Vec<NoiseParams>,
 
     game_mod: Vec<String>,
 
@@ -159,7 +136,7 @@ pub struct GenerationComponentSystem {
     caves: Vec<bool>,
 
     // minimum and maximum noise for a cave to be carved
-    cave_heat: Vec<NoiseParams>,
+    cave_noise_params: Vec<NoiseParams>,
 
     // defines if there is rain
     rain: Vec<bool>,
@@ -173,7 +150,7 @@ impl GenerationComponentSystem {
     pub fn new() -> Self {
         Self {
             id: Vec::new(),
-            heat_params: Vec::new(),
+            biome_noise_params: Vec::new(),
             game_mod: Vec::new(),
             name: Vec::new(),
             top_layer: Vec::new(),
@@ -186,7 +163,7 @@ impl GenerationComponentSystem {
             terrain_noise_multiplier: Vec::new(),
             terrain_frequency: Vec::new(),
             caves: Vec::new(),
-            cave_heat: Vec::new(),
+            cave_noise_params: Vec::new(),
             rain: Vec::new(),
             snow: Vec::new(),
         }
@@ -197,7 +174,7 @@ impl GenerationComponentSystem {
 
         name: String,
 
-        heat_params: HeatParams,
+        heat_params: NoiseParams,
 
         game_mod: String,
 
@@ -219,7 +196,7 @@ impl GenerationComponentSystem {
 
         caves: bool,
 
-        cave_heat: NoiseParams,
+        cave_noise_params: NoiseParams,
 
         rain: bool,
 
@@ -231,7 +208,7 @@ impl GenerationComponentSystem {
 
         self.id.push(self.id.len() as u32);
 
-        self.heat_params.push(heat_params);
+        self.biome_noise_params.push(heat_params);
 
         self.game_mod.push(game_mod);
 
@@ -255,7 +232,7 @@ impl GenerationComponentSystem {
 
         self.caves.push(caves);
 
-        self.cave_heat.push(cave_heat);
+        self.cave_noise_params.push(cave_noise_params);
 
         self.rain.push(rain);
 
@@ -263,30 +240,14 @@ impl GenerationComponentSystem {
     }
 
 
-    /*
-    id: Vec<u32>,
-    name: Vec<String>,
-    top_layer: Vec<u32>,
-    top_layer_depth: Vec<LayerDepth>,
-    bottom_layer: Vec<u32>,
-    bottom_layer_depth: Vec<LayerDepth>,
-    stone_layer: Vec<u32>,
-    terrain_noise_multiplier: Vec<u8>,
-    terrain_frequency: Vec<f32>,
-    caves: Vec<bool>,
-    cave_heat: Vec<NoiseParams>,
-    rain: Vec<bool>,
-    snow: Vec<bool>
-             */
-
     // this is debug
     // in production this will search by heatmap of 2D
     // this is also a mess
-    pub fn get(&self, id: usize) -> (&String, &HeatParams, u32, &LayerDepth, u32, &LayerDepth, u32, u32, &Option<BiomeOres>, u8, f32, bool, &NoiseParams, bool, bool) {
+    pub fn get(&self, id: usize) -> (&String, &NoiseParams, u32, &LayerDepth, u32, &LayerDepth, u32, u32, &Option<BiomeOres>, u8, f32, bool, &NoiseParams, bool, bool) {
         (
             &self.name[id],
 
-            &self.heat_params[id],
+            &self.biome_noise_params[id],
 
             self.top_layer[id],
             &self.top_layer_depth[id],
@@ -306,7 +267,7 @@ impl GenerationComponentSystem {
 
             self.caves[id],
 
-            &self.cave_heat[id],
+            &self.cave_noise_params[id],
 
             self.rain[id],
 
