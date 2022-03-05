@@ -106,6 +106,10 @@ local function check_biome_ores(mod, table_data)
         -- Make sure frequency exists and is correct.
         assert(data.frequency ~= nil, mod .. ":" .. table_data.name .. " IS MISSING frequency FOR ORE " .. name .. "!")
         assert(type(data.frequency) == "number", mod .. ":" .. table_data.name .. " HAS INCORRECT DATA FOR frequency FOR ORE " .. name .. "!")
+
+        -- Make sure scale exists and is correct.
+        assert(data.scale ~= nil, mod .. ":" .. table_data.name .. " IS MISSING scale FOR ORE" .. name .. "!")
+        assert(type(data.scale) == "number", mod .. ":" .. table_data.name .. " HAS INCORRECT DATA FOR scale FOR ORE " .. name .. "!")
     end
 end
 
