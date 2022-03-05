@@ -10,13 +10,10 @@ mod blocks;
 mod lua;
 mod biomes;
 
-
-use bracket_noise::prelude::{FastNoise, NoiseType, Interp};
 use glfw::*;
 
 use graphics::window_controls::toggle_full_screen;
 use mlua::Lua;
-use rand::prelude::ThreadRng;
 
 use std::{
     sync::mpsc::Receiver
@@ -59,8 +56,9 @@ use crate::{
     },
         helper::helper_functions::get_path_string, biomes::{biome_generator::gen_biome, generation_component_system::GenerationComponentSystem},
 
-    
 };
+
+pub const SEED: u64 = 123213123;
 
 fn main() {
 
@@ -76,20 +74,6 @@ fn main() {
 
     // testing of 3D camera
     window.set_cursor_mode(glfw::CursorMode::Disabled);
-
-    const SEED: u64 = 123213123;
-
-    // noise structure
-    let mut simplex_noise: FastNoise = FastNoise::new();
-    simplex_noise.set_noise_type(NoiseType::Simplex);
-    simplex_noise.set_seed(SEED);
-    simplex_noise.set_interp(Interp::Linear);
-
-    let mut fractal_noise: FastNoise = FastNoise::new();
-    fractal_noise.set_noise_type(NoiseType::SimplexFractal);
-    fractal_noise.set_seed(SEED);
-    fractal_noise.set_interp(Interp::Linear);
-    
 
     // let mut thread_rng: ThreadRng = rand::thread_rng();
 
@@ -193,9 +177,7 @@ fn main() {
                 &gcs,
                 world.get_chunk_blocks_mut(debug_x, debug_z).unwrap(),
                 debug_x,
-                debug_z,
-                &mut simplex_noise,
-                &mut fractal_noise
+                debug_z
             );
 
             // world.add(generated_chunk);
