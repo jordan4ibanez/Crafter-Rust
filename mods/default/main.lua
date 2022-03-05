@@ -69,11 +69,11 @@ crafter.register_biome({
         -- Multiplies the output of the noise value. 2.0 means -2.0 to 2.0 for your heat values.
         scale = 1.0,
         -- How often the terrain fluctuates.
-        frequency = 0.05,
+        frequency = 0.02554,
     },
 
     -- How high or low the terrain can fluctuate.
-    terrain_height_flux = 20;
+    terrain_height_flux = 10;
 
 
     top_layer = "grass",
