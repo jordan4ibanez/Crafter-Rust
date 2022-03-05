@@ -28,57 +28,40 @@ local function check_layers(mod, table_data)
     assert(table_data.bedrock_layer ~= nil and type(table_data.bedrock_layer) == "string", "BIOME " .. mod .. ":" .. table_data.name .. " NEEDS BEDROCK LAYER DEFINED!")
 end
 
-local function automate_and_check_biome_parameters(mod, table_data)
+
+local function check_params(mod, biome_name, params_name, params_table)
     
-    -- Force biome heat.
-    assert(table_data.biome_heat ~= nil, mod .. ":" .. table_data.name .. " NEEDS A biome_heat DEFINITION!")
-    assert(type(table_data.biome_heat) == "table", mod .. ":" .. table_data.name .. " NEEDS A 2 ELEMENT TABLE AS biome_heat!")
-    assert(#table_data.biome_heat == 2, mod .. ":" .. table_data.name .. " NEEDS 2 ELEMENTS AS biome_heat!")
-
-    for i = 1,2 do
-        assert(type(table_data.biome_heat[i]) == "number", mod .. ":" .. table_data.name .. " HAS INVALID DATA IN biome_heat IN ELEMENT " .. i .. "!")
+    local number_of_elements = 0
+    for _,_ in pairs(params_table) do
+        number_of_elements = number_of_elements + 1
     end
+    
 
+    assert(number_of_elements == 4, mod .. ":" .. biome_name .. " HAS INCORRECT AMOUNT OF VALUES IN " .. params_name .. "!")
+
+    for name,value in pairs(params_table) do
+        assert(type(value) == "number", mod .. ":" .. biome_name .. " HAS INCORRECT DATA IN " .. params_name .. " IN INDEX " .. name .. "!")
+    end
+end
+
+local function automate_and_check_biome_parameters(mod, table_data)
 
     -- Default to 30 if forgotten.
-    if table_data.terrain_noise_multiplier == nil then
-        table_data.terrain_noise_multiplier = 30
+    if table_data.terrain_height_flux == nil then
+        table_data.terrain_height_flux = 30
     end
 
     -- Can only be number.
-    assert(type(table_data.terrain_noise_multiplier) == "number", "BIOME " .. mod .. ":" .. table_data.name .. " NEEDS A NUMBER AS terrain_noise_multiplier!")
+    assert(type(table_data.terrain_height_flux) == "number", "BIOME " .. mod .. ":" .. table_data.name .. " NEEDS A NUMBER AS terrain_noise_multiplier!")
 
-    -- Default to 0.005 if forgotten.
-    if table_data.terrain_frequency == nil then
-        table_data.terrain_frequency = 0.005
-    end
-
-    assert(type(table_data.terrain_frequency) == "number", "BIOME " .. mod .. ":" .. table_data.name .. " NEEDS A NUMBER AS terrain_frequency!")
-    
-    -- Default to true.
-    if table_data.caves == nil then
-        table_data.caves = true
-    end
-
-    assert(type(table_data.caves) == "boolean", "BIOME " .. mod .. ":" .. table_data.name .. " NEEDS A BOOLEAN AS caves!")
-
+    -- Check biome parameters.
+    -- print(dump(table_data.biome_noise_params))
+    check_params(mod, table_data.name, "biome_noise_params", table_data.biome_noise_params)
 
     -- Check cave parameters.
-    
-    -- Default to 0.05 min, 0.30 max
-    if table_data.cave_heat == nil then
-        table_data.cave_heat = {0.05, 0.30}
-    end
-
-    assert(type(table_data.cave_heat) == "table", "BIOME " .. mod .. ":" .. table_data.name .. " NEEDS A TABLE AS cave_heat!")
-
-    -- Check type
-    for i = 1,2 do
-        assert(type(table_data.cave_heat[i]) == "number", "BIOME " .. mod .. ":" .. table_data.name .. " HAS INVALID DATA IN INDEX " .. i .. " OF cave_heat!")
-    end
+    check_params(mod, table_data.name, "cave_noise_params", table_data.cave_noise_params)
 
     -- Automate weather.
-
     if table_data.rain == nil then
         table_data.rain = false
     end
@@ -123,9 +106,7 @@ local function check_biome_ores(mod, table_data)
         -- Make sure frequency exists and is correct.
         assert(data.frequency ~= nil, mod .. ":" .. table_data.name .. " IS MISSING frequency FOR ORE " .. name .. "!")
         assert(type(data.frequency) == "number", mod .. ":" .. table_data.name .. " HAS INCORRECT DATA FOR frequency FOR ORE " .. name .. "!")
-
     end
-
 end
 
 
@@ -144,10 +125,6 @@ crafter.register_biome = function(table_data)
 
     -- Check and automate biome parameters.
     automate_and_check_biome_parameters(mod, table_data)
-
-    -- Check cave generation frequency parameters.
-    assert(table_data.cave_frequency ~= nil, mod .. ":" .. table_data.name .. " IS MISSING cave_frequency!")
-    assert(type(table_data.cave_frequency) == "number", mod .. ":" .. table_data.name .. " HAS INCORRECT DATA FOR cave_frequency! NEEDS A NUMBER!")
 
     -- Check biome ore definition is correct.
     check_biome_ores(mod, table_data)
