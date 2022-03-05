@@ -111,7 +111,7 @@ crafter.register_biome({
         -- Multiplies the output noise value.
         scale = 2.0,
         -- How often cave carving fluctuates.
-        cave_frequency = 0.06,
+        frequency = 0.06,
     },
 
     -- Defines if there is rain.
