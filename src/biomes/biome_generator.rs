@@ -180,9 +180,7 @@ pub fn gen_biome(
                     let y_u32: u32 = y as u32;
 
                     // set to 0 for debugging
-                    if *value == stone_layer &&
-
-                        y_u32 >= min_depth as u32 && y_u32 <= max_depth as u32 {
+                    if *value == stone_layer && y_u32 >= min_depth as u32 && y_u32 <= max_depth as u32 {
 
                             let ore_noise: f64 = gen_3d(&noise, x, y, z, frequency as f64, scale as f64);
 
