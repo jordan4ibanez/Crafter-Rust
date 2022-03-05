@@ -26,7 +26,7 @@ use crate::{
     helper::helper_functions::with_path,
     lua::lua_texture_atlas_calculation::{
         calculate_atlas_location_normal
-    }, biomes::generation_component_system::{LayerDepth, NoiseParams, GenerationComponentSystem, BiomeOres, HeatParams}
+    }, biomes::generation_component_system::{LayerDepth, NoiseParams, GenerationComponentSystem, BiomeOres}
 };
 
 
@@ -386,10 +386,11 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
 
         let cave_heat_table: Table = biome_table.get("cave_heat").unwrap();
 
-        let cave_heat: NoiseParams = NoiseParams::new(
-            cave_heat_table.get::<u8, f32>(1).unwrap(),
-            cave_heat_table.get::<u8, f32>(2).unwrap(),
-            biome_table.get("cave_frequency").unwrap()
+        let cave_noise_params: NoiseParams = NoiseParams::new(
+            cave_heat_table.get("heat_min").unwrap(),
+            cave_heat_table.get("heat_max").unwrap(),
+            cave_heat_table.get("scale").unwrap(),
+            cave_heat_table.get("frequency").unwrap()
         );
 
         let rain: bool = biome_table.get("rain").unwrap();
@@ -419,9 +420,11 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
 
                     let heat_table: Table = ore_lua_table.get("heat").unwrap();
 
-                    let heat: HeatParams = HeatParams::new(
+                    let heat: NoiseParams = NoiseParams::new(
                         heat_table.get(1).unwrap(),
                         heat_table.get(2).unwrap(),
+                        0.0,
+                        0.0
                     );
 
                     let frequency: f32 = ore_lua_table.get("frequency").unwrap();
@@ -438,19 +441,22 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
             Err(_) => biome_ores_option = None,
         }
 
-        // getting biome heat parameters
-        let lua_biome_heat_params: Table = biome_table.get("biome_heat").unwrap();
+        // getting biome noise parameters
+        let lua_biome_heat_params: Table = biome_table.get("biome_noise_params").unwrap();
 
-        let biome_heat_params: HeatParams = HeatParams::new(
-            lua_biome_heat_params.get(1).unwrap(),
-            lua_biome_heat_params.get(2).unwrap()
+        let biome_noise_params: NoiseParams = NoiseParams::new(
+            lua_biome_heat_params.get("heat_min").unwrap(),
+            lua_biome_heat_params.get("heat_max").unwrap(),
+            lua_biome_heat_params.get("scale").unwrap(),
+            lua_biome_heat_params.get("frequency").unwrap()
         );
 
 
 
         gcs.register_biome(
             biome_name,
-            biome_heat_params,
+            biome_noise_params,
+            terrain_height_flux,
             game_mod,
             bcs.get_id_of(top_layer),
             top_layer_depth,
@@ -459,10 +465,8 @@ pub fn intake_api_values(lua: &Lua, gcs: &mut GenerationComponentSystem, mcs: &m
             bcs.get_id_of(stone_layer),
             bcs.get_id_of(bedrock_layer),
             biome_ores_option,
-            terrain_height_flux,
-            terrain_frequency,
             caves,
-            cave_heat,
+            cave_noise_params,
             rain,
             snow
         );
