@@ -91,11 +91,13 @@ crafter.register_biome({
             depth = {2, 100},
             heat = {0.61, 0.66},
             frequency = 0.038,
+            scale = 1.0
         },
         iron_ore = {
             depth = {2,100},
             heat = {0.66, 0.71},
             frequency = 0.039,
+            scale = 1.0
         }
     },
 
