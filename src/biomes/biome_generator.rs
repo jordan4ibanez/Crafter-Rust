@@ -12,7 +12,7 @@ fn index_to_pos ( i: usize ) -> (f64,f64,f64) {
 }
 
 fn calculate_y_height(noise_input: f64, base_height: f64, terrain_height_flux: f64) -> u32 {
-    (noise_input * terrain_height_flux) as u32 + base_height as u32
+    ((noise_input * terrain_height_flux) as i32 + base_height as i32) as u32
 }
 
 fn calculate_depth(
@@ -20,7 +20,7 @@ fn calculate_depth(
     min: u8,
     max: u8
 ) -> u32 {
-    ((noise_input.abs() *
+    ((noise_input *
     (max - min) as f64)
     + min as f64)
     .floor()
@@ -41,8 +41,6 @@ pub fn gen_biome(
     block_data: &mut Vec<u32>,
     pos_x: i32,
     pos_z: i32,
-    // simplex_noise: &mut FastNoise,
-    // fractal_noise: &mut FastNoise
 ) {
 
     // this is debug
@@ -78,35 +76,28 @@ pub fn gen_biome(
 
     let (cave_heat_min, cave_heat_max, cave_scale, cave_frequency) = cave_noise_params.get();
 
+    // noise structure
     let noise = OpenSimplexNoise::new(Some(SEED as i64));
 
     // generate unmodified terrain
     block_data.par_iter_mut().enumerate().for_each(| (index, value) | {
 
-        // noise structure
-        
         let (mut x, y, mut z) = index_to_pos(index);
+
         x += pos_x as f64 * 16.0;
-        z += pos_z as f64 * 16.0;
-
-        // println!("NOISE: {:?}", perlin.get([x,y,z]));
-
-        
+        z += pos_z as f64 * 16.0;        
 
         let y_u32: u32 = y as u32;
 
-        // println!("Noise: {}", &perlin.get([x * pos_x as f64, z * pos_z as f64]));
+        let terrain_2d_noise = gen_2d(&noise, x, z, biome_frequency as f64, biome_scale as f64);
+        let terrain_3d_noise = gen_3d(&noise, x, y, z, biome_frequency as f64, biome_scale as f64);
 
-        // todo: replace scale 1.0 with terrain scale
-        let terrain_2d_noise = gen_2d(&noise, x, z, biome_frequency as f64, 1.0);
-        let terrain_3d_noise = gen_3d(&noise, x, y, z, biome_frequency as f64, 1.0);
-
-        let cave_2d_noise = gen_2d(&noise, x, z, cave_frequency as f64, cave_scale as f64);
         let cave_3d_noise = gen_3d(&noise, x, y, z, cave_frequency as f64, cave_scale as f64);
                 
         let y_height = calculate_y_height(terrain_2d_noise, base_height, terrain_height_flux as f64);
+
+        let bedrock_3d_noise = gen_3d(&noise, x, y, z, 1.5, 0.2);
         
-        // println!("Y HEIGHT IS: {}, 2d noise is: {}", y_height, noise_2d);
 
         let top_layer_depth_random = calculate_depth(
             terrain_2d_noise,
@@ -132,7 +123,7 @@ pub fn gen_biome(
 
                 } else {
 
-                    if terrain_3d_noise > 0.0 {
+                    if bedrock_3d_noise > 0.0 {
                         bedrock = true;
                     }
 
