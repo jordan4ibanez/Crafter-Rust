@@ -157,42 +157,42 @@ pub fn gen_biome(
         }
     });
 
-    /*
+
     // generate ores
     match biome_ores_option {
         Some(biome_ores) => {
 
             for ore_id in 0..biome_ores.get_size() {
 
-                let (block_id, depth, heat, frequency) = biome_ores.get_ore(ore_id);
-
-                fractal_noise.set_frequency(*frequency);
-                fractal_noise.set_fractal_octaves(2);
-                fractal_noise.set_fractal_type(FractalType::Billow);
+                let (block_id, depth, heat, frequency, scale) = biome_ores.get_ore(ore_id);
 
                 let (min_depth, max_depth) = depth.get();
 
-                let (heat_min, heat_max) = heat.get();
+                let (heat_min, heat_max, _, _) = heat.get();
 
-                for i in 0..32768 {
+                block_data.par_iter_mut().enumerate().for_each(| (index, value) | {
                     
-                    let (x,y,z) = index_to_pos(i);
+                    let (mut x,y,mut z) = index_to_pos(index);
+
+                    x += pos_x as f64 * 16.0;
+                    z += pos_z as f64 * 16.0; 
 
                     let y_u32: u32 = y as u32;
 
                     // set to 0 for debugging
-                    if block_data[i] == stone_layer &&
-                        y_u32 >= min_depth as u32 && y_u32 <= max_depth as u32 {
-                            let noise_calculation: f32 = calculate_noise(x, y, z, pos_x as f64, pos_z as f64, &fractal_noise);
+                    if *value == stone_layer &&
 
-                            if noise_calculation >= heat_min && noise_calculation <= heat_max {
-                                block_data[i] = *block_id;
+                        y_u32 >= min_depth as u32 && y_u32 <= max_depth as u32 {
+
+                            let ore_noise: f64 = gen_3d(&noise, x, y, z, frequency as f64, scale as f64);
+
+                            if ore_noise >= heat_min as f64 && ore_noise <= heat_max as f64 {
+                                *value = block_id;
                             }
-                        }
                     }
-                }
+                })
             }
+        },
         None => (),
     };
-    */
 }
