@@ -11,8 +11,8 @@ fn index_to_pos ( i: usize ) -> (f64,f64,f64) {
     ((i / 2048) as f64, ((i % 2048) % 128) as f64, ((i % 2048) / 128) as f64)
 }
 
-fn calculate_y_height(noise_input: f64, base_height: f64, noise_multiplier: f64) -> u32 {
-    (noise_input * noise_multiplier) as u32 + base_height as u32
+fn calculate_y_height(noise_input: f64, base_height: f64, terrain_height_flux: f64) -> u32 {
+    (noise_input * terrain_height_flux) as u32 + base_height as u32
 }
 
 fn calculate_depth(
@@ -48,7 +48,8 @@ pub fn gen_biome(
     // this is debug
     let (
         _,
-        biome_heat_params,
+        biome_noise_params,
+        terrain_height_flux,
         top_layer,
         top_layer_depth,
         bottom_layer,
@@ -56,10 +57,8 @@ pub fn gen_biome(
         stone_layer,
         bedrock_layer,
         biome_ores_option,
-        terrain_noise_multiplier,
-        terrain_frequency,
         caves,
-        cave_heat,
+        cave_noise_params,
         rain,
         snow
     ) = gcs.get(0);
@@ -74,46 +73,10 @@ pub fn gen_biome(
     // the amount of fluctuation the blocks can have from base height
     //let noise_multiplier = 50.0;
 
-    
-    /*
-    let mut y_height: u32 = calculate_y_height(
-        0.0, 
-        0.0, 
-        pos_x as f64, 
-        pos_z as f64,
-        simplex_noise,
-        base_height,
-        terrain_noise_multiplier as f64
-    );
 
-    let mut top_layer_depth_random: u32 = calculate_depth(
-        0.0, 
-        0.0, 
-        pos_x as f64, 
-        pos_z as f64,
-        simplex_noise, 
-        top_layer_depth.get_min(),
-        top_layer_depth.get_max() + 1
-    );
-    
+    let (biome_heat_min, biome_heat_max, biome_scale, biome_frequency) = biome_noise_params.get();
 
-    let mut bottom_layer_depth_random: u32 = calculate_depth(
-        0.0, 
-        0.0, 
-        pos_x as f64, 
-        pos_z as f64,
-        simplex_noise, 
-        bottom_layer_depth.get_min(),
-        bottom_layer_depth.get_max() + 1
-    );
-
-    fractal_noise.set_frequency(cave_frequency);
-    fractal_noise.set_fractal_octaves(3);
-    fractal_noise.set_fractal_type(FractalType::Billow);
-
-    */
-
-    let (cave_min_heat, cave_max_heat, cave_frequency) = cave_heat.get();
+    let (cave_heat_min, cave_heat_max, cave_scale, cave_frequency) = cave_noise_params.get();
 
     let noise = OpenSimplexNoise::new(Some(SEED as i64));
 
@@ -135,13 +98,13 @@ pub fn gen_biome(
         // println!("Noise: {}", &perlin.get([x * pos_x as f64, z * pos_z as f64]));
 
         // todo: replace scale 1.0 with terrain scale
-        let terrain_2d_noise = gen_2d(&noise, x, z, terrain_frequency as f64, 1.0);
-        let terrain_3d_noise = gen_3d(&noise, x, y, z, terrain_frequency as f64, 1.0);
+        let terrain_2d_noise = gen_2d(&noise, x, z, biome_frequency as f64, 1.0);
+        let terrain_3d_noise = gen_3d(&noise, x, y, z, biome_frequency as f64, 1.0);
 
-        let cave_2d_noise = gen_2d(&noise, x, z, cave_frequency as f64, 1.0);
-        let cave_3d_noise = gen_3d(&noise, x, y, z, cave_frequency as f64, 2.0);
+        let cave_2d_noise = gen_2d(&noise, x, z, cave_frequency as f64, cave_scale as f64);
+        let cave_3d_noise = gen_3d(&noise, x, y, z, cave_frequency as f64, cave_scale as f64);
                 
-        let y_height = calculate_y_height(terrain_2d_noise, base_height, terrain_noise_multiplier as f64);
+        let y_height = calculate_y_height(terrain_2d_noise, base_height, terrain_height_flux as f64);
         
         // println!("Y HEIGHT IS: {}, 2d noise is: {}", y_height, noise_2d);
 
@@ -183,7 +146,7 @@ pub fn gen_biome(
 
             } else {
 
-                if caves && (cave_3d_noise >= cave_min_heat as f64 && cave_3d_noise <= cave_max_heat as f64) {
+                if caves && (cave_3d_noise >= cave_heat_min as f64 && cave_3d_noise <= cave_heat_max as f64) {
                     *value = 0;
                 } else {
                     // top layer
