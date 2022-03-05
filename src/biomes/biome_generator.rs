@@ -1,68 +1,39 @@
 
-use bracket_noise::prelude::{FastNoise, FractalType};
+use opensimplex_noise_rs::OpenSimplexNoise;
+use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator, IndexedParallelIterator};
 
-use crate::blocks::block_component_system::BlockComponentSystem;
+use crate::SEED;
 
 use super::generation_component_system::GenerationComponentSystem;
 
 // Convertes u16 1D position into (u8,u8,u8) 3D tuple position
 fn index_to_pos ( i: usize ) -> (f64,f64,f64) {
-    ((i / 2048) as f64,
-    ((i % 2048) % 128) as f64,
-    ((i % 2048) / 128) as f64)
+    ((i / 2048) as f64, ((i % 2048) % 128) as f64, ((i % 2048) / 128) as f64)
 }
 
-fn calculate_y_height(
-    pos_x: f64,
-    pos_z: f64,
-    chunk_pos_x: f64,
-    chunk_pos_z: f64,
-    noise: &FastNoise, 
-    base_height: f64,
-    noise_multiplier: f64,
-) -> u32 {
-
-    (base_height + (
-        noise.get_noise(
-            (pos_x + (chunk_pos_x * 16.0)) as f32,
-            (pos_z + (chunk_pos_z * 16.0)) as f32)
-             * noise_multiplier as f32
-        ) as f64
-    ) as u32
+fn calculate_y_height(noise_input: f64, base_height: f64, noise_multiplier: f64) -> u32 {
+    (noise_input * noise_multiplier) as u32 + base_height as u32
 }
 
 fn calculate_depth(
-    pos_x: f64,
-    pos_z: f64,
-    chunk_pos_x: f64,
-    chunk_pos_z: f64,
-    noise: &FastNoise, 
+    noise_input: f64,
     min: u8,
     max: u8
-) -> u32{
-
-    ((noise.get_noise(
-        (pos_x + (chunk_pos_x * 16.0)) as f32,
-        (pos_z + (chunk_pos_z * 16.0)) as f32
-    ).abs() * (max - min) as f32) + min as f32).floor() as u32
+) -> u32 {
+    ((noise_input.abs() *
+    (max - min) as f64)
+    + min as f64)
+    .floor()
+    as u32
 }
 
-fn calculate_noise(
-    pos_x: f64,
-    pos_y: f64,
-    pos_z: f64,
-    chunk_pos_x: f64,
-    chunk_pos_z: f64,
-    noise: &FastNoise, 
-) -> f32{
-    noise.get_noise3d(
-        (pos_x + (chunk_pos_x * 16.0)) as f32,
-        pos_y as f32,
-        (pos_z + (chunk_pos_z * 16.0)) as f32
-    )
+fn gen_3d(noise: &OpenSimplexNoise, x: f64, y: f64, z: f64, frequency: f64, scale: f64) -> f64 {
+    noise.eval_3d(x * frequency, y * frequency, z * frequency) * scale
 }
 
-
+fn gen_2d(noise: &OpenSimplexNoise, x: f64, z: f64, frequency: f64, scale: f64) -> f64 {
+    noise.eval_2d(x * frequency, z * frequency) * scale
+}
 
 
 pub fn gen_biome(
@@ -70,8 +41,8 @@ pub fn gen_biome(
     block_data: &mut Vec<u32>,
     pos_x: i32,
     pos_z: i32,
-    simplex_noise: &mut FastNoise,
-    fractal_noise: &mut FastNoise
+    // simplex_noise: &mut FastNoise,
+    // fractal_noise: &mut FastNoise
 ) {
 
     // this is debug
@@ -92,8 +63,10 @@ pub fn gen_biome(
         rain,
         snow
     ) = gcs.get(0);
+    
+    // let simplex_noise: &mut FastNoise = &mut *simplex_noise;
 
-    simplex_noise.set_frequency(terrain_frequency);
+    // simplex_noise.set_frequency(terrain_frequency);
 
     // the base height - if noise is always 0 the blocks will always generate to 0
     let base_height = 90.0;
@@ -102,6 +75,7 @@ pub fn gen_biome(
     //let noise_multiplier = 50.0;
 
     
+    /*
     let mut y_height: u32 = calculate_y_height(
         0.0, 
         0.0, 
@@ -133,44 +107,55 @@ pub fn gen_biome(
         bottom_layer_depth.get_max() + 1
     );
 
-    let (cave_min_heat, cave_max_heat, cave_frequency) = cave_heat.get();
-
     fractal_noise.set_frequency(cave_frequency);
     fractal_noise.set_fractal_octaves(3);
     fractal_noise.set_fractal_type(FractalType::Billow);
 
+    */
+
+    let (cave_min_heat, cave_max_heat, cave_frequency) = cave_heat.get();
+
+    let noise = OpenSimplexNoise::new(Some(SEED as i64));
 
     // generate unmodified terrain
-    for i in 0..32768 {
+    block_data.par_iter_mut().enumerate().for_each(| (index, value) | {
+
+        // noise structure
         
-        let (x,y,z) = index_to_pos(i);
+        let (mut x, y, mut z) = index_to_pos(index);
+        x += pos_x as f64 * 16.0;
+        z += pos_z as f64 * 16.0;
+
+        // println!("NOISE: {:?}", perlin.get([x,y,z]));
 
         
+
         let y_u32: u32 = y as u32;
 
-        if y_u32 == 0 {
-            y_height = calculate_y_height(x, z, pos_x as f64, pos_z as f64, simplex_noise, base_height, terrain_noise_multiplier as f64);
+        // println!("Noise: {}", &perlin.get([x * pos_x as f64, z * pos_z as f64]));
 
-            top_layer_depth_random = calculate_depth(
-                x, 
-                z, 
-                pos_x as f64, 
-                pos_z as f64,
-                simplex_noise, 
-                top_layer_depth.get_min(),
-                top_layer_depth.get_max() + 1
-            );
+        // todo: replace scale 1.0 with terrain scale
+        let terrain_2d_noise = gen_2d(&noise, x, z, terrain_frequency as f64, 1.0);
+        let terrain_3d_noise = gen_3d(&noise, x, y, z, terrain_frequency as f64, 1.0);
 
-            bottom_layer_depth_random = calculate_depth(
-                x, 
-                z,
-                pos_x as f64, 
-                pos_z as f64,
-                simplex_noise, 
-                bottom_layer_depth.get_min(),
-                bottom_layer_depth.get_max() + 1
-            );
-        }
+        let cave_2d_noise = gen_2d(&noise, x, z, cave_frequency as f64, 1.0);
+        let cave_3d_noise = gen_3d(&noise, x, y, z, cave_frequency as f64, 2.0);
+                
+        let y_height = calculate_y_height(terrain_2d_noise, base_height, terrain_noise_multiplier as f64);
+        
+        // println!("Y HEIGHT IS: {}, 2d noise is: {}", y_height, noise_2d);
+
+        let top_layer_depth_random = calculate_depth(
+            terrain_2d_noise,
+            top_layer_depth.get_min(),
+            top_layer_depth.get_max() + 1
+        );
+
+        let bottom_layer_depth_random = calculate_depth(
+            terrain_2d_noise,
+            bottom_layer_depth.get_min(),
+            bottom_layer_depth.get_max() + 1
+        );
 
         // only calculate when inside possible parameter
         if y_u32 <= y_height {
@@ -179,54 +164,46 @@ pub fn gen_biome(
 
             if y_u32 <= 2 {
                 if y_u32 == 0 {
+
                     bedrock = true;
+
                 } else {
 
-                    simplex_noise.set_frequency(1.0);
-
-                    let bedrock_noise_calculation: f32 = calculate_noise(x, y, z, pos_x as f64, pos_z as f64, simplex_noise);
-                    
-                    if bedrock_noise_calculation > 0.0 {
+                    if terrain_3d_noise > 0.0 {
                         bedrock = true;
                     }
 
-                    simplex_noise.set_frequency(terrain_frequency);
+                    //simplex_noise.set_frequency(terrain_frequency);
                 }
             }
 
             if bedrock {
 
-                block_data[i] = bedrock_layer;
+                *value = bedrock_layer;
 
             } else {
 
-                let mut cave_noise_calculation: f32 = 0.0;
-
-                if caves {
-                    cave_noise_calculation = calculate_noise(x, y, z, pos_x as f64, pos_z as f64, fractal_noise);
-                }
-
-                if caves && (cave_noise_calculation <= cave_min_heat || cave_noise_calculation >= cave_max_heat) {
-                    block_data[i] = 0;
+                if caves && (cave_3d_noise >= cave_min_heat as f64 && cave_3d_noise <= cave_max_heat as f64) {
+                    *value = 0;
                 } else {
                     // top layer
                     if y_u32 >= y_height - top_layer_depth_random {
-                        block_data[i] = top_layer;
+                        *value = top_layer;
                     }
                     // bottom layer
                     else if y_u32 < y_height - top_layer_depth_random &&  y_u32 >= y_height - top_layer_depth_random - bottom_layer_depth_random {
-                        block_data[i] = bottom_layer;
+                        *value = bottom_layer;
                     }
                     // stone layer
                     else if y_u32 < y_height - top_layer_depth_random - bottom_layer_depth_random {
-                        block_data[i] = stone_layer;
+                        *value = stone_layer;
                     }
                 }
             }
         }
-    }
+    });
 
-
+    /*
     // generate ores
     match biome_ores_option {
         Some(biome_ores) => {
@@ -262,5 +239,6 @@ pub fn gen_biome(
                 }
             }
         None => (),
-    };    
+    };
+    */
 }
