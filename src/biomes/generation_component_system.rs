@@ -110,6 +110,9 @@ pub struct GenerationComponentSystem {
 
     biome_noise_params: Vec<NoiseParams>,
 
+    // how high or low the terrain can fluctuate
+    terrain_height_flux: Vec<u8>,
+
     game_mod: Vec<String>,
 
     name: Vec<String>,
@@ -125,12 +128,6 @@ pub struct GenerationComponentSystem {
     bedrock_layer: Vec<u32>,
 
     biome_ores: Vec<Option<BiomeOres>>,
-
-    // how high or low the terrain can fluctuate
-    terrain_noise_multiplier: Vec<u8>,
-
-    // how often the terrain fluctuates
-    terrain_frequency: Vec<f32>,
 
     // defines if there is cave generation
     caves: Vec<bool>,
@@ -151,6 +148,7 @@ impl GenerationComponentSystem {
         Self {
             id: Vec::new(),
             biome_noise_params: Vec::new(),
+            terrain_height_flux: Vec::new(),
             game_mod: Vec::new(),
             name: Vec::new(),
             top_layer: Vec::new(),
@@ -160,8 +158,6 @@ impl GenerationComponentSystem {
             stone_layer: Vec::new(),
             bedrock_layer: Vec::new(),
             biome_ores: Vec::new(),
-            terrain_noise_multiplier: Vec::new(),
-            terrain_frequency: Vec::new(),
             caves: Vec::new(),
             cave_noise_params: Vec::new(),
             rain: Vec::new(),
@@ -174,7 +170,9 @@ impl GenerationComponentSystem {
 
         name: String,
 
-        heat_params: NoiseParams,
+        biome_noise_params: NoiseParams,
+
+        terrain_height_flux: u8,
 
         game_mod: String,
 
@@ -190,10 +188,6 @@ impl GenerationComponentSystem {
 
         biome_ores: Option<BiomeOres>,
 
-        terrain_noise_multiplier: u8,
-
-        terrain_frequency: f32,
-
         caves: bool,
 
         cave_noise_params: NoiseParams,
@@ -208,7 +202,9 @@ impl GenerationComponentSystem {
 
         self.id.push(self.id.len() as u32);
 
-        self.biome_noise_params.push(heat_params);
+        self.biome_noise_params.push(biome_noise_params);
+
+        self.terrain_height_flux.push(terrain_height_flux);
 
         self.game_mod.push(game_mod);
 
@@ -226,9 +222,6 @@ impl GenerationComponentSystem {
 
         self.biome_ores.push(biome_ores);
 
-        self.terrain_noise_multiplier.push(terrain_noise_multiplier);
-
-        self.terrain_frequency.push(terrain_frequency);
 
         self.caves.push(caves);
 
@@ -243,11 +236,13 @@ impl GenerationComponentSystem {
     // this is debug
     // in production this will search by heatmap of 2D
     // this is also a mess
-    pub fn get(&self, id: usize) -> (&String, &NoiseParams, u32, &LayerDepth, u32, &LayerDepth, u32, u32, &Option<BiomeOres>, u8, f32, bool, &NoiseParams, bool, bool) {
+    pub fn get(&self, id: usize) -> (&String, &NoiseParams, u8, u32, &LayerDepth, u32, &LayerDepth, u32, u32, &Option<BiomeOres>, bool, &NoiseParams, bool, bool) {
         (
             &self.name[id],
 
             &self.biome_noise_params[id],
+
+            self.terrain_height_flux[id],
 
             self.top_layer[id],
             &self.top_layer_depth[id],
@@ -260,10 +255,6 @@ impl GenerationComponentSystem {
             self.bedrock_layer[id],
 
             &self.biome_ores[id],
-
-            self.terrain_noise_multiplier[id],
-
-            self.terrain_frequency[id],
 
             self.caves[id],
 
