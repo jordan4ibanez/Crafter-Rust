@@ -1,3 +1,5 @@
+use std::borrow::Borrow;
+
 use crate::{
     chunk_mesh_procedure::chunk_mesh_boilerplate::dry_run,
     world::{
@@ -60,28 +62,16 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
     let neighbor_plus_z_option: Option<&Vec<u32>> = world.get_chunk_blocks(pos_x ,pos_z + 1);
     let neighbor_minus_z_option: Option<&Vec<u32>> = world.get_chunk_blocks(pos_x, pos_z - 1);
 
-    
-    /*
-    match neighbor_minus_x_option {
-        Some(_) => println!("YES NEIGHBOR DOES EXIST"),
-        None => println!("NO NEIGHBOR DOES NOT EXIST"),
-    }
-    
-    match neighbor_plus_x_option {
-        Some(_) => println!("YES NEIGHBOR DOES EXIST"),
-        None => println!("NO NEIGHBOR DOES NOT EXIST"),
-    }
-    */
-
 
     // slight performance loss at the expense of readibility
 
-    for i in 0..32768 {
 
-        let (x,y,z) = index_to_pos(i);        
+    chunk.iter().enumerate().for_each(|(index, value)| {
+
+        let (x,y,z) = index_to_pos(index);        
 
         // if it does not equal air
-        if chunk[i] != 0 {
+        if *value != 0 {
             
             // internal
             if x + 1 <= 15 && chunk[pos_to_index(x + 1, y, z)] == 0 {
@@ -151,7 +141,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
                 }
             }
         }
-    }
+    });
     
     // end dry run
 
@@ -174,14 +164,14 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
     // this part is EXTREMELY important, this allows all the vertex points to link together
     let mut face_count: usize = 0;
 
-    for i in 0..32768 {
+    chunk.iter().enumerate().for_each(|(index, value)| {
 
-        let (x,y,z) = index_to_pos(i);
+        let (x,y,z) = index_to_pos(index);
 
-        let block_id: u32 = chunk[pos_to_index(x, y, z)];
+        // let block_id: u32 = chunk[pos_to_index(x, y, z)];
 
         // if it does not equal air
-        if block_id != 0 {
+        if *value != 0 {
 
             let light = 16.0/16.0;
             
@@ -240,7 +230,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
 
             if x_plus || x_minus || y_plus || y_minus || z_plus || z_minus {
                 add_block(
-                    bcs.get_mapping(block_id),
+                    bcs.get_mapping(*value),
                     &mut float_data,
                     &mut indices_data,
 
@@ -262,7 +252,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
                 );
             }
         }
-    }
+    });
 
     let returning_mesh: u32 = mcs.new_mesh(float_data, indices_data, texture_id);
 
