@@ -8,6 +8,14 @@ Blocks. That is all.
 
 Discord: https://discord.gg/PPUQHEKvJr
 
+# Dependencies
+---
+### Windows 10/11
+---
+[You need the visual studio installer.](https://docs.microsoft.com/en-us/visualstudio/install/install-visual-studio?view=vs-2022)
+You must install desktop development with c++.
+
+
 ---
 ### If you would like to replicate the **exact** setup I am using to program this:
 ---
