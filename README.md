@@ -17,6 +17,16 @@ You must install desktop development with c++.
 
 
 ---
+### Ubuntu/Mint/Etc
+
+You will need to install the following libraries:
+
+```
+sudo apt install build-essential cmake libglfw3-dev xorg-dev 
+```
+
+---
+---
 ### If you would like to replicate the **exact** setup I am using to program this:
 ---
 
