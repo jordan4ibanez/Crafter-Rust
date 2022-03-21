@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-
 use crate::{
     chunk_mesh_procedure::chunk_mesh_boilerplate::dry_run,
     world::{
