@@ -131,7 +131,7 @@ crafter.register_biome({
 
 
     -- Defines if there is cave generation.
-    caves = false,
+    caves = true,
 
     -- Cave parameters.
     cave_noise_params = {
@@ -203,7 +203,7 @@ crafter.register_biome({
 
 
     -- Defines if there is cave generation.
-    caves = false,
+    caves = true,
 
     -- Cave parameters.
     cave_noise_params = {
