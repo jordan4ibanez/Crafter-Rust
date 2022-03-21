@@ -8,12 +8,14 @@ use glam::{Vec3, Vec2};
 
 use crate::graphics::mesh_component_system::MeshComponentSystem;
 
+use super::chunk::BlockChunk;
+
 
 pub struct World {
 
     position_x: Vec<i32>,
     position_z: Vec<i32>,
-    block:      Vec<Vec<u32>>,
+    block:      Vec<BlockChunk>,
     rotation:   Vec<Vec<u8>>,
     light:      Vec<Vec<u8>>,
     heightmap:  Vec<Vec<u8>>,
