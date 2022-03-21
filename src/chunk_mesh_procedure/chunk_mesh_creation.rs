@@ -61,15 +61,12 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
     let neighbor_minus_z_option: Option<&Vec<u32>> = world.get_chunk_blocks(pos_x, pos_z - 1);
 
 
-    // slight performance loss at the expense of readibility
-
-
     chunk.iter().enumerate().for_each(|(index, value)| {
-
-        let (x,y,z) = index_to_pos(index);        
 
         // if it does not equal air
         if *value != 0 {
+
+            let (x,y,z) = index_to_pos(index);
             
             // internal
             if x + 1 <= 15 && chunk[pos_to_index(x + 1, y, z)] == 0 {
@@ -164,12 +161,12 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
 
     chunk.iter().enumerate().for_each(|(index, value)| {
 
-        let (x,y,z) = index_to_pos(index);
-
         // let block_id: u32 = chunk[pos_to_index(x, y, z)];
 
         // if it does not equal air
         if *value != 0 {
+
+            let (x,y,z) = index_to_pos(index);
 
             let light = 16.0/16.0;
             
