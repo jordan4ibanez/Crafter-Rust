@@ -1,3 +1,5 @@
+use std::sync::atomic::{AtomicUsize, Ordering};
+
 use rayon::prelude::*;
 
 use crate::{
@@ -52,8 +54,8 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
     }
 
 
-    let mut float_count: usize = 0;
-    let mut indices_count: usize = 0;
+    let float_count: AtomicUsize = AtomicUsize::new(0);
+    let indices_count: AtomicUsize = AtomicUsize::new(0);
 
     let chunk: &[u32] = block_vector_option.unwrap();
 
@@ -64,7 +66,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
     let neighbor_minus_z_option: Option<&[u32]> = world.get_chunk_blocks_slice(pos_x, pos_z - 1);
 
 
-    chunk.iter().enumerate().for_each( | ( index, value ) | {
+    chunk.par_iter().enumerate().for_each( | ( index, value ) | {
 
         // if it does not equal air
         if *value != 0 {
@@ -73,24 +75,24 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
             
             // internal
             if x + 1 <= 15 && chunk[pos_to_index(x + 1, y, z)] == 0 {
-                dry_run(&mut float_count, &mut indices_count)
+                dry_run(&float_count, &indices_count)
             }
             if x >= 1 && chunk[pos_to_index(x - 1, y, z)] == 0 {
-                dry_run(&mut float_count, &mut indices_count)
+                dry_run(&float_count, &indices_count)
             }
 
             if y == 127 || (y < 127 && chunk[pos_to_index(x, y + 1, z)] == 0) {
-                dry_run(&mut float_count, &mut indices_count)
+                dry_run(&float_count, &indices_count)
             }
             if y > 0 && y - 1 >= 1 && chunk[pos_to_index(x, y - 1, z)] == 0 {
-                dry_run(&mut float_count, &mut indices_count)
+                dry_run(&float_count, &indices_count)
             }
 
             if z + 1 <= 15 && chunk[pos_to_index(x, y, z + 1)] == 0 {
-                dry_run(&mut float_count, &mut indices_count)
+                dry_run(&float_count, &indices_count)
             }
             if z >= 1 && chunk[pos_to_index(x, y, z - 1)] == 0 {
-                dry_run(&mut float_count, &mut indices_count)
+                dry_run(&float_count, &indices_count)
             }
 
             // external
@@ -100,7 +102,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
                 match neighbor_minus_x_option {
                     Some(neighbor_minus_x) => {
                         if neighbor_minus_x[pos_to_index(15, y, z)] == 0 {
-                            dry_run(&mut float_count, &mut indices_count);
+                            dry_run(&float_count, &indices_count);
                         }
                     },
                     None => (),
@@ -110,7 +112,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
                 match neighbor_plus_x_option {
                     Some(neighbor_plus_x) => {
                         if neighbor_plus_x[pos_to_index(0, y, z)] == 0 {
-                            dry_run(&mut float_count, &mut indices_count);
+                            dry_run(&float_count, &indices_count);
                         }
                     },
                     None => (),
@@ -122,7 +124,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
                 match neighbor_minus_z_option {
                     Some(neighbor_minus_z) => {
                         if neighbor_minus_z[pos_to_index(x, y, 15)] == 0 {
-                            dry_run(&mut float_count, &mut indices_count);
+                            dry_run(&float_count, &indices_count);
                         }
                     },
                     None => (),
@@ -132,7 +134,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
                 match neighbor_plus_z_option {
                     Some(neighbor_plus_z) => {
                         if neighbor_plus_z[pos_to_index(x, y, 0)] == 0 {
-                            dry_run(&mut float_count, &mut indices_count);
+                            dry_run(&float_count, &indices_count);
                         }
                     },
                     None => (),
@@ -144,20 +146,20 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
     // end dry run
 
     // prevent crashing
-    if float_count == 0 {
+    if float_count.load(Ordering::Relaxed) == 0 {
         return None;
     }
 
     // println!("CALCULATED: {}", pos_count);
 
     // create the vectors with predetermined size
-    let mut float_data: Vec<f32> = vec![0.0; float_count];
-    let mut indices_data: Vec<u32> = vec![0; indices_count];
+    let mut float_data: Vec<f32> = vec![0.0; float_count.load(Ordering::Relaxed)];
+    let mut indices_data: Vec<u32> = vec![0; indices_count.load(Ordering::Relaxed)];
 
 
     // reset the counters
-    float_count = 0;
-    indices_count = 0;
+    let mut new_float_count = 0;
+    let mut new_indices_count = 0;
 
     // this part is EXTREMELY important, this allows all the vertex points to link together
     let mut face_count: usize = 0;
@@ -232,9 +234,9 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
                     &mut float_data,
                     &mut indices_data,
 
-                    &mut float_count,
+                    &mut new_float_count,
                     &mut face_count,
-                    &mut indices_count,
+                    &mut new_indices_count,
 
                     x_plus,
                     x_minus,

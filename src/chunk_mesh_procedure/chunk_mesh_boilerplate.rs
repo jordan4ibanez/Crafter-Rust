@@ -25,6 +25,8 @@ this is extremely similar to RAID-0 with hard drive/ssd technology
 
 // generic functions to reduce boilerplate
 
+use std::sync::atomic::{AtomicUsize, Ordering};
+
 use crate::blocks::block_component_system::{AtlasTextureMap};
 
 // pushes the adjusted xyz into the vertex data
@@ -65,12 +67,16 @@ fn assign_indices(vector: &mut Vec<u32>, array: &[u32], current_count: &mut usiz
 
 
 // a precalculator for capacity information
-pub fn dry_run(float_count: &mut usize, indices_count: &mut usize) {
-    *float_count += 12; // pos
-    *float_count += 12; // color
-    *float_count += 8; // texture
+pub fn dry_run(float_count: &AtomicUsize, indices_count: &AtomicUsize) {
+    /*
+    pos     12
+    color   12
+    texture 8
+    */
+    float_count.fetch_add(32, Ordering::Relaxed);
 
-    *indices_count += 6;
+    // indices 6
+    indices_count.fetch_add(6, Ordering::Relaxed);    
 }
 
 // this interlaces the mesh data for the gpu
