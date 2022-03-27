@@ -190,6 +190,16 @@ impl World {
             None => None,
         }
     }
+
+    // returns the vector block data as slice - immutably
+    pub fn get_chunk_blocks_slice(&self, x: i32, z: i32) -> Option<&[u32]> {
+        match self.get_index(x, z) {
+            Some(index) => {
+                return Some(&self.block[index][0..32768])
+            },
+            None => None,
+        }
+    }
     
     /*
     pub fn iter_map_sorted(&self, camera_pos: Vec3) -> Vec<&Chunk> {
