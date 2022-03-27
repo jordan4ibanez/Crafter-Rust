@@ -44,15 +44,16 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
 
     // dry run to get capacities
 
-    let mut float_count: usize = 0;
-    let mut indices_count: usize = 0;
-
     let block_vector_option: Option<&[u32]> = world.get_chunk_blocks_slice(pos_x, pos_z);
 
     match block_vector_option {
         Some(_) => (),
         None => return None,
     }
+
+
+    let mut float_count: usize = 0;
+    let mut indices_count: usize = 0;
 
     let chunk: &[u32] = block_vector_option.unwrap();
 
