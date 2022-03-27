@@ -45,20 +45,20 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
     let mut float_count: usize = 0;
     let mut indices_count: usize = 0;
 
-    let block_vector_option: Option<&Vec<u32>> = world.get_chunk_blocks(pos_x, pos_z);
+    let block_vector_option: Option<&[u32]> = world.get_chunk_blocks_slice(pos_x, pos_z);
 
     match block_vector_option {
         Some(_) => (),
         None => return None,
     }
 
-    let chunk: &Vec<u32> = block_vector_option.unwrap();
+    let chunk: &[u32] = block_vector_option.unwrap();
 
-    let neighbor_plus_x_option: Option<&Vec<u32>> = world.get_chunk_blocks(pos_x + 1, pos_z);
-    let neighbor_minus_x_option: Option<&Vec<u32>> = world.get_chunk_blocks(pos_x - 1, pos_z);
+    let neighbor_plus_x_option: Option<&[u32]> = world.get_chunk_blocks_slice(pos_x + 1, pos_z);
+    let neighbor_minus_x_option: Option<&[u32]> = world.get_chunk_blocks_slice(pos_x - 1, pos_z);
 
-    let neighbor_plus_z_option: Option<&Vec<u32>> = world.get_chunk_blocks(pos_x ,pos_z + 1);
-    let neighbor_minus_z_option: Option<&Vec<u32>> = world.get_chunk_blocks(pos_x, pos_z - 1);
+    let neighbor_plus_z_option: Option<&[u32]> = world.get_chunk_blocks_slice(pos_x ,pos_z + 1);
+    let neighbor_minus_z_option: Option<&[u32]> = world.get_chunk_blocks_slice(pos_x, pos_z - 1);
 
 
     chunk.iter().enumerate().for_each(|(index, value)| {
