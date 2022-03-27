@@ -1,3 +1,5 @@
+use rayon::prelude::*;
+
 use crate::{
     chunk_mesh_procedure::chunk_mesh_boilerplate::dry_run,
     world::{
@@ -61,7 +63,7 @@ pub fn create_chunk_mesh(bcs: &BlockComponentSystem, mcs: &mut MeshComponentSyst
     let neighbor_minus_z_option: Option<&[u32]> = world.get_chunk_blocks_slice(pos_x, pos_z - 1);
 
 
-    chunk.iter().enumerate().for_each(|(index, value)| {
+    chunk.iter().enumerate().for_each( | ( index, value ) | {
 
         // if it does not equal air
         if *value != 0 {
