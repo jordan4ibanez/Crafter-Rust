@@ -29,6 +29,7 @@ glam = "0.20.2"
 # openAL wrapper
 # alto = "*"
 # ears = "0.8.0"
+oddio = "0.5.0"
 
 # Rust stb
 image = "0.24.1"
